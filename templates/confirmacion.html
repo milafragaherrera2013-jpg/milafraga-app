@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pedido recibido · {{ negocio.marca }}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<div class="confirmacion-box">
+  <div class="icono">💌</div>
+  <h2>¡Gracias, {{ pedido.cliente }}!</h2>
+  <p>Tu pedido nº <strong>{{ pedido.id }}</strong> se ha registrado correctamente.</p>
+
+  <div style="text-align:left; margin-top:20px; background:var(--crema); padding:16px; border-radius:12px;">
+    {% for item in pedido.productos %}
+      <div>{{ item.cantidad }}x {{ item.nombre }} — {{ "%.2f"|format(item.cantidad * item.precio_unitario) }} €</div>
+    {% endfor %}
+    <hr style="border:none; border-top:1px solid var(--borde); margin:10px 0;">
+    <strong>Total: {{ "%.2f"|format(pedido.total) }} €</strong>
+  </div>
+
+  <p style="margin-top:20px; font-size:14px; color:var(--texto-suave);">
+    Para confirmar el pago puedes hacerlo por Bizum al {{ cobro.bizum }}. Pulsa el botón para avisarme por WhatsApp y así preparo tu pedido cuanto antes.
+  </p>
+
+  <a class="btn-whatsapp"
+     href="https://wa.me/{{ cobro.whatsapp | replace('+','') }}?text=Hola%20Mila%2C%20soy%20{{ pedido.cliente | urlencode }}%2C%20acabo%20de%20enviar%20mi%20pedido%20n%C2%BA%20{{ pedido.id }}%20por%20un%20total%20de%20{{ '%.2f'|format(pedido.total) }}%E2%82%AC."
+     target="_blank">
+    Avisar por WhatsApp 💬
+  </a>
+</div>
+</body>
+</html>

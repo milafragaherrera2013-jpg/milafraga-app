@@ -1,0 +1,32 @@
+{
+  "negocio": {
+    "nombre_completo": "Milagros Fraga Herrera",
+    "nif": "48968846Y",
+    "telefono": "677004382",
+    "direccion_calle": "Plaza Mayor 16, 1º C",
+    "direccion_cp_ciudad": "47193 La Cistérniga, Valladolid",
+    "marca": "Mila Fraga",
+    "web": ""
+  },
+  "cobro": {
+    "bizum": "677004382",
+    "whatsapp": "+34677004382",
+    "iban_completo": "ES0415860001405024114711",
+    "iban_mostrar": "ES04 **** **** **** ****4711",
+    "titular_cuenta": "Milagros Fraga Herrera"
+  },
+  "rutas": {
+    "carpeta_base": "Documentos/MilaFraga",
+    "carpeta_facturas": "Documentos/MilaFraga/Facturas",
+    "carpeta_etiquetas": "Documentos/MilaFraga/Etiquetas",
+    "logo_factura": "static/img/logo.png",
+    "logo_marca": "static/img/logo_acuarela.png"
+  },
+  "marca_visual": {
+    "color_aqua": "#7FC7C4",
+    "color_lila": "#B9A6D6",
+    "color_texto": "#3A3A3A",
+    "fuente_titulos": "Playfair Display",
+    "fuente_texto": "Lato"
+  }
+}

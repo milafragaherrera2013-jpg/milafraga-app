@@ -1,0 +1,286 @@
+{
+  "productos": [
+    {
+      "id": "cafe50_15",
+      "categoria": "Café 5.0",
+      "nombre": "Café 5.0 (15 sobres)",
+      "detalle": "Formato 15 días",
+      "precio": 25,
+      "img": "cafe50_15.png"
+    },
+    {
+      "id": "cafe50_30",
+      "categoria": "Café 5.0",
+      "nombre": "Café 5.0 (30 sobres)",
+      "detalle": "1 mes · 30 sobres",
+      "precio": 40,
+      "img": "cafe50_30.png"
+    },
+    {
+      "id": "id_15",
+      "categoria": "Bebida Inteligente",
+      "nombre": "Bebida Inteligente (15 sobres)",
+      "detalle": "Formato 15 días",
+      "precio": 25,
+      "img": "id_15.png"
+    },
+    {
+      "id": "id_30",
+      "categoria": "Bebida Inteligente",
+      "nombre": "Bebida Inteligente (30 sobres)",
+      "detalle": "1 mes · 30 sobres",
+      "precio": 40,
+      "img": "id_30.png"
+    },
+    {
+      "id": "choco_5",
+      "categoria": "ChocoSlender",
+      "nombre": "ChocoSlender (5 sobres)",
+      "detalle": "Pack prueba · 5 sobres",
+      "precio": 16,
+      "img": "choco_5.png"
+    },
+    {
+      "id": "choco_30",
+      "categoria": "ChocoSlender",
+      "nombre": "ChocoSlender (1 mes)",
+      "detalle": "1 mes · 30 días",
+      "precio": 40,
+      "img": "choco_30.png"
+    },
+    {
+      "id": "elixir_7",
+      "categoria": "Elixir de Juventud",
+      "nombre": "Elixir de Juventud (7 sobres)",
+      "detalle": "Pack prueba · 7 sobres",
+      "precio": 17,
+      "img": "elixir_7.png"
+    },
+    {
+      "id": "elixir_30",
+      "categoria": "Elixir de Juventud",
+      "nombre": "Elixir de Juventud (1 mes)",
+      "detalle": "Colágeno · 1 mes",
+      "precio": 50,
+      "img": "elixir_30.png"
+    },
+    {
+      "id": "cania",
+      "categoria": "Caña Zero",
+      "nombre": "Caña Zero",
+      "detalle": "Endulzante natural",
+      "precio": 14,
+      "img": "cania.png"
+    }
+  ],
+  "packs_duo": [
+    {
+      "id": "duo_cafe2",
+      "nombre": "Pack Duo 2 Cafés",
+      "detalle": "2 unidades",
+      "precio": 76,
+      "img": "duo_cafe2.png"
+    },
+    {
+      "id": "duo_id2",
+      "nombre": "Pack Duo 2 Bebidas",
+      "detalle": "2 unidades",
+      "precio": 76,
+      "img": "duo_id2.png"
+    },
+    {
+      "id": "duo_choco2",
+      "nombre": "Pack Duo 2 Chocos",
+      "detalle": "2 unidades",
+      "precio": 76,
+      "img": "duo_choco2.png"
+    },
+    {
+      "id": "duo_elixir2",
+      "nombre": "Pack Duo 2 Elixires",
+      "detalle": "2 unidades",
+      "precio": 95,
+      "img": "duo_elixir2.png"
+    },
+    {
+      "id": "duo_cania2",
+      "nombre": "Pack Duo 2 Cañas",
+      "detalle": "2 unidades",
+      "precio": 26,
+      "img": "duo_cania2.png"
+    },
+    {
+      "id": "duo_cafe_cania",
+      "nombre": "Pack Duo Café y Caña",
+      "detalle": "Café + Caña Zero",
+      "precio": 50,
+      "img": "duo_cafe_cania.png"
+    },
+    {
+      "id": "duo_cafe_id",
+      "nombre": "Pack Duo Café y Bebida",
+      "detalle": "Café + Bebida Inteligente",
+      "precio": 75,
+      "img": "duo_cafe_id.png"
+    },
+    {
+      "id": "duo_cafe_choco",
+      "nombre": "Pack Duo Café y Choco",
+      "detalle": "Café + ChocoSlender",
+      "precio": 75,
+      "img": "duo_cafe_choco.png"
+    },
+    {
+      "id": "duo_cafe_elixir",
+      "nombre": "Pack Duo Café y Elixir",
+      "detalle": "Café + Elixir",
+      "precio": 82,
+      "img": "duo_cafe_elixir.png"
+    },
+    {
+      "id": "duo_id_choco",
+      "nombre": "Pack Duo Bebida y Choco",
+      "detalle": "Bebida + ChocoSlender",
+      "precio": 75,
+      "img": "duo_id_choco.png"
+    },
+    {
+      "id": "duo_id_elixir",
+      "nombre": "Pack Duo Bebida y Elixir",
+      "detalle": "Bebida + Elixir",
+      "precio": 82,
+      "img": "duo_id_elixir.png"
+    },
+    {
+      "id": "duo_choco_elixir",
+      "nombre": "Pack Duo Choco y Elixir",
+      "detalle": "Choco + Elixir",
+      "precio": 82,
+      "img": "duo_choco_elixir.png"
+    }
+  ],
+  "packs_trio": [
+    {
+      "id": "trio_cafe3",
+      "nombre": "Pack Trío Café 5.0",
+      "detalle": "3 unidades",
+      "precio": 110,
+      "img": "trio_cafe3.png"
+    },
+    {
+      "id": "trio_id3",
+      "nombre": "Pack Trío ID (Bebida Inteligente)",
+      "detalle": "3 unidades",
+      "precio": 110,
+      "img": "trio_id3.png"
+    },
+    {
+      "id": "trio_choco3",
+      "nombre": "Pack Trío ChocoSlender",
+      "detalle": "3 unidades",
+      "precio": 110,
+      "img": "trio_choco3.png"
+    },
+    {
+      "id": "trio_elixir3",
+      "nombre": "Pack Trío Elixir de Juventud",
+      "detalle": "3 unidades",
+      "precio": 138,
+      "img": "trio_elixir3.png"
+    },
+    {
+      "id": "trio_cania3",
+      "nombre": "Pack Trío Caña Zero",
+      "detalle": "3 unidades",
+      "precio": 38,
+      "img": "trio_cania3.png"
+    },
+    {
+      "id": "trio_cafe_choco_id",
+      "nombre": "Pack Trío Café+Choco+ID",
+      "detalle": "Café · ChocoSlender · Bebida",
+      "precio": 110,
+      "img": "trio_cafe_choco_id.png"
+    },
+    {
+      "id": "trio_cafe_elixir_id",
+      "nombre": "Pack Trío Café+Elixir+ID",
+      "detalle": "Café · Elixir · Bebida",
+      "precio": 118,
+      "img": "trio_cafe_elixir_id.png"
+    }
+  ],
+  "packs_5": [
+    {
+      "id": "5_cafe",
+      "nombre": "Pack 5 Café 5.0",
+      "detalle": "5 unidades",
+      "precio": 170,
+      "img": "5_cafe.png"
+    },
+    {
+      "id": "5_id",
+      "nombre": "Pack 5 ID (Bebida Inteligente)",
+      "detalle": "5 unidades",
+      "precio": 170,
+      "img": "5_id.png"
+    },
+    {
+      "id": "5_choco",
+      "nombre": "Pack 5 ChocoSlender",
+      "detalle": "5 unidades",
+      "precio": 170,
+      "img": "5_choco.png"
+    },
+    {
+      "id": "5_elixir",
+      "nombre": "Pack 5 Elixir de Juventud",
+      "detalle": "5 unidades",
+      "precio": 212,
+      "img": "5_elixir.png"
+    },
+    {
+      "id": "5_cania",
+      "nombre": "Pack 5 Cañas Zero",
+      "detalle": "5 unidades",
+      "precio": 60,
+      "img": "5_cania.png"
+    }
+  ],
+  "combos_permanentes": [
+    {
+      "id": "combo_bienestar",
+      "nombre": "Combo Bienestar Integral",
+      "detalle": "Pack completo bienestar",
+      "precio": 165,
+      "img": "combo_bienestar.png"
+    },
+    {
+      "id": "combo_familiar",
+      "nombre": "Combo Familiar",
+      "detalle": "Lo más completo · envío gratis",
+      "precio": 240,
+      "img": "combo_familiar.png"
+    }
+  ],
+  "edicion_limitada": [
+    {
+      "id": "primavera",
+      "nombre": "Primavera Artabria",
+      "detalle": "2 Café 5.0 + 2 Elixir de Juventud + 🎁 esponja Konjac de regalo",
+      "precio": 130,
+      "precio_antes": 187,
+      "descuento": "30%",
+      "img": "primavera.png"
+    },
+    {
+      "id": "bienestar_primavera",
+      "nombre": "Paquete Bienestar Especial Primavera",
+      "detalle": "Café + Bebida Inteligente + ChocoSlender + Caña Zero + 2 Elixir + 🎁 esponja Konjac",
+      "precio": 161,
+      "precio_antes": 251,
+      "descuento": "35%",
+      "img": "bienestar_primavera.png"
+    }
+  ]
+}

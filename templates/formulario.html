@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Catálogo · {{ negocio.marca }}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<div class="hero">
+  <img class="logo-marca" src="{{ url_for('static', filename='img/logo_acuarela.png') }}" alt="{{ negocio.marca }}">
+  <p>Elige tus productos favoritos y te preparo el pedido con mucho cariño 💛</p>
+</div>
+
+<div class="container">
+
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      {% for m in messages %}<div class="flash">{{ m }}</div>{% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <form method="post" action="{{ url_for('crear_pedido') }}">
+
+    {% for grupo in grupos %}
+    <div class="grupo-titulo">{{ grupo.nombre }}</div>
+    <div class="grid-productos">
+      {% for item in grupo.productos %}
+      <div class="card-producto">
+        <img src="{{ url_for('static', filename='img/' + item.img if item.img else 'img/placeholder.png') }}" alt="{{ item.nombre }}" onerror="this.src='{{ url_for('static', filename='img/placeholder.png') }}'">
+        <div class="nombre">{{ item.nombre }}</div>
+        <div class="detalle">{{ item.detalle }}</div>
+        {% if item.precio_antes %}
+        <div><span class="precio-antes">{{ item.precio_antes }}€</span> <span class="descuento">-{{ item.descuento }}</span></div>
+        {% endif %}
+        <div class="precio">{{ item.precio }} €</div>
+        <input type="number" name="cantidad_{{ item.id }}" min="0" value="0" placeholder="Cantidad">
+      </div>
+      {% endfor %}
+    </div>
+    {% endfor %}
+
+    <div class="form-datos">
+      <h3>Tus datos</h3>
+      <label>Nombre y apellidos *</label>
+      <input type="text" name="cliente" required>
+
+      <label>Teléfono / WhatsApp</label>
+      <input type="text" name="telefono_cliente">
+
+      <label>Dirección de envío</label>
+      <input type="text" name="direccion_cliente">
+
+      <label>¿Algo que deba saber? (alergias, preferencias, horario de entrega...)</label>
+      <textarea name="notas" rows="3"></textarea>
+
+      <button type="submit" class="btn-enviar">Enviar mi pedido</button>
+    </div>
+
+  </form>
+</div>
+</body>
+</html>
