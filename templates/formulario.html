@@ -36,6 +36,9 @@
         <img src="{{ url_for('static', filename='img/' + item.img if item.img else 'img/placeholder.png') }}" alt="{{ item.nombre }}" onerror="this.src='{{ url_for('static', filename='img/placeholder.png') }}'">
         <div class="nombre">{{ item.nombre }}</div>
         <div class="detalle">{{ item.detalle }}</div>
+        {% if item.descripcion %}
+        <div class="descripcion">{{ item.descripcion }}</div>
+        {% endif %}
         {% if item.precio_antes %}
         <div><span class="precio-antes">{{ item.precio_antes }}€</span> <span class="descuento">-{{ item.descuento }}</span></div>
         {% endif %}
@@ -57,6 +60,9 @@
 
       <label>Teléfono / WhatsApp</label>
       <input type="text" name="telefono_cliente">
+
+      <label>Email (opcional)</label>
+      <input type="email" name="email_cliente" placeholder="tuemail@ejemplo.com">
 
       <label>Dirección de envío</label>
       <input type="text" name="direccion_cliente">
