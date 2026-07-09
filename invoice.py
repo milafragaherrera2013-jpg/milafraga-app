@@ -1,101 +1,188 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Panel de pedidos · {{ negocio.marca }}</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
-<body>
+# invoice.py
+# Genera facturas en PDF para los pedidos, usando los datos de config.json
+import json
+import os
+from datetime import datetime
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.units import mm
+from reportlab.lib import colors
+from reportlab.pdfgen import canvas
 
-<div class="topbar">
-  <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo">
-  <div class="marca">{{ negocio.marca }} · Panel de pedidos</div>
-  <div style="margin-left:auto;">
-    <a href="{{ url_for('logout') }}" style="font-size:13px; color:var(--texto-suave); text-decoration:none;">Cerrar sesión</a>
-  </div>
-</div>
+with open(os.path.join(os.path.dirname(__file__), "config.json"), encoding="utf-8") as f:
+    CONFIG = json.load(f)
 
-<div class="container">
+AQUA = colors.HexColor(CONFIG["marca_visual"]["color_aqua"])
+LILA = colors.HexColor(CONFIG["marca_visual"]["color_lila"])
+TEXTO = colors.HexColor(CONFIG["marca_visual"]["color_texto"])
 
-  <div class="stats">
-    <div class="stat-card">
-      <div class="num">{{ num_pedidos }}</div>
-      <div class="label">Pedidos {{ 'filtrados' if filtro_estado else 'totales' }}</div>
-    </div>
-    <div class="stat-card">
-      <div class="num">{{ "%.2f"|format(total_ventas) }} €</div>
-      <div class="label">Total en estos pedidos</div>
-    </div>
-    <div class="stat-card">
-      <div class="num"><a href="{{ url_for('formulario') }}" style="color: var(--aqua-dark); text-decoration:none;">Ver →</a></div>
-      <div class="label">Catálogo / Formulario</div>
-    </div>
-  </div>
 
-  <div class="filtros">
-    <a href="{{ url_for('index') }}" class="{{ 'activo' if not filtro_estado else '' }}">Todos</a>
-    <a href="{{ url_for('index', estado='Nuevo') }}" class="{{ 'activo' if filtro_estado=='Nuevo' else '' }}">Nuevos</a>
-    <a href="{{ url_for('index', estado='Confirmado') }}" class="{{ 'activo' if filtro_estado=='Confirmado' else '' }}">Confirmados</a>
-    <a href="{{ url_for('index', estado='Enviado') }}" class="{{ 'activo' if filtro_estado=='Enviado' else '' }}">Enviados</a>
-    <a href="{{ url_for('index', estado='Entregado') }}" class="{{ 'activo' if filtro_estado=='Entregado' else '' }}">Entregados</a>
-  </div>
+def generar_factura(pedido, carpeta_destino):
+    """
+    pedido: dict con keys: id, fecha, cliente, telefono, direccion, items (lista de dicts
+            con nombre, cantidad, precio_unitario), total, notas
+    carpeta_destino: ruta local donde guardar el PDF
+    Devuelve la ruta del PDF generado.
+    """
+    os.makedirs(carpeta_destino, exist_ok=True)
+    numero_factura = f"MF-{pedido['id']:05d}"
+    nombre_archivo = f"Factura_{numero_factura}.pdf"
+    ruta_pdf = os.path.join(carpeta_destino, nombre_archivo)
 
-  {% if pedidos %}
-  <table class="pedidos">
-    <thead>
-      <tr>
-        <th>Nº</th>
-        <th>Fecha</th>
-        <th>Clienta</th>
-        <th>Productos</th>
-        <th>Total</th>
-        <th>Estado</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for p in pedidos %}
-      <tr>
-        <td>#{{ p.id }}</td>
-        <td>{{ p.fecha }}</td>
-        <td>
-          <strong>{{ p.cliente }}</strong><br>
-          <span style="color:var(--texto-suave); font-size:12px;">{{ p.telefono_cliente }}</span>
-        </td>
-        <td>
-          {% for item in p.productos %}
-            {{ item.cantidad }}x {{ item.nombre }}<br>
-          {% endfor %}
-          <span style="font-size:11px; color:var(--texto-suave);">💳 {{ p.metodo_pago }}</span>
-        </td>
-        <td><strong>{{ "%.2f"|format(p.total) }} €</strong></td>
-        <td>
-          <span class="badge {{ p.estado }}">{{ p.estado }}</span><br>
-          <form method="post" action="{{ url_for('cambiar_estado', pedido_id=p.id) }}" style="margin-top:6px;">
-            <select name="estado" onchange="this.form.submit()">
-              <option value="Nuevo" {{ 'selected' if p.estado=='Nuevo' }}>Nuevo</option>
-              <option value="Confirmado" {{ 'selected' if p.estado=='Confirmado' }}>Confirmado</option>
-              <option value="Enviado" {{ 'selected' if p.estado=='Enviado' }}>Enviado</option>
-              <option value="Entregado" {{ 'selected' if p.estado=='Entregado' }}>Entregado</option>
-            </select>
-          </form>
-        </td>
-        <td class="acciones">
-          <a class="factura" href="{{ url_for('descargar_factura', pedido_id=p.id) }}">Factura</a>
-          <a class="etiqueta" href="{{ url_for('descargar_etiqueta', pedido_id=p.id) }}">Etiqueta</a>
-        </td>
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
-  {% else %}
-  <div class="empty-state">
-    <h3>Todavía no hay pedidos {{ 'con este estado' if filtro_estado else '' }}</h3>
-    <p>En cuanto una clienta rellene el <a href="{{ url_for('formulario') }}">formulario del catálogo</a>, aparecerá aquí automáticamente.</p>
-  </div>
-  {% endif %}
+    c = canvas.Canvas(ruta_pdf, pagesize=A4)
+    ancho, alto = A4
 
-</div>
-</body>
-</html>
+    # Logo
+    logo_path = os.path.join(os.path.dirname(__file__), CONFIG["rutas"]["logo_factura"])
+    if os.path.exists(logo_path):
+        try:
+            c.drawImage(logo_path, ancho - 60 * mm, alto - 45 * mm, width=45 * mm, height=35 * mm,
+                        preserveAspectRatio=True, mask='auto')
+        except Exception:
+            pass
+
+    # Cabecera negocio
+    negocio = CONFIG["negocio"]
+    cobro = CONFIG["cobro"]
+
+    y = alto - 25 * mm
+    c.setFont("Helvetica-Bold", 16)
+    c.setFillColor(TEXTO)
+    c.drawString(20 * mm, y, negocio["marca"])
+    y -= 6 * mm
+    c.setFont("Helvetica", 9)
+    c.drawString(20 * mm, y, negocio["nombre_completo"])
+    y -= 4.5 * mm
+    c.drawString(20 * mm, y, f"NIF: {negocio['nif']}")
+    y -= 4.5 * mm
+    c.drawString(20 * mm, y, negocio["direccion_calle"])
+    y -= 4.5 * mm
+    c.drawString(20 * mm, y, negocio["direccion_cp_ciudad"])
+    y -= 4.5 * mm
+    c.drawString(20 * mm, y, f"Tel/WhatsApp: {negocio['telefono']}")
+
+    # Datos factura
+    y -= 12 * mm
+    c.setFont("Helvetica-Bold", 12)
+    c.drawString(20 * mm, y, f"Factura Nº {numero_factura}")
+    y -= 6 * mm
+    c.setFont("Helvetica", 9)
+    fecha = pedido.get("fecha", datetime.now().strftime("%d/%m/%Y"))
+    c.drawString(20 * mm, y, f"Fecha: {fecha}")
+
+    # Datos cliente
+    y -= 10 * mm
+    c.setFont("Helvetica-Bold", 10)
+    c.drawString(20 * mm, y, "Cliente")
+    y -= 5 * mm
+    c.setFont("Helvetica", 9)
+    c.drawString(20 * mm, y, pedido.get("cliente", ""))
+    if pedido.get("telefono_cliente"):
+        y -= 4.5 * mm
+        c.drawString(20 * mm, y, f"Tel: {pedido['telefono_cliente']}")
+    if pedido.get("direccion_cliente"):
+        y -= 4.5 * mm
+        c.drawString(20 * mm, y, pedido["direccion_cliente"])
+
+    # Tabla de productos
+    y -= 12 * mm
+    c.setFillColor(AQUA)
+    c.rect(20 * mm, y - 2 * mm, ancho - 40 * mm, 7 * mm, fill=1, stroke=0)
+    c.setFillColor(colors.white)
+    c.setFont("Helvetica-Bold", 9)
+    c.drawString(22 * mm, y, "Producto")
+    c.drawString(120 * mm, y, "Cant.")
+    c.drawString(140 * mm, y, "Precio")
+    c.drawString(165 * mm, y, "Subtotal")
+
+    y -= 9 * mm
+    c.setFillColor(TEXTO)
+    c.setFont("Helvetica", 9)
+    subtotal_productos = 0
+    for item in pedido.get("items", []):
+        subtotal = item["cantidad"] * item["precio_unitario"]
+        subtotal_productos += subtotal
+        c.drawString(22 * mm, y, item["nombre"][:45])
+        c.drawString(120 * mm, y, str(item["cantidad"]))
+        c.drawString(140 * mm, y, f"{item['precio_unitario']:.2f} EUR")
+        c.drawString(165 * mm, y, f"{subtotal:.2f} EUR")
+        y -= 6 * mm
+        if y < 60 * mm:
+            c.showPage()
+            y = alto - 25 * mm
+
+    gastos_envio = pedido.get("gastos_envio", 0) or 0
+    if gastos_envio > 0:
+        c.drawString(22 * mm, y, "Gastos de envío")
+        c.drawString(165 * mm, y, f"{gastos_envio:.2f} EUR")
+        y -= 6 * mm
+
+    total = subtotal_productos + gastos_envio
+
+    # Total
+    y -= 4 * mm
+    c.setFillColor(LILA)
+    c.rect(120 * mm, y - 2 * mm, ancho - 140 * mm, 8 * mm, fill=1, stroke=0)
+    c.setFillColor(colors.white)
+    c.setFont("Helvetica-Bold", 11)
+    c.drawString(125 * mm, y, f"TOTAL: {total:.2f} EUR")
+
+    # Forma de pago
+    y -= 18 * mm
+    c.setFillColor(TEXTO)
+    c.setFont("Helvetica-Bold", 10)
+    c.drawString(20 * mm, y, "Forma de pago")
+    y -= 5 * mm
+    c.setFont("Helvetica", 9)
+    if pedido.get("metodo_pago"):
+        c.drawString(20 * mm, y, f"Método elegido: {pedido['metodo_pago']}")
+        y -= 4.5 * mm
+    c.drawString(20 * mm, y, f"Bizum: {cobro['bizum']}")
+    y -= 4.5 * mm
+    c.drawString(20 * mm, y, f"WhatsApp: {cobro['whatsapp']}")
+    y -= 4.5 * mm
+    c.drawString(20 * mm, y, f"Transferencia - IBAN: {cobro['iban_mostrar']}")
+    y -= 4.5 * mm
+    c.drawString(20 * mm, y, f"Titular: {cobro['titular_cuenta']}")
+
+    if pedido.get("notas"):
+        y -= 10 * mm
+        c.setFont("Helvetica-Oblique", 8)
+        c.drawString(20 * mm, y, f"Notas: {pedido['notas']}")
+
+    c.save()
+    return ruta_pdf
+
+
+def generar_etiqueta(pedido, carpeta_destino):
+    """
+    Genera una etiqueta de envío sencilla (tamaño mitad de A4) con los datos
+    del cliente y el número de pedido.
+    """
+    os.makedirs(carpeta_destino, exist_ok=True)
+    numero = f"MF-{pedido['id']:05d}"
+    ruta_pdf = os.path.join(carpeta_destino, f"Etiqueta_{numero}.pdf")
+
+    ancho, alto = 148 * mm, 105 * mm  # tamaño A6 aprox
+    c = canvas.Canvas(ruta_pdf, pagesize=(ancho, alto))
+
+    c.setFillColor(AQUA)
+    c.rect(0, alto - 18 * mm, ancho, 18 * mm, fill=1, stroke=0)
+    c.setFillColor(colors.white)
+    c.setFont("Helvetica-Bold", 14)
+    c.drawString(8 * mm, alto - 12 * mm, CONFIG["negocio"]["marca"])
+
+    c.setFillColor(TEXTO)
+    c.setFont("Helvetica-Bold", 11)
+    c.drawString(8 * mm, alto - 28 * mm, "Enviar a:")
+    c.setFont("Helvetica", 11)
+    c.drawString(8 * mm, alto - 36 * mm, pedido.get("cliente", ""))
+    if pedido.get("direccion_cliente"):
+        c.drawString(8 * mm, alto - 43 * mm, pedido["direccion_cliente"])
+    if pedido.get("telefono_cliente"):
+        c.drawString(8 * mm, alto - 50 * mm, f"Tel: {pedido['telefono_cliente']}")
+
+    c.setFont("Helvetica-Bold", 10)
+    c.drawString(8 * mm, 10 * mm, f"Pedido: {numero}")
+
+    c.save()
+    return ruta_pdf
