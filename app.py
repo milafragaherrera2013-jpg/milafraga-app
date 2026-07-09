@@ -234,6 +234,16 @@ def cambiar_estado(pedido_id):
     return redirect(url_for("index"))
 
 
+@app.route("/pedido/<int:pedido_id>/eliminar", methods=["POST"])
+@login_requerido
+def eliminar_pedido(pedido_id):
+    conn = get_db()
+    conn.execute("DELETE FROM pedidos WHERE id = ?", (pedido_id,))
+    conn.commit()
+    conn.close()
+    return redirect(url_for("index"))
+
+
 @app.route("/pedido/<int:pedido_id>/factura")
 @login_requerido
 def descargar_factura(pedido_id):
