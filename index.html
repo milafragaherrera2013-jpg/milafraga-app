@@ -94,6 +94,10 @@
         <td class="acciones">
           <a class="factura" href="{{ url_for('descargar_factura', pedido_id=p.id) }}">Factura</a>
           <a class="etiqueta" href="{{ url_for('descargar_etiqueta', pedido_id=p.id) }}">Etiqueta</a>
+          <form method="post" action="{{ url_for('eliminar_pedido', pedido_id=p.id) }}" style="display:inline;"
+                onsubmit="return confirm('¿Seguro que quieres eliminar el pedido #{{ p.id }} de {{ p.cliente }}? Esto no se puede deshacer.');">
+            <button type="submit" class="btn-eliminar" title="Eliminar pedido">🗑️</button>
+          </form>
         </td>
       </tr>
       {% endfor %}
