@@ -165,6 +165,19 @@ table.pedidos tr:last-child td { border-bottom: none; }
 .acciones a.factura { background: var(--aqua); color: white; border-color: var(--aqua); }
 .acciones a.etiqueta { background: var(--lila); color: white; border-color: var(--lila); }
 
+.btn-eliminar {
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  border: 1px solid #E8B4B0;
+  background: #FCE3E0;
+  cursor: pointer;
+}
+
+.btn-eliminar:hover {
+  background: #F5A9A3;
+}
+
 .empty-state {
   text-align: center;
   padding: 60px 20px;
