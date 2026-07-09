@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Acceso panel · {{ negocio.marca }}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<div class="confirmacion-box">
+  <div class="icono">🔒</div>
+  <h2>Panel privado</h2>
+  <p style="color:var(--texto-suave); font-size:14px;">Introduce la contraseña para ver tus pedidos.</p>
+
+  {% if error %}
+  <div class="flash">{{ error }}</div>
+  {% endif %}
+
+  <form method="post">
+    <input type="password" name="password" placeholder="Contraseña" autofocus
+           style="width:100%; padding:12px; border-radius:10px; border:1px solid var(--borde); margin:16px 0; text-align:center; font-size:15px;">
+    <button type="submit" class="btn-enviar">Entrar</button>
+  </form>
+</div>
+</body>
+</html>
