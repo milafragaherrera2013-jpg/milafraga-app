@@ -191,50 +191,57 @@ table.pedidos tr:last-child td { border-bottom: none; }
 
 .grid-productos {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 14px;
 }
 
 .card-producto {
   background: white;
-  border-radius: 16px;
-  padding: 14px;
+  border-radius: 14px;
+  padding: 10px;
   border: 1px solid var(--borde);
-  box-shadow: 0 4px 14px rgba(150,130,190,0.08);
+  box-shadow: 0 3px 10px rgba(150,130,190,0.07);
   display: flex;
   flex-direction: column;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.card-producto:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(150,130,190,0.14);
 }
 
 .card-producto img {
   width: 100%;
-  border-radius: 12px;
-  margin-bottom: 10px;
+  border-radius: 10px;
+  margin-bottom: 8px;
   aspect-ratio: 1/1;
   object-fit: cover;
 }
 
 .card-producto .nombre {
   font-weight: 700;
-  font-size: 15px;
+  font-size: 13px;
   margin-bottom: 2px;
+  line-height: 1.25;
 }
 
 .card-producto .detalle {
-  font-size: 12px;
+  font-size: 11px;
   color: var(--texto-suave);
-  margin-bottom: 8px;
-  min-height: 30px;
+  margin-bottom: 6px;
+  min-height: 26px;
 }
 
 .card-producto .precio {
   font-family: 'Playfair Display', serif;
-  font-size: 19px;
+  font-size: 16px;
   color: var(--aqua-dark);
   margin-bottom: 4px;
 }
 
 .card-producto .precio-antes {
-  font-size: 12px;
+  font-size: 11px;
   color: #C0645A;
   text-decoration: line-through;
   margin-right: 6px;
@@ -244,8 +251,8 @@ table.pedidos tr:last-child td { border-bottom: none; }
   display: inline-block;
   background: #FCE3E0;
   color: #C0645A;
-  font-size: 11px;
-  padding: 2px 8px;
+  font-size: 10px;
+  padding: 2px 7px;
   border-radius: 10px;
   margin-bottom: 6px;
   width: fit-content;
@@ -254,11 +261,11 @@ table.pedidos tr:last-child td { border-bottom: none; }
 .card-producto input[type=number] {
   margin-top: auto;
   width: 100%;
-  padding: 8px;
+  padding: 7px;
   border-radius: 8px;
   border: 1px solid var(--borde);
   text-align: center;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .form-datos {
