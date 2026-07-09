@@ -253,9 +253,9 @@ def crear_pedido():
         flash("Falta el nombre de la clienta o no se ha seleccionado ningún producto.")
         return redirect(url_for("formulario"))
 
-    gastos_envio = COSTE_ENVIO if metodo_pago == "Contrareembolso" else (
-        0.0 if total >= UMBRAL_ENVIO_GRATIS else COSTE_ENVIO
-    )
+    envio_base = 0.0 if total >= UMBRAL_ENVIO_GRATIS else COSTE_ENVIO
+    recargo_contrareembolso = COSTE_ENVIO if metodo_pago == "Contrareembolso" else 0.0
+    gastos_envio = envio_base + recargo_contrareembolso
     total_con_envio = total + gastos_envio
 
     conn = get_db()
