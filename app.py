@@ -1,101 +1,151 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Catálogo · {{ negocio.marca }}</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
-<body>
+# app.py
+# Aplicacion de gestion de pedidos - Mila Fraga / Artabria
+import json
+import os
+import sqlite3
+from datetime import datetime
+from functools import wraps
 
-<div class="hero">
-  <img class="logo-marca" src="{{ url_for('static', filename='img/logo_acuarela.png') }}" alt="{{ negocio.marca }}">
-  <p>Elige tus productos favoritos y te preparo el pedido con mucho cariño 💛</p>
-</div>
+from flask import Flask, render_template, request, redirect, url_for, send_file, flash, session
 
-<div class="container">
+from invoice import generar_factura, generar_etiqueta
 
-  {% with messages = get_flashed_messages() %}
-    {% if messages %}
-      {% for m in messages %}<div class="flash">{{ m }}</div>{% endfor %}
-    {% endif %}
-  {% endwith %}
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_PATH = os.path.join(BASE_DIR, "pedidos.db")
 
-  <form method="post" action="{{ url_for('crear_pedido') }}">
+with open(os.path.join(BASE_DIR, "config.json"), encoding="utf-8") as f:
+    CONFIG = json.load(f)
 
-    {% for grupo in grupos %}
-    <div class="grupo-titulo">{{ grupo.nombre }}</div>
-    <div class="grid-productos">
-      {% for item in grupo.productos %}
-      <div class="card-producto">
-        <img src="{{ url_for('static', filename='img/' + item.img if item.img else 'img/placeholder.png') }}" alt="{{ item.nombre }}" onerror="this.src='{{ url_for('static', filename='img/placeholder.png') }}'">
-        <div class="nombre">{{ item.nombre }}</div>
-        <div class="detalle">{{ item.detalle }}</div>
-        {% if item.precio_antes %}
-        <div><span class="precio-antes">{{ item.precio_antes }}€</span> <span class="descuento">-{{ item.descuento }}</span></div>
-        {% endif %}
-        <div class="precio">{{ item.precio }} €</div>
-        <div class="stepper">
-          <button type="button" class="stepper-btn menos" onclick="cambiarCantidad('{{ item.id }}', -1)">−</button>
-          <input type="number" id="cantidad_{{ item.id }}" name="cantidad_{{ item.id }}" min="0" value="0" readonly>
-          <button type="button" class="stepper-btn mas" onclick="cambiarCantidad('{{ item.id }}', 1)">+</button>
-        </div>
-      </div>
-      {% endfor %}
-    </div>
-    {% endfor %}
+with open(os.path.join(BASE_DIR, "catalog.json"), encoding="utf-8") as f:
+    CATALOGO = json.load(f)
 
-    <div class="form-datos">
-      <h3>Tus datos</h3>
-      <label>Nombre y apellidos *</label>
-      <input type="text" name="cliente" required>
+app = Flask(__name__)
+app.secret_key = os.environ.get("SECRET_KEY", "mila-fraga-clave-local-cambiar-si-se-publica")
 
-      <label>Teléfono / WhatsApp</label>
-      <input type="text" name="telefono_cliente">
 
-      <label>Dirección de envío</label>
-      <input type="text" name="direccion_cliente">
+def get_db():
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    return conn
 
-      <label>¿Algo que deba saber? (alergias, preferencias, horario de entrega...)</label>
-      <textarea name="notas" rows="3"></textarea>
 
-      <label>¿Cómo prefieres pagar?</label>
-      <div class="metodos-pago">
-        <label class="metodo-opcion">
-          <input type="radio" name="metodo_pago" value="Efectivo (entrega en mano)" checked>
-          <span>💶 Efectivo (entrega en mano)</span>
-        </label>
-        <label class="metodo-opcion">
-          <input type="radio" name="metodo_pago" value="Bizum">
-          <span>📲 Bizum</span>
-        </label>
-        <label class="metodo-opcion">
-          <input type="radio" name="metodo_pago" value="Transferencia bancaria">
-          <span>🏦 Transferencia bancaria</span>
-        </label>
-        <label class="metodo-opcion">
-          <input type="radio" name="metodo_pago" value="Contrareembolso">
-          <span>📦 Contrareembolso</span>
-        </label>
-      </div>
+def init_db():
+    conn = get_db()
+    conn.execute("""
+        CREATE TABLE IF NOT EXISTS pedidos (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            fecha TEXT NOT NULL,
+            cliente TEXT NOT NULL,
+            telefono_cliente TEXT,
+            direccion_cliente TEXT,
+            items TEXT NOT NULL,
+            total REAL NOT NULL,
+            notas TEXT,
+            estado TEXT NOT NULL DEFAULT 'Nuevo'
+        )
+    """)
+    conn.commit()
+    # Migración: añadir columna de gastos de envío si no existe todavía
+    try:
+        conn.execute("ALTER TABLE pedidos ADD COLUMN gastos_envio REAL DEFAULT 0")
+        conn.commit()
+    except sqlite3.OperationalError:
+        pass  # la columna ya existía
+    # Migración: añadir columna de método de pago si no existe todavía
+    try:
+        conn.execute("ALTER TABLE pedidos ADD COLUMN metodo_pago TEXT DEFAULT 'No especificado'")
+        conn.commit()
+    except sqlite3.OperationalError:
+        pass  # la columna ya existía
+    conn.close()
 
-      <p style="font-size:13px; color:var(--texto-suave); margin-top:14px; text-align:center;">
-        🚚 Envío gratis a partir de 53€ de pedido. Pedidos inferiores: 3€ de gastos de envío.
-      </p>
 
-      <button type="submit" class="btn-enviar">Enviar mi pedido</button>
-    </div>
+UMBRAL_ENVIO_GRATIS = 53.0
+COSTE_ENVIO = 3.0
 
-  </form>
-</div>
 
-<script>
-function cambiarCantidad(id, delta) {
-  const input = document.getElementById('cantidad_' + id);
-  let val = parseInt(input.value || '0', 10) + delta;
-  if (val < 0) val = 0;
-  input.value = val;
-}
-</script>
-</body>
-</html>
+# Crear la base de datos ya al importar el módulo (necesario para gunicorn en producción)
+init_db()
+
+
+def todos_los_productos():
+    """Aplana el catálogo completo en una sola lista para el formulario.
+    Orden: primero promociones/edición limitada, luego el resto."""
+    items = []
+    for p in CATALOGO["edicion_limitada"]:
+        items.append({**p, "grupo": "🔥 Promociones y edición limitada"})
+    for p in CATALOGO["combos_permanentes"]:
+        items.append({**p, "grupo": "Combos"})
+    for p in CATALOGO["productos"]:
+        items.append({**p, "grupo": "Productos individuales"})
+    for p in CATALOGO["packs_duo"]:
+        items.append({**p, "grupo": "Packs Duo (2 unidades)"})
+    for p in CATALOGO["packs_trio"]:
+        items.append({**p, "grupo": "Packs Trío (3 unidades)"})
+    for p in CATALOGO["packs_5"]:
+        items.append({**p, "grupo": "Packs de 5 unidades"})
+    return items
+
+
+# ---------------------------------------------------------------------------
+# PROTECCIÓN CON CONTRASEÑA (solo para el panel de Mila, no para el catálogo)
+# ---------------------------------------------------------------------------
+ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "cambiaesto")
+
+
+def login_requerido(f):
+    @wraps(f)
+    def decorada(*args, **kwargs):
+        if not session.get("autenticado"):
+            return redirect(url_for("login", next=request.path))
+        return f(*args, **kwargs)
+    return decorada
+
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    error = None
+    if request.method == "POST":
+        password = request.form.get("password", "")
+        if password == ADMIN_PASSWORD:
+            session["autenticado"] = True
+            destino = request.args.get("next") or url_for("index")
+            return redirect(destino)
+        else:
+            error = "Contraseña incorrecta, inténtalo de nuevo."
+    return render_template("login.html", error=error, negocio=CONFIG["negocio"])
+
+
+@app.route("/logout")
+def logout():
+    session.pop("autenticado", None)
+    return redirect(url_for("login"))
+
+
+# ---------------------------------------------------------------------------
+# PANEL DE PEDIDOS (para Mila) — vive en /panel
+# ---------------------------------------------------------------------------
+@app.route("/panel")
+@login_requerido
+def index():
+    conn = get_db()
+    filtro_estado = request.args.get("estado", "")
+    if filtro_estado:
+        rows = conn.execute(
+            "SELECT * FROM pedidos WHERE estado = ? ORDER BY id DESC", (filtro_estado,)
+        ).fetchall()
+    else:
+        rows = conn.execute("SELECT * FROM pedidos ORDER BY id DESC").fetchall()
+    conn.close()
+
+    pedidos = []
+    total_ventas = 0
+    for r in rows:
+        pedido = dict(r)
+        pedido["productos"] = json.loads(pedido.pop("items"))
+        pedidos.append(pedido)
+        total_ventas += pedido["total"]
+
+    return render_template(
+        "index.html",
+        pedidos=pedidos,
