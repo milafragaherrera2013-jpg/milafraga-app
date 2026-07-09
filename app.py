@@ -45,7 +45,17 @@ def init_db():
         )
     """)
     conn.commit()
+    # Migración: añadir columna de gastos de envío si no existe todavía
+    try:
+        conn.execute("ALTER TABLE pedidos ADD COLUMN gastos_envio REAL DEFAULT 0")
+        conn.commit()
+    except sqlite3.OperationalError:
+        pass  # la columna ya existía
     conn.close()
+
+
+UMBRAL_ENVIO_GRATIS = 53.0
+COSTE_ENVIO = 3.0
 
 
 # Crear la base de datos ya al importar el módulo (necesario para gunicorn en producción)
@@ -53,8 +63,13 @@ init_db()
 
 
 def todos_los_productos():
-    """Aplana el catálogo completo en una sola lista para el formulario."""
+    """Aplana el catálogo completo en una sola lista para el formulario.
+    Orden: primero promociones/edición limitada, luego el resto."""
     items = []
+    for p in CATALOGO["edicion_limitada"]:
+        items.append({**p, "grupo": "🔥 Promociones y edición limitada"})
+    for p in CATALOGO["combos_permanentes"]:
+        items.append({**p, "grupo": "Combos"})
     for p in CATALOGO["productos"]:
         items.append({**p, "grupo": "Productos individuales"})
     for p in CATALOGO["packs_duo"]:
@@ -63,10 +78,6 @@ def todos_los_productos():
         items.append({**p, "grupo": "Packs Trío (3 unidades)"})
     for p in CATALOGO["packs_5"]:
         items.append({**p, "grupo": "Packs de 5 unidades"})
-    for p in CATALOGO["combos_permanentes"]:
-        items.append({**p, "grupo": "Combos"})
-    for p in CATALOGO["edicion_limitada"]:
-        items.append({**p, "grupo": "Edición limitada"})
     return items
 
 
@@ -106,7 +117,7 @@ def logout():
 
 
 # ---------------------------------------------------------------------------
-# PANEL DE PEDIDOS (para Mila) — ahora vive en /panel, no en la raíz
+# PANEL DE PEDIDOS (para Mila) — vive en /panel
 # ---------------------------------------------------------------------------
 @app.route("/panel")
 @login_requerido
@@ -185,7 +196,7 @@ def descargar_etiqueta(pedido_id):
 
 
 # ---------------------------------------------------------------------------
-# CATALOGO / FORMULARIO (para clientas) — ahora vive en la raíz "/"
+# CATALOGO / FORMULARIO (para clientas) — vive en la raíz "/"
 # ---------------------------------------------------------------------------
 @app.route("/", methods=["GET"])
 def formulario():
@@ -235,20 +246,24 @@ def crear_pedido():
         flash("Falta el nombre de la clienta o no se ha seleccionado ningún producto.")
         return redirect(url_for("formulario"))
 
+    gastos_envio = 0.0 if total >= UMBRAL_ENVIO_GRATIS else COSTE_ENVIO
+    total_con_envio = total + gastos_envio
+
     conn = get_db()
     conn.execute(
         """INSERT INTO pedidos (fecha, cliente, telefono_cliente, direccion_cliente,
-                                 items, total, notas, estado)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?)""",
+                                 items, total, notas, estado, gastos_envio)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)""",
         (
             datetime.now().strftime("%d/%m/%Y %H:%M"),
             cliente,
             telefono_cliente,
             direccion_cliente,
             json.dumps(items_pedido, ensure_ascii=False),
-            total,
+            total_con_envio,
             notas,
             "Nuevo",
+            gastos_envio,
         ),
     )
     conn.commit()
