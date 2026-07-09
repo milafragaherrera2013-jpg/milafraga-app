@@ -17,7 +17,15 @@ body {
   margin: 0;
   font-family: 'Lato', sans-serif;
   color: var(--texto);
-  background: linear-gradient(160deg, #F3F8F7 0%, #F6F2FA 55%, #FBF9F6 100%);
+  background-color: #FBF9F6;
+  background-image:
+    radial-gradient(ellipse 500px 400px at 8% 15%, rgba(127,199,196,0.30) 0%, transparent 60%),
+    radial-gradient(ellipse 550px 450px at 92% 10%, rgba(185,166,214,0.32) 0%, transparent 60%),
+    radial-gradient(ellipse 480px 400px at 15% 85%, rgba(240,197,143,0.22) 0%, transparent 60%),
+    radial-gradient(ellipse 520px 420px at 88% 80%, rgba(212,150,178,0.20) 0%, transparent 60%),
+    radial-gradient(ellipse 600px 500px at 50% 45%, rgba(185,166,214,0.12) 0%, transparent 65%);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
   min-height: 100vh;
 }
 
