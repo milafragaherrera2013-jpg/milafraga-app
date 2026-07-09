@@ -106,9 +106,9 @@ def logout():
 
 
 # ---------------------------------------------------------------------------
-# PANEL DE PEDIDOS (para Mila)
+# PANEL DE PEDIDOS (para Mila) — ahora vive en /panel, no en la raíz
 # ---------------------------------------------------------------------------
-@app.route("/")
+@app.route("/panel")
 @login_requerido
 def index():
     conn = get_db()
@@ -185,9 +185,9 @@ def descargar_etiqueta(pedido_id):
 
 
 # ---------------------------------------------------------------------------
-# CATALOGO / FORMULARIO (para clientas)
+# CATALOGO / FORMULARIO (para clientas) — ahora vive en la raíz "/"
 # ---------------------------------------------------------------------------
-@app.route("/formulario", methods=["GET"])
+@app.route("/", methods=["GET"])
 def formulario():
     items = todos_los_productos()
     grupos = []
@@ -206,7 +206,7 @@ def formulario():
     )
 
 
-@app.route("/formulario", methods=["POST"])
+@app.route("/", methods=["POST"])
 def crear_pedido():
     items_catalogo = {i["id"]: i for i in todos_los_productos()}
 
