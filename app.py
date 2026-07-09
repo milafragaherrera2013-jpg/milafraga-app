@@ -57,6 +57,12 @@ def init_db():
         conn.commit()
     except sqlite3.OperationalError:
         pass  # la columna ya existía
+    # Migración: añadir columna de email del cliente si no existe todavía
+    try:
+        conn.execute("ALTER TABLE pedidos ADD COLUMN email_cliente TEXT DEFAULT ''")
+        conn.commit()
+    except sqlite3.OperationalError:
+        pass  # la columna ya existía
     conn.close()
 
 
@@ -229,6 +235,7 @@ def crear_pedido():
 
     cliente = request.form.get("cliente", "").strip()
     telefono_cliente = request.form.get("telefono_cliente", "").strip()
+    email_cliente = request.form.get("email_cliente", "").strip()
     direccion_cliente = request.form.get("direccion_cliente", "").strip()
     notas = request.form.get("notas", "").strip()
     metodo_pago = request.form.get("metodo_pago", "No especificado").strip()
@@ -261,8 +268,8 @@ def crear_pedido():
     conn = get_db()
     conn.execute(
         """INSERT INTO pedidos (fecha, cliente, telefono_cliente, direccion_cliente,
-                                 items, total, notas, estado, gastos_envio, metodo_pago)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                                 items, total, notas, estado, gastos_envio, metodo_pago, email_cliente)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
         (
             datetime.now().strftime("%d/%m/%Y %H:%M"),
             cliente,
@@ -274,6 +281,7 @@ def crear_pedido():
             "Nuevo",
             gastos_envio,
             metodo_pago,
+            email_cliente,
         ),
     )
     conn.commit()
