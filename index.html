@@ -1,428 +1,102 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,600&family=Lato:wght@400;700&display=swap');
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Panel de pedidos · {{ negocio.marca }}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
 
-:root {
-  --aqua: #7FC7C4;
-  --aqua-dark: #5AA8A5;
-  --lila: #B9A6D6;
-  --lila-dark: #9B84C2;
-  --crema: #FBF9F6;
-  --texto: #3A3A3A;
-  --texto-suave: #6B6B6B;
-  --borde: #E4DEEF;
-}
+<div class="topbar">
+  <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo">
+  <div class="marca">{{ negocio.marca }} · Panel de pedidos</div>
+  <div style="margin-left:auto;">
+    <a href="{{ url_for('logout') }}" style="font-size:13px; color:var(--texto-suave); text-decoration:none;">Cerrar sesión</a>
+  </div>
+</div>
 
-* { box-sizing: border-box; }
+<div class="container">
 
-body {
-  margin: 0;
-  font-family: 'Lato', sans-serif;
-  color: var(--texto);
-  background: linear-gradient(160deg, #F3F8F7 0%, #F6F2FA 55%, #FBF9F6 100%);
-  min-height: 100vh;
-}
+  <div class="stats">
+    <div class="stat-card">
+      <div class="num">{{ num_pedidos }}</div>
+      <div class="label">Pedidos {{ 'filtrados' if filtro_estado else 'totales' }}</div>
+    </div>
+    <div class="stat-card">
+      <div class="num">{{ "%.2f"|format(total_ventas) }} €</div>
+      <div class="label">Total en estos pedidos</div>
+    </div>
+    <div class="stat-card">
+      <div class="num"><a href="{{ url_for('formulario') }}" style="color: var(--aqua-dark); text-decoration:none;">Ver →</a></div>
+      <div class="label">Catálogo / Formulario</div>
+    </div>
+  </div>
 
-h1, h2, h3 {
-  font-family: 'Playfair Display', serif;
-  margin: 0 0 8px 0;
-}
+  <div class="filtros">
+    <a href="{{ url_for('index') }}" class="{{ 'activo' if not filtro_estado else '' }}">Todos</a>
+    <a href="{{ url_for('index', estado='Nuevo') }}" class="{{ 'activo' if filtro_estado=='Nuevo' else '' }}">Nuevos</a>
+    <a href="{{ url_for('index', estado='Confirmado') }}" class="{{ 'activo' if filtro_estado=='Confirmado' else '' }}">Confirmados</a>
+    <a href="{{ url_for('index', estado='Enviado') }}" class="{{ 'activo' if filtro_estado=='Enviado' else '' }}">Enviados</a>
+    <a href="{{ url_for('index', estado='Entregado') }}" class="{{ 'activo' if filtro_estado=='Entregado' else '' }}">Entregados</a>
+  </div>
 
-.topbar {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 18px 28px;
-  background: rgba(255,255,255,0.7);
-  border-bottom: 1px solid var(--borde);
-  backdrop-filter: blur(6px);
-}
+  {% if pedidos %}
+  <table class="pedidos">
+    <thead>
+      <tr>
+        <th>Nº</th>
+        <th>Fecha</th>
+        <th>Clienta</th>
+        <th>Productos</th>
+        <th>Total</th>
+        <th>Estado</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for p in pedidos %}
+      <tr>
+        <td>#{{ p.id }}</td>
+        <td>{{ p.fecha }}</td>
+        <td>
+          <strong>{{ p.cliente }}</strong><br>
+          <span style="color:var(--texto-suave); font-size:12px;">{{ p.telefono_cliente }}</span>
+          {% if p.email_cliente %}<br><span style="color:var(--texto-suave); font-size:12px;">{{ p.email_cliente }}</span>{% endif %}
+        </td>
+        <td>
+          {% for item in p.productos %}
+            {{ item.cantidad }}x {{ item.nombre }}<br>
+          {% endfor %}
+          <span style="font-size:11px; color:var(--texto-suave);">💳 {{ p.metodo_pago }}</span>
+        </td>
+        <td><strong>{{ "%.2f"|format(p.total) }} €</strong></td>
+        <td>
+          <span class="badge {{ p.estado }}">{{ p.estado }}</span><br>
+          <form method="post" action="{{ url_for('cambiar_estado', pedido_id=p.id) }}" style="margin-top:6px;">
+            <select name="estado" onchange="this.form.submit()">
+              <option value="Nuevo" {{ 'selected' if p.estado=='Nuevo' }}>Nuevo</option>
+              <option value="Confirmado" {{ 'selected' if p.estado=='Confirmado' }}>Confirmado</option>
+              <option value="Enviado" {{ 'selected' if p.estado=='Enviado' }}>Enviado</option>
+              <option value="Entregado" {{ 'selected' if p.estado=='Entregado' }}>Entregado</option>
+            </select>
+          </form>
+        </td>
+        <td class="acciones">
+          <a class="factura" href="{{ url_for('descargar_factura', pedido_id=p.id) }}">Factura</a>
+          <a class="etiqueta" href="{{ url_for('descargar_etiqueta', pedido_id=p.id) }}">Etiqueta</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty-state">
+    <h3>Todavía no hay pedidos {{ 'con este estado' if filtro_estado else '' }}</h3>
+    <p>En cuanto una clienta rellene el <a href="{{ url_for('formulario') }}">formulario del catálogo</a>, aparecerá aquí automáticamente.</p>
+  </div>
+  {% endif %}
 
-.topbar img { height: 48px; }
-
-.topbar .marca {
-  font-family: 'Playfair Display', serif;
-  font-size: 22px;
-  font-weight: 700;
-  color: var(--aqua-dark);
-}
-
-.container {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 28px 20px 60px;
-}
-
-.stats {
-  display: flex;
-  gap: 16px;
-  margin-bottom: 24px;
-  flex-wrap: wrap;
-}
-
-.stat-card {
-  flex: 1;
-  min-width: 160px;
-  background: white;
-  border-radius: 14px;
-  padding: 18px 20px;
-  box-shadow: 0 4px 16px rgba(150,130,190,0.10);
-  border: 1px solid var(--borde);
-}
-
-.stat-card .num {
-  font-family: 'Playfair Display', serif;
-  font-size: 28px;
-  color: var(--lila-dark);
-}
-
-.stat-card .label {
-  color: var(--texto-suave);
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-.filtros {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 18px;
-  flex-wrap: wrap;
-}
-
-.filtros a {
-  padding: 6px 14px;
-  border-radius: 20px;
-  border: 1px solid var(--borde);
-  background: white;
-  color: var(--texto-suave);
-  text-decoration: none;
-  font-size: 13px;
-}
-
-.filtros a.activo, .filtros a:hover {
-  background: var(--aqua);
-  color: white;
-  border-color: var(--aqua);
-}
-
-table.pedidos {
-  width: 100%;
-  border-collapse: collapse;
-  background: white;
-  border-radius: 14px;
-  overflow: hidden;
-  box-shadow: 0 4px 16px rgba(150,130,190,0.10);
-}
-
-table.pedidos th {
-  background: var(--lila);
-  color: white;
-  text-align: left;
-  padding: 12px 14px;
-  font-weight: 700;
-  font-size: 13px;
-}
-
-table.pedidos td {
-  padding: 12px 14px;
-  border-bottom: 1px solid var(--borde);
-  font-size: 14px;
-  vertical-align: top;
-}
-
-table.pedidos tr:last-child td { border-bottom: none; }
-
-.badge {
-  display: inline-block;
-  padding: 3px 10px;
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 700;
-}
-.badge.Nuevo { background: #FDECC8; color: #9A6B00; }
-.badge.Confirmado { background: #DCEFFB; color: #1D6FA5; }
-.badge.Enviado { background: #DFF3E3; color: #2E8B57; }
-.badge.Entregado { background: #E3E9C2; color: #556B2F; }
-
-.acciones a, .acciones select {
-  font-size: 12px;
-  margin-right: 6px;
-  padding: 4px 8px;
-  border-radius: 8px;
-  border: 1px solid var(--borde);
-  text-decoration: none;
-  color: var(--texto);
-  background: var(--crema);
-}
-
-.acciones a.factura { background: var(--aqua); color: white; border-color: var(--aqua); }
-.acciones a.etiqueta { background: var(--lila); color: white; border-color: var(--lila); }
-
-.empty-state {
-  text-align: center;
-  padding: 60px 20px;
-  color: var(--texto-suave);
-}
-
-/* ---- FORMULARIO / CATALOGO ---- */
-.hero {
-  text-align: center;
-  padding: 40px 20px 20px;
-}
-
-.hero img.logo-marca {
-  max-width: 260px;
-  margin-bottom: 10px;
-}
-
-.hero p {
-  color: var(--texto-suave);
-  font-size: 15px;
-}
-
-.grupo-titulo {
-  font-family: 'Playfair Display', serif;
-  font-size: 22px;
-  color: var(--lila-dark);
-  margin: 34px 0 14px;
-  padding-bottom: 6px;
-  border-bottom: 2px solid var(--aqua);
-  display: inline-block;
-}
-
-.grid-productos {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  gap: 14px;
-}
-
-.card-producto {
-  background: white;
-  border-radius: 14px;
-  padding: 10px;
-  border: 1px solid var(--borde);
-  box-shadow: 0 3px 10px rgba(150,130,190,0.07);
-  display: flex;
-  flex-direction: column;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-
-.card-producto:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(150,130,190,0.14);
-}
-
-.card-producto img {
-  width: 100%;
-  border-radius: 10px;
-  margin-bottom: 8px;
-  aspect-ratio: 1/1;
-  object-fit: cover;
-}
-
-.card-producto .nombre {
-  font-weight: 700;
-  font-size: 13px;
-  margin-bottom: 2px;
-  line-height: 1.25;
-}
-
-.card-producto .detalle {
-  font-size: 11px;
-  color: var(--texto-suave);
-  margin-bottom: 6px;
-  min-height: 26px;
-}
-
-.card-producto .precio {
-  font-family: 'Playfair Display', serif;
-  font-size: 16px;
-  color: var(--aqua-dark);
-  margin-bottom: 4px;
-}
-
-.card-producto .precio-antes {
-  font-size: 11px;
-  color: #C0645A;
-  text-decoration: line-through;
-  margin-right: 6px;
-}
-
-.card-producto .descuento {
-  display: inline-block;
-  background: #FCE3E0;
-  color: #C0645A;
-  font-size: 10px;
-  padding: 2px 7px;
-  border-radius: 10px;
-  margin-bottom: 6px;
-  width: fit-content;
-}
-
-.card-producto input[type=number] {
-  margin-top: auto;
-  width: 100%;
-  padding: 7px;
-  border-radius: 8px;
-  border: 1px solid var(--borde);
-  text-align: center;
-  font-size: 13px;
-}
-
-.stepper {
-  margin-top: auto;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border: 1px solid var(--borde);
-  border-radius: 10px;
-  overflow: hidden;
-  background: var(--crema);
-}
-
-.stepper-btn {
-  border: none;
-  background: var(--aqua);
-  color: white;
-  width: 32px;
-  height: 32px;
-  font-size: 18px;
-  font-weight: 700;
-  cursor: pointer;
-  line-height: 1;
-  flex-shrink: 0;
-}
-
-.stepper-btn:active { background: var(--aqua-dark); }
-.stepper-btn.menos { background: var(--lila); }
-.stepper-btn.menos:active { background: var(--lila-dark); }
-
-.stepper input {
-  border: none;
-  background: transparent;
-  text-align: center;
-  width: 100%;
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--texto);
-  -moz-appearance: textfield;
-}
-
-.stepper input::-webkit-outer-spin-button,
-.stepper input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-.form-datos {
-  background: white;
-  border-radius: 16px;
-  padding: 24px;
-  margin-top: 36px;
-  border: 1px solid var(--borde);
-  box-shadow: 0 4px 16px rgba(150,130,190,0.10);
-}
-
-.form-datos label {
-  display: block;
-  font-size: 13px;
-  font-weight: 700;
-  margin: 12px 0 4px;
-  color: var(--texto-suave);
-}
-
-.form-datos input, .form-datos textarea {
-  width: 100%;
-  padding: 10px 12px;
-  border-radius: 10px;
-  border: 1px solid var(--borde);
-  font-family: 'Lato', sans-serif;
-  font-size: 14px;
-}
-
-.metodos-pago {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-  margin-top: 6px;
-}
-
-.metodo-opcion {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 12px;
-  border: 1px solid var(--borde);
-  border-radius: 10px;
-  cursor: pointer;
-  font-size: 13px;
-  background: var(--crema);
-}
-
-.metodo-opcion input {
-  width: auto;
-  accent-color: var(--aqua-dark);
-}
-
-.metodo-opcion:has(input:checked) {
-  border-color: var(--aqua);
-  background: white;
-  box-shadow: 0 0 0 2px rgba(127,199,196,0.25);
-}
-
-@media (max-width: 480px) {
-  .metodos-pago { grid-template-columns: 1fr; }
-}
-
-.btn-enviar {
-  margin-top: 20px;
-  width: 100%;
-  padding: 14px;
-  border: none;
-  border-radius: 30px;
-  background: linear-gradient(120deg, var(--aqua), var(--lila));
-  color: white;
-  font-size: 16px;
-  font-weight: 700;
-  font-family: 'Playfair Display', serif;
-  cursor: pointer;
-}
-
-.btn-enviar:hover { opacity: 0.92; }
-
-.flash {
-  background: #FCE3E0;
-  color: #A5453B;
-  padding: 10px 16px;
-  border-radius: 10px;
-  margin-bottom: 16px;
-  font-size: 14px;
-}
-
-.confirmacion-box {
-  max-width: 520px;
-  margin: 60px auto;
-  background: white;
-  border-radius: 18px;
-  padding: 40px;
-  text-align: center;
-  border: 1px solid var(--borde);
-  box-shadow: 0 6px 24px rgba(150,130,190,0.14);
-}
-
-.confirmacion-box .icono { font-size: 46px; margin-bottom: 10px; }
-
-.btn-whatsapp {
-  display: inline-block;
-  margin-top: 20px;
-  padding: 12px 26px;
-  background: #25D366;
-  color: white;
-  border-radius: 30px;
-  text-decoration: none;
-  font-weight: 700;
-}
-
-@media (max-width: 600px) {
-  .topbar { padding: 14px 16px; }
-  .container { padding: 18px 12px 40px; }
-}
+</div>
+</body>
+</html>
