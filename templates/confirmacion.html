@@ -29,6 +29,12 @@
     Forma de pago elegida: <strong>{{ pedido.metodo_pago }}</strong>
   </p>
 
+  {% if pedido.codigo_descuento == "BIENVENIDAWEB" %}
+  <p style="margin-top:10px; font-size:14px; color:var(--aqua-dark); font-weight:700;">
+    🎁 ¡Gracias por usar tu código de bienvenida! Te incluiré un regalito en tu pedido.
+  </p>
+  {% endif %}
+
   <p style="margin-top:8px; font-size:14px; color:var(--texto-suave);">
     Pulsa el botón para avisarme por WhatsApp y así preparo tu pedido cuanto antes.
   </p>
