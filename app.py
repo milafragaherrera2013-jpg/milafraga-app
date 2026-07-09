@@ -123,7 +123,7 @@ def logout():
 
 
 # ---------------------------------------------------------------------------
-# PANEL DE PEDIDOS (para Mila) — vive en /panel
+# PANEL DE PEDIDOS (para Mila) — ahora vive en /panel, no en la raíz
 # ---------------------------------------------------------------------------
 @app.route("/panel")
 @login_requerido
@@ -149,3 +149,154 @@ def index():
     return render_template(
         "index.html",
         pedidos=pedidos,
+        total_ventas=total_ventas,
+        num_pedidos=len(pedidos),
+        negocio=CONFIG["negocio"],
+        filtro_estado=filtro_estado,
+    )
+
+
+@app.route("/pedido/<int:pedido_id>/estado", methods=["POST"])
+@login_requerido
+def cambiar_estado(pedido_id):
+    nuevo_estado = request.form.get("estado")
+    conn = get_db()
+    conn.execute("UPDATE pedidos SET estado = ? WHERE id = ?", (nuevo_estado, pedido_id))
+    conn.commit()
+    conn.close()
+    return redirect(url_for("index"))
+
+
+@app.route("/pedido/<int:pedido_id>/factura")
+@login_requerido
+def descargar_factura(pedido_id):
+    conn = get_db()
+    row = conn.execute("SELECT * FROM pedidos WHERE id = ?", (pedido_id,)).fetchone()
+    conn.close()
+    if row is None:
+        return "Pedido no encontrado", 404
+
+    pedido = dict(row)
+    pedido["items"] = json.loads(pedido["items"])
+
+    carpeta = os.path.join(BASE_DIR, "static", "facturas")
+    ruta_pdf = generar_factura(pedido, carpeta)
+    return send_file(ruta_pdf, as_attachment=True)
+
+
+@app.route("/pedido/<int:pedido_id>/etiqueta")
+@login_requerido
+def descargar_etiqueta(pedido_id):
+    conn = get_db()
+    row = conn.execute("SELECT * FROM pedidos WHERE id = ?", (pedido_id,)).fetchone()
+    conn.close()
+    if row is None:
+        return "Pedido no encontrado", 404
+
+    pedido = dict(row)
+    pedido["items"] = json.loads(pedido["items"])
+
+    carpeta = os.path.join(BASE_DIR, "static", "etiquetas")
+    ruta_pdf = generar_etiqueta(pedido, carpeta)
+    return send_file(ruta_pdf, as_attachment=True)
+
+
+# ---------------------------------------------------------------------------
+# CATALOGO / FORMULARIO (para clientas) — ahora vive en la raíz "/"
+# ---------------------------------------------------------------------------
+@app.route("/", methods=["GET"])
+def formulario():
+    items = todos_los_productos()
+    grupos = []
+    vistos = []
+    for it in items:
+        if it["grupo"] not in vistos:
+            vistos.append(it["grupo"])
+    for g in vistos:
+        grupos.append({"nombre": g, "productos": [i for i in items if i["grupo"] == g]})
+
+    return render_template(
+        "formulario.html",
+        grupos=grupos,
+        negocio=CONFIG["negocio"],
+        cobro=CONFIG["cobro"],
+    )
+
+
+@app.route("/", methods=["POST"])
+def crear_pedido():
+    items_catalogo = {i["id"]: i for i in todos_los_productos()}
+
+    cliente = request.form.get("cliente", "").strip()
+    telefono_cliente = request.form.get("telefono_cliente", "").strip()
+    direccion_cliente = request.form.get("direccion_cliente", "").strip()
+    notas = request.form.get("notas", "").strip()
+    metodo_pago = request.form.get("metodo_pago", "No especificado").strip()
+
+    items_pedido = []
+    total = 0
+    for key, value in request.form.items():
+        if key.startswith("cantidad_") and value and int(value) > 0:
+            prod_id = key.replace("cantidad_", "")
+            if prod_id in items_catalogo:
+                cantidad = int(value)
+                producto = items_catalogo[prod_id]
+                subtotal = cantidad * producto["precio"]
+                total += subtotal
+                items_pedido.append({
+                    "nombre": producto["nombre"],
+                    "cantidad": cantidad,
+                    "precio_unitario": producto["precio"],
+                })
+
+    if not cliente or not items_pedido:
+        flash("Falta el nombre de la clienta o no se ha seleccionado ningún producto.")
+        return redirect(url_for("formulario"))
+
+    gastos_envio = 0.0 if total >= UMBRAL_ENVIO_GRATIS else COSTE_ENVIO
+    total_con_envio = total + gastos_envio
+
+    conn = get_db()
+    conn.execute(
+        """INSERT INTO pedidos (fecha, cliente, telefono_cliente, direccion_cliente,
+                                 items, total, notas, estado, gastos_envio, metodo_pago)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+        (
+            datetime.now().strftime("%d/%m/%Y %H:%M"),
+            cliente,
+            telefono_cliente,
+            direccion_cliente,
+            json.dumps(items_pedido, ensure_ascii=False),
+            total_con_envio,
+            notas,
+            "Nuevo",
+            gastos_envio,
+            metodo_pago,
+        ),
+    )
+    conn.commit()
+    pedido_id = conn.execute("SELECT last_insert_rowid()").fetchone()[0]
+    conn.close()
+
+    return redirect(url_for("confirmacion", pedido_id=pedido_id))
+
+
+@app.route("/confirmacion/<int:pedido_id>")
+def confirmacion(pedido_id):
+    conn = get_db()
+    row = conn.execute("SELECT * FROM pedidos WHERE id = ?", (pedido_id,)).fetchone()
+    conn.close()
+    if row is None:
+        return "Pedido no encontrado", 404
+    pedido = dict(row)
+    pedido["productos"] = json.loads(pedido.pop("items"))
+    return render_template(
+        "confirmacion.html", pedido=pedido, negocio=CONFIG["negocio"], cobro=CONFIG["cobro"]
+    )
+
+
+if __name__ == "__main__":
+    init_db()
+    puerto = int(os.environ.get("PORT", 5000))
+    modo_debug = os.environ.get("FLASK_DEBUG", "0") == "1"
+    app.run(debug=modo_debug, host="0.0.0.0", port=puerto)
