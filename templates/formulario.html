@@ -35,7 +35,11 @@
         <div><span class="precio-antes">{{ item.precio_antes }}€</span> <span class="descuento">-{{ item.descuento }}</span></div>
         {% endif %}
         <div class="precio">{{ item.precio }} €</div>
-        <input type="number" name="cantidad_{{ item.id }}" min="0" value="0" placeholder="Cantidad">
+        <div class="stepper">
+          <button type="button" class="stepper-btn menos" onclick="cambiarCantidad('{{ item.id }}', -1)">−</button>
+          <input type="number" id="cantidad_{{ item.id }}" name="cantidad_{{ item.id }}" min="0" value="0" readonly>
+          <button type="button" class="stepper-btn mas" onclick="cambiarCantidad('{{ item.id }}', 1)">+</button>
+        </div>
       </div>
       {% endfor %}
     </div>
@@ -55,6 +59,26 @@
       <label>¿Algo que deba saber? (alergias, preferencias, horario de entrega...)</label>
       <textarea name="notas" rows="3"></textarea>
 
+      <label>¿Cómo prefieres pagar?</label>
+      <div class="metodos-pago">
+        <label class="metodo-opcion">
+          <input type="radio" name="metodo_pago" value="Efectivo (entrega en mano)" checked>
+          <span>💶 Efectivo (entrega en mano)</span>
+        </label>
+        <label class="metodo-opcion">
+          <input type="radio" name="metodo_pago" value="Bizum">
+          <span>📲 Bizum</span>
+        </label>
+        <label class="metodo-opcion">
+          <input type="radio" name="metodo_pago" value="Transferencia bancaria">
+          <span>🏦 Transferencia bancaria</span>
+        </label>
+        <label class="metodo-opcion">
+          <input type="radio" name="metodo_pago" value="Contrareembolso">
+          <span>📦 Contrareembolso</span>
+        </label>
+      </div>
+
       <p style="font-size:13px; color:var(--texto-suave); margin-top:14px; text-align:center;">
         🚚 Envío gratis a partir de 53€ de pedido. Pedidos inferiores: 3€ de gastos de envío.
       </p>
@@ -64,5 +88,14 @@
 
   </form>
 </div>
+
+<script>
+function cambiarCantidad(id, delta) {
+  const input = document.getElementById('cantidad_' + id);
+  let val = parseInt(input.value || '0', 10) + delta;
+  if (val < 0) val = 0;
+  input.value = val;
+}
+</script>
 </body>
 </html>
