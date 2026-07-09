@@ -27,6 +27,12 @@
       <div class="num">{{ "%.2f"|format(total_ventas) }} €</div>
       <div class="label">Total en estos pedidos</div>
     </div>
+    {% if producto_mas_vendido %}
+    <div class="stat-card">
+      <div class="num" style="font-size:16px;">{{ producto_mas_vendido }}</div>
+      <div class="label">Más vendido ({{ unidades_mas_vendido }} unidades)</div>
+    </div>
+    {% endif %}
     <div class="stat-card">
       <div class="num"><a href="{{ url_for('formulario') }}" style="color: var(--aqua-dark); text-decoration:none;">Ver →</a></div>
       <div class="label">Catálogo / Formulario</div>
@@ -39,6 +45,7 @@
     <a href="{{ url_for('index', estado='Confirmado') }}" class="{{ 'activo' if filtro_estado=='Confirmado' else '' }}">Confirmados</a>
     <a href="{{ url_for('index', estado='Enviado') }}" class="{{ 'activo' if filtro_estado=='Enviado' else '' }}">Enviados</a>
     <a href="{{ url_for('index', estado='Entregado') }}" class="{{ 'activo' if filtro_estado=='Entregado' else '' }}">Entregados</a>
+    <a href="{{ url_for('exportar_pedidos') }}" style="margin-left:auto; background:var(--lila); color:white; border-color:var(--lila);">⬇️ Exportar a Excel/CSV</a>
   </div>
 
   {% if pedidos %}
@@ -69,6 +76,8 @@
             {{ item.cantidad }}x {{ item.nombre }}<br>
           {% endfor %}
           <span style="font-size:11px; color:var(--texto-suave);">💳 {{ p.metodo_pago }}</span>
+          {% if p.codigo_descuento == "BIENVENIDAWEB" %}<br><span style="font-size:11px; color:var(--lila-dark); font-weight:700;">🎁 BIENVENIDAWEB — añadir regalo</span>
+          {% elif p.codigo_descuento %}<br><span style="font-size:11px; color:var(--texto-suave);">Código: {{ p.codigo_descuento }}</span>{% endif %}
         </td>
         <td><strong>{{ "%.2f"|format(p.total) }} €</strong></td>
         <td>
