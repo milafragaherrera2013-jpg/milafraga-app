@@ -3,100 +3,119 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Panel de pedidos · {{ negocio.marca }}</title>
+<title>Catálogo · {{ negocio.marca }}</title>
 <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
 
-<div class="topbar">
-  <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo">
-  <div class="marca">{{ negocio.marca }} · Panel de pedidos</div>
-  <div style="margin-left:auto;">
-    <a href="{{ url_for('logout') }}" style="font-size:13px; color:var(--texto-suave); text-decoration:none;">Cerrar sesión</a>
+<div class="hero">
+  <img class="logo-marca" src="{{ url_for('static', filename='img/logo_acuarela.png') }}" alt="{{ negocio.marca }}">
+  <p>Elige tus productos favoritos y te preparo el pedido con mucho cariño 💛</p>
+  <div class="hero-badges">
+    <div class="hero-badge">🚚 Envío gratis desde 50€</div>
+    <div class="hero-badge">💛 Atención cercana y personal</div>
+    <div class="hero-badge">🌿 Ingredientes naturales</div>
   </div>
 </div>
 
 <div class="container">
 
-  <div class="stats">
-    <div class="stat-card">
-      <div class="num">{{ num_pedidos }}</div>
-      <div class="label">Pedidos {{ 'filtrados' if filtro_estado else 'totales' }}</div>
-    </div>
-    <div class="stat-card">
-      <div class="num">{{ "%.2f"|format(total_ventas) }} €</div>
-      <div class="label">Total en estos pedidos</div>
-    </div>
-    <div class="stat-card">
-      <div class="num"><a href="{{ url_for('formulario') }}" style="color: var(--aqua-dark); text-decoration:none;">Ver →</a></div>
-      <div class="label">Catálogo / Formulario</div>
-    </div>
-  </div>
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      {% for m in messages %}<div class="flash">{{ m }}</div>{% endfor %}
+    {% endif %}
+  {% endwith %}
 
-  <div class="filtros">
-    <a href="{{ url_for('index') }}" class="{{ 'activo' if not filtro_estado else '' }}">Todos</a>
-    <a href="{{ url_for('index', estado='Nuevo') }}" class="{{ 'activo' if filtro_estado=='Nuevo' else '' }}">Nuevos</a>
-    <a href="{{ url_for('index', estado='Confirmado') }}" class="{{ 'activo' if filtro_estado=='Confirmado' else '' }}">Confirmados</a>
-    <a href="{{ url_for('index', estado='Enviado') }}" class="{{ 'activo' if filtro_estado=='Enviado' else '' }}">Enviados</a>
-    <a href="{{ url_for('index', estado='Entregado') }}" class="{{ 'activo' if filtro_estado=='Entregado' else '' }}">Entregados</a>
-  </div>
+  <form method="post" action="{{ url_for('crear_pedido') }}">
 
-  {% if pedidos %}
-  <table class="pedidos">
-    <thead>
-      <tr>
-        <th>Nº</th>
-        <th>Fecha</th>
-        <th>Clienta</th>
-        <th>Productos</th>
-        <th>Total</th>
-        <th>Estado</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for p in pedidos %}
-      <tr>
-        <td>#{{ p.id }}</td>
-        <td>{{ p.fecha }}</td>
-        <td>
-          <strong>{{ p.cliente }}</strong><br>
-          <span style="color:var(--texto-suave); font-size:12px;">{{ p.telefono_cliente }}</span>
-          {% if p.email_cliente %}<br><span style="color:var(--texto-suave); font-size:12px;">{{ p.email_cliente }}</span>{% endif %}
-        </td>
-        <td>
-          {% for item in p.productos %}
-            {{ item.cantidad }}x {{ item.nombre }}<br>
-          {% endfor %}
-          <span style="font-size:11px; color:var(--texto-suave);">💳 {{ p.metodo_pago }}</span>
-        </td>
-        <td><strong>{{ "%.2f"|format(p.total) }} €</strong></td>
-        <td>
-          <span class="badge {{ p.estado }}">{{ p.estado }}</span><br>
-          <form method="post" action="{{ url_for('cambiar_estado', pedido_id=p.id) }}" style="margin-top:6px;">
-            <select name="estado" onchange="this.form.submit()">
-              <option value="Nuevo" {{ 'selected' if p.estado=='Nuevo' }}>Nuevo</option>
-              <option value="Confirmado" {{ 'selected' if p.estado=='Confirmado' }}>Confirmado</option>
-              <option value="Enviado" {{ 'selected' if p.estado=='Enviado' }}>Enviado</option>
-              <option value="Entregado" {{ 'selected' if p.estado=='Entregado' }}>Entregado</option>
-            </select>
-          </form>
-        </td>
-        <td class="acciones">
-          <a class="factura" href="{{ url_for('descargar_factura', pedido_id=p.id) }}">Factura</a>
-          <a class="etiqueta" href="{{ url_for('descargar_etiqueta', pedido_id=p.id) }}">Etiqueta</a>
-        </td>
-      </tr>
+    {% for grupo in grupos %}
+    <div class="grupo-titulo">{{ grupo.nombre }}</div>
+    <div class="grid-productos">
+      {% for item in grupo.productos %}
+      <div class="card-producto">
+        <img src="{{ url_for('static', filename='img/' + item.img if item.img else 'img/placeholder.png') }}" alt="{{ item.nombre }}" onerror="this.src='{{ url_for('static', filename='img/placeholder.png') }}'">
+        <div class="nombre">{{ item.nombre }}</div>
+        <div class="detalle">{{ item.detalle }}</div>
+        {% if item.descripcion %}
+        <div class="descripcion">{{ item.descripcion }}</div>
+        {% endif %}
+        {% if item.precio_antes %}
+        <div><span class="precio-antes">{{ item.precio_antes }}€</span> <span class="descuento">-{{ item.descuento }}</span></div>
+        {% endif %}
+        <div class="precio">{{ item.precio }} €</div>
+        <div class="stepper">
+          <button type="button" class="stepper-btn menos" onclick="cambiarCantidad('{{ item.id }}', -1)">−</button>
+          <input type="number" id="cantidad_{{ item.id }}" name="cantidad_{{ item.id }}" min="0" value="0" readonly>
+          <button type="button" class="stepper-btn mas" onclick="cambiarCantidad('{{ item.id }}', 1)">+</button>
+        </div>
+      </div>
       {% endfor %}
-    </tbody>
-  </table>
-  {% else %}
-  <div class="empty-state">
-    <h3>Todavía no hay pedidos {{ 'con este estado' if filtro_estado else '' }}</h3>
-    <p>En cuanto una clienta rellene el <a href="{{ url_for('formulario') }}">formulario del catálogo</a>, aparecerá aquí automáticamente.</p>
-  </div>
-  {% endif %}
+    </div>
+    {% endfor %}
 
+    <div class="form-datos">
+      <h3>Tus datos</h3>
+      <label>Nombre y apellidos *</label>
+      <input type="text" name="cliente" required>
+
+      <label>Teléfono / WhatsApp</label>
+      <input type="text" name="telefono_cliente">
+
+      <label>Email (opcional)</label>
+      <input type="email" name="email_cliente" placeholder="tuemail@ejemplo.com">
+
+      <label>Código de descuento o referido (opcional)</label>
+      <input type="text" name="codigo_descuento" placeholder="Si una amiga te lo ha pasado, ponlo aquí">
+
+      <label>Dirección de envío</label>
+      <input type="text" name="direccion_cliente">
+
+      <label>¿Algo que deba saber? (alergias, preferencias, horario de entrega...)</label>
+      <textarea name="notas" rows="3"></textarea>
+
+      <label>¿Cómo prefieres pagar?</label>
+      <div class="metodos-pago">
+        <label class="metodo-opcion">
+          <input type="radio" name="metodo_pago" value="Efectivo (entrega en mano)" checked>
+          <span>💶 Efectivo (entrega en mano)</span>
+        </label>
+        <label class="metodo-opcion">
+          <input type="radio" name="metodo_pago" value="Bizum">
+          <span>📲 Bizum</span>
+        </label>
+        <label class="metodo-opcion">
+          <input type="radio" name="metodo_pago" value="Transferencia bancaria">
+          <span>🏦 Transferencia bancaria</span>
+        </label>
+        <label class="metodo-opcion">
+          <input type="radio" name="metodo_pago" value="Contrareembolso">
+          <span>📦 Contrareembolso</span>
+        </label>
+      </div>
+
+      <p style="font-size:13px; color:var(--texto-suave); margin-top:14px; text-align:center;">
+        🚚 Envío gratis a partir de 50€ de pedido. Pedidos inferiores: 3€ de gastos de envío.<br>
+        📦 El contrareembolso siempre incluye 3€ de gastos de envío, sea cual sea el importe.
+      </p>
+
+      <button type="submit" class="btn-enviar">Enviar mi pedido</button>
+    </div>
+
+  </form>
 </div>
+
+<script>
+function cambiarCantidad(id, delta) {
+  const input = document.getElementById('cantidad_' + id);
+  let val = parseInt(input.value || '0', 10) + delta;
+  if (val < 0) val = 0;
+  input.value = val;
+}
+</script>
+
+<a href="https://wa.me/{{ cobro.whatsapp | replace('+','') }}?text=Hola%20{{ negocio.marca | urlencode }}%2C%20tengo%20una%20pregunta%20antes%20de%20hacer%20mi%20pedido"
+   class="whatsapp-flotante" target="_blank" title="Escríbeme por WhatsApp">
+  💬
+</a>
 </body>
 </html>
