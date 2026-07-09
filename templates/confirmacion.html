@@ -16,6 +16,11 @@
     {% for item in pedido.productos %}
       <div>{{ item.cantidad }}x {{ item.nombre }} — {{ "%.2f"|format(item.cantidad * item.precio_unitario) }} €</div>
     {% endfor %}
+    {% if pedido.gastos_envio and pedido.gastos_envio > 0 %}
+      <div style="margin-top:6px; color:var(--texto-suave);">Gastos de envío — {{ "%.2f"|format(pedido.gastos_envio) }} €</div>
+    {% else %}
+      <div style="margin-top:6px; color:var(--aqua-dark);">Envío gratis 🎉</div>
+    {% endif %}
     <hr style="border:none; border-top:1px solid var(--borde); margin:10px 0;">
     <strong>Total: {{ "%.2f"|format(pedido.total) }} €</strong>
   </div>
