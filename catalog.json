@@ -1,11 +1,20 @@
 {
   "productos": [
     {
+      "id": "cafe50_7",
+      "categoria": "Café 5.0",
+      "nombre": "Café 5.0 (7 días)",
+      "detalle": "Formato 7 días",
+      "precio": 12,
+      "img": "cafe50_15.png",
+      "descripcion": "Café soluble con Garcinia Cambogia que te ayuda a activar tu metabolismo mientras disfrutas de tu café de cada mañana."
+    },
+    {
       "id": "cafe50_15",
       "categoria": "Café 5.0",
       "nombre": "Café 5.0 (15 sobres)",
       "detalle": "Formato 15 días",
-      "precio": 25,
+      "precio": 22,
       "img": "cafe50_15.png",
       "descripcion": "Café soluble con Garcinia Cambogia que te ayuda a activar tu metabolismo mientras disfrutas de tu café de cada mañana."
     },
@@ -19,11 +28,20 @@
       "descripcion": "Café soluble con Garcinia Cambogia que te ayuda a activar tu metabolismo mientras disfrutas de tu café de cada mañana."
     },
     {
+      "id": "id_7",
+      "categoria": "Bebida Inteligente",
+      "nombre": "Bebida Inteligente (7 días)",
+      "detalle": "Formato 7 días",
+      "precio": 12,
+      "img": "id_15.png",
+      "descripcion": "Bebida con jengibre, inulina e hibisco pensada para sentirte más ligera y con energía a lo largo del día."
+    },
+    {
       "id": "id_15",
       "categoria": "Bebida Inteligente",
       "nombre": "Bebida Inteligente (15 sobres)",
       "detalle": "Formato 15 días",
-      "precio": 25,
+      "precio": 22,
       "img": "id_15.png",
       "descripcion": "Bebida con jengibre, inulina e hibisco pensada para sentirte más ligera y con energía a lo largo del día."
     },
