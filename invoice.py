@@ -97,10 +97,10 @@ def generar_factura(pedido, carpeta_destino):
     y -= 9 * mm
     c.setFillColor(TEXTO)
     c.setFont("Helvetica", 9)
-    total = 0
+    subtotal_productos = 0
     for item in pedido.get("items", []):
         subtotal = item["cantidad"] * item["precio_unitario"]
-        total += subtotal
+        subtotal_productos += subtotal
         c.drawString(22 * mm, y, item["nombre"][:45])
         c.drawString(120 * mm, y, str(item["cantidad"]))
         c.drawString(140 * mm, y, f"{item['precio_unitario']:.2f} EUR")
@@ -109,6 +109,14 @@ def generar_factura(pedido, carpeta_destino):
         if y < 60 * mm:
             c.showPage()
             y = alto - 25 * mm
+
+    gastos_envio = pedido.get("gastos_envio", 0) or 0
+    if gastos_envio > 0:
+        c.drawString(22 * mm, y, "Gastos de envío")
+        c.drawString(165 * mm, y, f"{gastos_envio:.2f} EUR")
+        y -= 6 * mm
+
+    total = subtotal_productos + gastos_envio
 
     # Total
     y -= 4 * mm
