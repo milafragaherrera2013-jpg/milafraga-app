@@ -1,12 +1,14 @@
 # app.py
 # Aplicacion de gestion de pedidos - Mila Fraga / Artabria
+import csv
+import io
 import json
 import os
 import sqlite3
 from datetime import datetime
 from functools import wraps
 
-from flask import Flask, render_template, request, redirect, url_for, send_file, flash, session
+from flask import Flask, render_template, request, redirect, url_for, send_file, flash, session, Response
 
 from invoice import generar_factura, generar_etiqueta
 
@@ -60,6 +62,12 @@ def init_db():
     # Migración: añadir columna de email del cliente si no existe todavía
     try:
         conn.execute("ALTER TABLE pedidos ADD COLUMN email_cliente TEXT DEFAULT ''")
+        conn.commit()
+    except sqlite3.OperationalError:
+        pass  # la columna ya existía
+    # Migración: añadir columna de código de descuento/referido si no existe todavía
+    try:
+        conn.execute("ALTER TABLE pedidos ADD COLUMN codigo_descuento TEXT DEFAULT ''")
         conn.commit()
     except sqlite3.OperationalError:
         pass  # la columna ya existía
@@ -146,11 +154,20 @@ def index():
 
     pedidos = []
     total_ventas = 0
+    ventas_por_producto = {}
     for r in rows:
         pedido = dict(r)
         pedido["productos"] = json.loads(pedido.pop("items"))
         pedidos.append(pedido)
         total_ventas += pedido["total"]
+        for item in pedido["productos"]:
+            ventas_por_producto[item["nombre"]] = ventas_por_producto.get(item["nombre"], 0) + item["cantidad"]
+
+    producto_mas_vendido = None
+    unidades_mas_vendido = 0
+    if ventas_por_producto:
+        producto_mas_vendido = max(ventas_por_producto, key=ventas_por_producto.get)
+        unidades_mas_vendido = ventas_por_producto[producto_mas_vendido]
 
     return render_template(
         "index.html",
@@ -159,6 +176,50 @@ def index():
         num_pedidos=len(pedidos),
         negocio=CONFIG["negocio"],
         filtro_estado=filtro_estado,
+        producto_mas_vendido=producto_mas_vendido,
+        unidades_mas_vendido=unidades_mas_vendido,
+    )
+
+
+@app.route("/panel/exportar")
+@login_requerido
+def exportar_pedidos():
+    conn = get_db()
+    rows = conn.execute("SELECT * FROM pedidos ORDER BY id ASC").fetchall()
+    conn.close()
+
+    salida = io.StringIO()
+    escritor = csv.writer(salida)
+    escritor.writerow([
+        "Nº Pedido", "Fecha", "Cliente", "Teléfono", "Email", "Dirección",
+        "Productos", "Total", "Gastos Envío", "Método Pago", "Código Descuento",
+        "Notas", "Estado",
+    ])
+    for r in rows:
+        pedido = dict(r)
+        items = json.loads(pedido["items"])
+        productos_texto = "; ".join(f"{i['cantidad']}x {i['nombre']}" for i in items)
+        escritor.writerow([
+            pedido["id"],
+            pedido["fecha"],
+            pedido["cliente"],
+            pedido.get("telefono_cliente", ""),
+            pedido.get("email_cliente", ""),
+            pedido.get("direccion_cliente", ""),
+            productos_texto,
+            pedido["total"],
+            pedido.get("gastos_envio", 0),
+            pedido.get("metodo_pago", ""),
+            pedido.get("codigo_descuento", ""),
+            pedido.get("notas", ""),
+            pedido["estado"],
+        ])
+
+    nombre_archivo = f"pedidos_milafraga_{datetime.now().strftime('%Y%m%d')}.csv"
+    return Response(
+        "\ufeff" + salida.getvalue(),  # BOM para que Excel muestre bien los acentos
+        mimetype="text/csv",
+        headers={"Content-Disposition": f"attachment; filename={nombre_archivo}"},
     )
 
 
@@ -239,6 +300,7 @@ def crear_pedido():
     direccion_cliente = request.form.get("direccion_cliente", "").strip()
     notas = request.form.get("notas", "").strip()
     metodo_pago = request.form.get("metodo_pago", "No especificado").strip()
+    codigo_descuento = request.form.get("codigo_descuento", "").strip().upper()
 
     items_pedido = []
     total = 0
@@ -268,8 +330,9 @@ def crear_pedido():
     conn = get_db()
     conn.execute(
         """INSERT INTO pedidos (fecha, cliente, telefono_cliente, direccion_cliente,
-                                 items, total, notas, estado, gastos_envio, metodo_pago, email_cliente)
-           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                                 items, total, notas, estado, gastos_envio, metodo_pago,
+                                 email_cliente, codigo_descuento)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
         (
             datetime.now().strftime("%d/%m/%Y %H:%M"),
             cliente,
@@ -282,6 +345,7 @@ def crear_pedido():
             gastos_envio,
             metodo_pago,
             email_cliente,
+            codigo_descuento,
         ),
     )
     conn.commit()
