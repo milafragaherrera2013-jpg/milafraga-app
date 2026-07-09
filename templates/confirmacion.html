@@ -29,6 +29,20 @@
     Forma de pago elegida: <strong>{{ pedido.metodo_pago }}</strong>
   </p>
 
+  {% if pedido.metodo_pago == "Bizum" %}
+  <div style="margin-top:10px; background:var(--crema); padding:14px; border-radius:10px; font-size:14px;">
+    📲 Envía <strong>{{ "%.2f"|format(pedido.total) }} €</strong> por Bizum al número
+    <strong>{{ cobro.bizum }}</strong>, indicando "Pedido {{ pedido.id }}" en el concepto si tu app lo permite.
+  </div>
+  {% elif pedido.metodo_pago == "Transferencia bancaria" %}
+  <div style="margin-top:10px; background:var(--crema); padding:14px; border-radius:10px; font-size:14px;">
+    🏦 Realiza una transferencia de <strong>{{ "%.2f"|format(pedido.total) }} €</strong> a:<br>
+    IBAN: <strong>{{ cobro.iban_completo }}</strong><br>
+    Titular: {{ cobro.titular_cuenta }}<br>
+    Concepto: Pedido {{ pedido.id }}
+  </div>
+  {% endif %}
+
   {% if pedido.codigo_descuento == "BIENVENIDAWEB" %}
   <p style="margin-top:10px; font-size:14px; color:var(--aqua-dark); font-weight:700;">
     🎁 ¡Gracias por usar tu código de bienvenida! Te incluiré un regalito en tu pedido.
