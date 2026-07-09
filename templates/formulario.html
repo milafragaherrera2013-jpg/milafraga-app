@@ -64,6 +64,9 @@
       <label>Email (opcional)</label>
       <input type="email" name="email_cliente" placeholder="tuemail@ejemplo.com">
 
+      <label>Código de descuento o referido (opcional)</label>
+      <input type="text" name="codigo_descuento" placeholder="Si una amiga te lo ha pasado, ponlo aquí">
+
       <label>Dirección de envío</label>
       <input type="text" name="direccion_cliente">
 
@@ -109,5 +112,10 @@ function cambiarCantidad(id, delta) {
   input.value = val;
 }
 </script>
+
+<a href="https://wa.me/{{ cobro.whatsapp | replace('+','') }}?text=Hola%20{{ negocio.marca | urlencode }}%2C%20tengo%20una%20pregunta%20antes%20de%20hacer%20mi%20pedido"
+   class="whatsapp-flotante" target="_blank" title="Escríbeme por WhatsApp">
+  💬
+</a>
 </body>
 </html>
