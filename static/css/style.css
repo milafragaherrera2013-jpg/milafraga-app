@@ -304,6 +304,14 @@ table.pedidos tr:last-child td { border-bottom: none; }
   min-height: 26px;
 }
 
+.card-producto .descripcion {
+  font-size: 11px;
+  color: var(--texto-suave);
+  font-style: italic;
+  line-height: 1.35;
+  margin-bottom: 8px;
+}
+
 .card-producto .precio {
   font-family: 'Playfair Display', serif;
   font-size: 16px;
