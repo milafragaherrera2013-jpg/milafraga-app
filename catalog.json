@@ -346,11 +346,11 @@
       "descripcion": "Nuestro pack de bienestar más completo, en edición limitada de primavera, con un regalo incluido."
     },
     {
-      "id": "ensaladera_choco",
-      "nombre": "img": "ensaladera_gratis_pack_1.png",,
+     "id": "ensaladera_choco",
+      "nombre": "Ensaladera Gratis - Pack Energía y Control",
       "detalle": "Café + Bebida Inteligente + ChocoSlender + 🥗 Ensaladera de regalo",
       "precio": 110,
-      "img": "img": "ensaladera_gratis_pack_2.png",,
+      "img": "ensaladera_gratis_pack_1.png",
       "descripcion": "Energía, enfoque, control del apetito y bienestar total — con ensaladera portátil de regalo incluida."
     },
     {
