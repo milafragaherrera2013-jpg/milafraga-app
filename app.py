@@ -281,6 +281,13 @@ def descargar_etiqueta(pedido_id):
 # ---------------------------------------------------------------------------
 # CATALOGO / FORMULARIO (para clientas) — ahora vive en la raíz "/"
 # ---------------------------------------------------------------------------
+ANCLAS_GRUPOS = {
+    "🔥 Promociones y edición limitada": "promos",
+    "Productos individuales": "individuales",
+    "Combos": "combos",
+}
+
+
 @app.route("/", methods=["GET"])
 def formulario():
     items = todos_los_productos()
@@ -290,7 +297,11 @@ def formulario():
         if it["grupo"] not in vistos:
             vistos.append(it["grupo"])
     for g in vistos:
-        grupos.append({"nombre": g, "productos": [i for i in items if i["grupo"] == g]})
+        grupos.append({
+            "nombre": g,
+            "productos": [i for i in items if i["grupo"] == g],
+            "ancla": ANCLAS_GRUPOS.get(g, ""),
+        })
 
     return render_template(
         "formulario.html",
