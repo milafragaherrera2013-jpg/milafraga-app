@@ -338,20 +338,20 @@
       "descripcion": "Nuestro pack de bienestar más completo, en edición limitada de primavera, con un regalo incluido."
     },
     {
-      "id": "ensaladera_elixir",
-      "nombre": "Ensaladera Gratis - Pack Energía y Colágeno",
-      "detalle": "Café 5.0 (30 sobres) + Bebida Inteligente (30 sobres) + Elixir de Juventud (1 mes) + 🥗 Ensaladera portátil de regalo",
-      "precio": 110,
-      "img": "ensaladera_gratis_pack_1.png",
-      "descripcion": "Belleza desde el interior, energía y equilibrio — con ensaladera portátil de regalo incluida."
-    },
-    {
       "id": "ensaladera_choco",
       "nombre": "Ensaladera Gratis - Pack Energía y Control",
       "detalle": "Café 5.0 (30 sobres) + Bebida Inteligente (30 sobres) + ChocoSlender (1 mes) + 🥗 Ensaladera portátil de regalo",
-      "precio": 118,
+      "precio": 110,
       "img": "ensaladera_gratis_pack_2.png",
       "descripcion": "Energía, enfoque, control del apetito y bienestar total — con ensaladera portátil de regalo incluida."
+    },
+    {
+      "id": "ensaladera_elixir",
+      "nombre": "Ensaladera Gratis - Pack Energía y Colágeno",
+      "detalle": "Café 5.0 (30 sobres) + Bebida Inteligente (30 sobres) + Elixir de Juventud (1 mes) + 🥗 Ensaladera portátil de regalo",
+      "precio": 118,
+      "img": "ensaladera_gratis_pack_1.png",
+      "descripcion": "Belleza desde el interior, energía y equilibrio — con ensaladera portátil de regalo incluida."
     }
   ]
 }
