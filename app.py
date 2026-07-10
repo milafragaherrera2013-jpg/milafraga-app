@@ -102,6 +102,43 @@ def todos_los_productos():
 
 
 # ---------------------------------------------------------------------------
+# AGRUPACIÓN POR INGREDIENTE (desplegables del catálogo público)
+# ---------------------------------------------------------------------------
+CATEGORIAS_INGREDIENTE = [
+    ("Café 5.0", "cafe", "☕"),
+    ("Bebida Inteligente", "id", "🍵"),
+    ("ChocoSlender", "choco", "🍫"),
+    ("Elixir de Juventud", "elixir", "✨"),
+    ("Caña Zero", "cania", "🍯"),
+]
+
+
+def _pertenece(item_id, keyword):
+    """Comprueba si el id del producto contiene ese ingrediente
+    (ej. 'duo_cafe_id' pertenece a 'cafe' y a 'id')."""
+    return any(seg == keyword or seg.startswith(keyword) for seg in item_id.split("_"))
+
+
+def productos_por_ingrediente():
+    """Agrupa cada individual + todos los packs que lo incluyen, bajo su ingrediente."""
+    base = []
+    for p in CATALOGO["productos"]:
+        base.append(p)
+    for p in CATALOGO["packs_duo"]:
+        base.append(p)
+    for p in CATALOGO["packs_trio"]:
+        base.append(p)
+    for p in CATALOGO["packs_5"]:
+        base.append(p)
+
+    categorias = []
+    for nombre, keyword, icono in CATEGORIAS_INGREDIENTE:
+        productos = [p for p in base if _pertenece(p["id"], keyword)]
+        categorias.append({"nombre": nombre, "icono": icono, "productos": productos})
+    return categorias
+
+
+# ---------------------------------------------------------------------------
 # PROTECCIÓN CON CONTRASEÑA (solo para el panel de Mila, no para el catálogo)
 # ---------------------------------------------------------------------------
 ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "cambiaesto")
@@ -290,22 +327,15 @@ ANCLAS_GRUPOS = {
 
 @app.route("/", methods=["GET"])
 def formulario():
-    items = todos_los_productos()
-    grupos = []
-    vistos = []
-    for it in items:
-        if it["grupo"] not in vistos:
-            vistos.append(it["grupo"])
-    for g in vistos:
-        grupos.append({
-            "nombre": g,
-            "productos": [i for i in items if i["grupo"] == g],
-            "ancla": ANCLAS_GRUPOS.get(g, ""),
-        })
+    promos = CATALOGO["edicion_limitada"]
+    combos = CATALOGO["combos_permanentes"]
+    categorias = productos_por_ingrediente()
 
     return render_template(
         "formulario.html",
-        grupos=grupos,
+        promos=promos,
+        combos=combos,
+        categorias=categorias,
         negocio=CONFIG["negocio"],
         cobro=CONFIG["cobro"],
     )
