@@ -119,7 +119,7 @@ def _pertenece(item_id, keyword):
     return any(seg == keyword or seg.startswith(keyword) for seg in item_id.split("_"))
 
 
-IDS_PRUEBA = ["cafe50_7", "cafe50_15", "id_7", "id_15", "choco_5", "elixir_7"]
+IDS_PRUEBA = ["cafe50_7", "cafe50_15", "id_7", "id_15", "choco_5", "elixir_7", "duo_cafe15_id15"]
 
 
 def productos_por_ingrediente():
@@ -136,7 +136,7 @@ def productos_por_ingrediente():
         base.append(p)
 
     categorias = []
-    prueba = [p for p in CATALOGO["productos"] if p["id"] in IDS_PRUEBA]
+    prueba = [p for p in base if p["id"] in IDS_PRUEBA]
     categorias.append({"nombre": "Packs de Prueba (7-15 días)", "imagen": "cafe50_15.png", "productos": prueba})
     for nombre, keyword, imagen in CATEGORIAS_INGREDIENTE:
         productos = [p for p in base if _pertenece(p["id"], keyword)]
