@@ -62,8 +62,13 @@
 
     <div id="individuales">
       {% for cat in categorias %}
-      <details class="acordeon" {% if loop.first %}open{% endif %}>
-        <summary class="acordeon-titulo">{{ cat.icono }} {{ cat.nombre }}</summary>
+      <details class="acordeon">
+        <summary class="acordeon-titulo">
+          <span class="acordeon-titulo-texto">
+            <img class="acordeon-miniatura" src="{{ url_for('static', filename='img/' + cat.imagen) }}" alt="">
+            {{ cat.nombre }}
+          </span>
+        </summary>
         <div class="grid-productos acordeon-contenido">
           {% for item in cat.productos %}{{ tarjeta(item) }}{% endfor %}
         </div>
@@ -71,7 +76,12 @@
       {% endfor %}
 
       <details class="acordeon">
-        <summary class="acordeon-titulo">🎁 Combos</summary>
+        <summary class="acordeon-titulo">
+          <span class="acordeon-titulo-texto">
+            <img class="acordeon-miniatura" src="{{ url_for('static', filename='img/combo_bienestar.png') }}" alt="">
+            🎁 Combos
+          </span>
+        </summary>
         <div class="grid-productos acordeon-contenido">
           {% for item in combos %}{{ tarjeta(item) }}{% endfor %}
         </div>
