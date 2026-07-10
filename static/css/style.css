@@ -232,6 +232,51 @@ table.pedidos tr:last-child td { border-bottom: none; }
   font-size: 15px;
 }
 
+.hero-frase {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 17px;
+  color: var(--texto);
+  max-width: 480px;
+  margin: 0 auto 6px;
+  line-height: 1.45;
+}
+
+.rutas-guiadas {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 26px;
+}
+
+.ruta-btn {
+  background: white;
+  border: 1px solid var(--borde);
+  border-radius: 14px;
+  padding: 14px 20px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--texto);
+  text-decoration: none;
+  box-shadow: 0 3px 12px rgba(150,130,190,0.10);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.ruta-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(150,130,190,0.18);
+}
+
+.ruta-btn-whatsapp {
+  background: #EAFBF1;
+  border-color: #BEE9CE;
+}
+
+@media (max-width: 600px) {
+  .rutas-guiadas { flex-direction: column; align-items: stretch; }
+}
+
 .hero-subtitulo {
   font-size: 13px;
   color: var(--lila-dark);
