@@ -105,11 +105,11 @@ def todos_los_productos():
 # AGRUPACIÓN POR INGREDIENTE (desplegables del catálogo público)
 # ---------------------------------------------------------------------------
 CATEGORIAS_INGREDIENTE = [
-    ("Café 5.0", "cafe", "☕"),
-    ("Bebida Inteligente", "id", "🍵"),
-    ("ChocoSlender", "choco", "🍫"),
-    ("Elixir de Juventud", "elixir", "✨"),
-    ("Caña Zero", "cania", "🍯"),
+    ("Café 5.0", "cafe", "cafe50_30.png"),
+    ("Bebida Inteligente", "id", "id_30.png"),
+    ("ChocoSlender", "choco", "choco_30.png"),
+    ("Elixir de Juventud", "elixir", "elixir_30.png"),
+    ("Caña Zero", "cania", "cania.png"),
 ]
 
 
@@ -119,8 +119,12 @@ def _pertenece(item_id, keyword):
     return any(seg == keyword or seg.startswith(keyword) for seg in item_id.split("_"))
 
 
+IDS_PRUEBA = ["cafe50_7", "cafe50_15", "id_7", "id_15", "choco_5", "elixir_7"]
+
+
 def productos_por_ingrediente():
-    """Agrupa cada individual + todos los packs que lo incluyen, bajo su ingrediente."""
+    """Agrupa cada individual + todos los packs que lo incluyen, bajo su ingrediente.
+    Añade primero una categoría especial de 'Packs de Prueba' (formatos pequeños)."""
     base = []
     for p in CATALOGO["productos"]:
         base.append(p)
@@ -132,9 +136,11 @@ def productos_por_ingrediente():
         base.append(p)
 
     categorias = []
-    for nombre, keyword, icono in CATEGORIAS_INGREDIENTE:
+    prueba = [p for p in CATALOGO["productos"] if p["id"] in IDS_PRUEBA]
+    categorias.append({"nombre": "Packs de Prueba (7-15 días)", "imagen": "cafe50_15.png", "productos": prueba})
+    for nombre, keyword, imagen in CATEGORIAS_INGREDIENTE:
         productos = [p for p in base if _pertenece(p["id"], keyword)]
-        categorias.append({"nombre": nombre, "icono": icono, "productos": productos})
+        categorias.append({"nombre": nombre, "imagen": imagen, "productos": productos})
     return categorias
 
 
