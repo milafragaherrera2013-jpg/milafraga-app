@@ -158,6 +158,14 @@
       "descripcion": "Pack pensado para aprovechar café + bebida inteligente en un solo pedido, ahorrando frente a comprarlos por separado."
     },
     {
+      "id": "duo_cafe15_id15",
+      "nombre": "Pack Prueba Café + Bebida (15+15 sobres)",
+      "detalle": "15 sobres Café 5.0 + 15 sobres Bebida Inteligente",
+      "precio": 40,
+      "img": "duo_cafe_id.png",
+      "descripcion": "El pack ideal para probar los dos productos dos semanas completas, como si fuera una caja completa."
+    },
+    {
       "id": "duo_cafe_choco",
       "nombre": "Pack Duo Café y Choco",
       "detalle": "Café + ChocoSlender",
