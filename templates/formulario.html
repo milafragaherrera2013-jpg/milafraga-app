@@ -10,11 +10,18 @@
 
 <div class="hero">
   <img class="logo-marca" src="{{ url_for('static', filename='img/logo_acuarela.png') }}" alt="{{ negocio.marca }}">
-  <p>Elige tus productos favoritos y te preparo el pedido con mucho cariño 💛</p>
+  <p class="hero-frase">"Soy Mila. Después de cambiar mis propios hábitos, acompaño a mujeres que quieren volver a cuidarse de una forma sencilla y real."</p>
   <div class="hero-badges">
     <div class="hero-badge">🚚 Envío gratis desde 50€</div>
     <div class="hero-badge">💛 Atención cercana y personal</div>
     <div class="hero-badge">🌿 Ingredientes naturales</div>
+  </div>
+
+  <div class="rutas-guiadas">
+    <a href="#promos" class="ruta-btn">🌸 No sé por dónde empezar</a>
+    <a href="#individuales" class="ruta-btn">☕ Quiero empezar mi rutina</a>
+    <a href="https://wa.me/{{ cobro.whatsapp | replace('+','') }}?text=Hola%20Mila%2C%20me%20gustar%C3%ADa%20que%20me%20aconsejaras%20qu%C3%A9%20producto%20encaja%20mejor%20conmigo"
+       class="ruta-btn ruta-btn-whatsapp" target="_blank">💜 Quiero que Mila me aconseje</a>
   </div>
 </div>
 
@@ -29,7 +36,7 @@
   <form method="post" action="{{ url_for('crear_pedido') }}">
 
     {% for grupo in grupos %}
-    <div class="grupo-titulo">{{ grupo.nombre }}</div>
+    <div class="grupo-titulo" id="{{ grupo.ancla }}">{{ grupo.nombre }}</div>
     <div class="grid-productos">
       {% for item in grupo.productos %}
       <div class="card-producto">
