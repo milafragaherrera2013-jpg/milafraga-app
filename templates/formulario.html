@@ -40,7 +40,7 @@
     <div class="grid-productos">
       {% for item in grupo.productos %}
       <div class="card-producto">
-        <img src="{{ url_for('static', filename='img/' + item.img if item.img else 'img/placeholder.png') }}" alt="{{ item.nombre }}" onerror="this.src='{{ url_for('static', filename='img/placeholder.png') }}'">
+        <img src="{{ url_for('static', filename='img/' + item.img if item.img else 'img/placeholder.png') }}" alt="{{ item.nombre }}" onerror="this.src='{{ url_for('static', filename='img/placeholder.png') }}'" onclick="abrirLightbox(this.src, this.alt)">
         <div class="nombre">{{ item.nombre }}</div>
         <div class="detalle">{{ item.detalle }}</div>
         {% if item.descripcion %}
@@ -118,7 +118,22 @@ function cambiarCantidad(id, delta) {
   if (val < 0) val = 0;
   input.value = val;
 }
+
+function abrirLightbox(src, alt) {
+  document.getElementById('lightbox-img').src = src;
+  document.getElementById('lightbox-img').alt = alt;
+  document.getElementById('lightbox').classList.add('activo');
+}
+
+function cerrarLightbox() {
+  document.getElementById('lightbox').classList.remove('activo');
+}
 </script>
+
+<div class="lightbox" id="lightbox" onclick="cerrarLightbox()">
+  <span class="lightbox-cerrar" onclick="cerrarLightbox()">&times;</span>
+  <img id="lightbox-img" src="" alt="">
+</div>
 
 <a href="https://wa.me/{{ cobro.whatsapp | replace('+','') }}?text=Hola%20{{ negocio.marca | urlencode }}%2C%20tengo%20una%20pregunta%20antes%20de%20hacer%20mi%20pedido"
    class="whatsapp-flotante" target="_blank" title="Escríbeme por WhatsApp">
