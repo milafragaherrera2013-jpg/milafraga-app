@@ -329,6 +329,21 @@ table.pedidos tr:last-child td { border-bottom: none; }
 
 .acordeon-titulo::-webkit-details-marker { display: none; }
 
+.acordeon-titulo-texto {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.acordeon-miniatura {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--borde);
+  flex-shrink: 0;
+}
+
 .acordeon-titulo::after {
   content: "+";
   font-size: 22px;
