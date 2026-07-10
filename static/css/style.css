@@ -1,14 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,600&family=Lato:wght@400;700&display=swap');
 
 :root {
-  --aqua: #7FC7C4;
-  --aqua-dark: #5AA8A5;
-  --lila: #B9A6D6;
-  --lila-dark: #9B84C2;
-  --crema: #FBF9F6;
-  --texto: #3A3A3A;
+  --aqua: #8FCBC0;
+  --aqua-dark: #5FAEA2;
+  --lila: #B68BD6;
+  --lila-dark: #7C4D9E;
+  --dorado: #C99A3B;
+  --crema: #FFF9F3;
+  --texto: #1C1C1C;
   --texto-suave: #6B6B6B;
-  --borde: #E4DEEF;
+  --borde: #EDE1F5;
 }
 
 * { box-sizing: border-box; }
@@ -17,15 +18,8 @@ body {
   margin: 0;
   font-family: 'Lato', sans-serif;
   color: var(--texto);
-  background-color: #FBF9F6;
-  background-image:
-    radial-gradient(ellipse 500px 400px at 8% 15%, rgba(127,199,196,0.30) 0%, transparent 60%),
-    radial-gradient(ellipse 550px 450px at 92% 10%, rgba(185,166,214,0.32) 0%, transparent 60%),
-    radial-gradient(ellipse 480px 400px at 15% 85%, rgba(240,197,143,0.22) 0%, transparent 60%),
-    radial-gradient(ellipse 520px 420px at 88% 80%, rgba(212,150,178,0.20) 0%, transparent 60%),
-    radial-gradient(ellipse 600px 500px at 50% 45%, rgba(185,166,214,0.12) 0%, transparent 65%);
-  background-attachment: fixed;
-  background-repeat: no-repeat;
+  background-color: var(--crema);
+  background-image: linear-gradient(160deg, #FFF9F3 0%, #F7EEFB 60%, #FFF9F3 100%);
   min-height: 100vh;
 }
 
@@ -314,7 +308,7 @@ table.pedidos tr:last-child td { border-bottom: none; }
   color: var(--lila-dark);
   margin: 34px 0 14px;
   padding-bottom: 6px;
-  border-bottom: 2px solid var(--aqua);
+  border-bottom: 2px solid var(--dorado);
   display: inline-block;
 }
 
