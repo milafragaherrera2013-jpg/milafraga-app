@@ -8,6 +8,26 @@
 </head>
 <body>
 
+{% macro tarjeta(item) %}
+<div class="card-producto">
+  <img src="{{ url_for('static', filename='img/' + item.img if item.img else 'img/placeholder.png') }}" alt="{{ item.nombre }}" onerror="this.src='{{ url_for('static', filename='img/placeholder.png') }}'" onclick="abrirLightbox(this.src, this.alt)">
+  <div class="nombre">{{ item.nombre }}</div>
+  <div class="detalle">{{ item.detalle }}</div>
+  {% if item.descripcion %}
+  <div class="descripcion">{{ item.descripcion }}</div>
+  {% endif %}
+  {% if item.precio_antes %}
+  <div><span class="precio-antes">{{ item.precio_antes }}€</span> <span class="descuento">-{{ item.descuento }}</span></div>
+  {% endif %}
+  <div class="precio">{{ item.precio }} €</div>
+  <div class="stepper">
+    <button type="button" class="stepper-btn menos" onclick="cambiarCantidad('{{ item.id }}', -1)">−</button>
+    <input type="number" id="cantidad_{{ item.id }}" name="cantidad_{{ item.id }}" min="0" value="0" readonly>
+    <button type="button" class="stepper-btn mas" onclick="cambiarCantidad('{{ item.id }}', 1)">+</button>
+  </div>
+</div>
+{% endmacro %}
+
 <div class="hero">
   <img class="logo-marca" src="{{ url_for('static', filename='img/logo_acuarela.png') }}" alt="{{ negocio.marca }}">
   <p class="hero-frase">"Soy Mila. Después de cambiar mis propios hábitos, acompaño a mujeres que quieren volver a cuidarse de una forma sencilla y real."</p>
@@ -35,30 +55,28 @@
 
   <form method="post" action="{{ url_for('crear_pedido') }}">
 
-    {% for grupo in grupos %}
-    <div class="grupo-titulo" id="{{ grupo.ancla }}">{{ grupo.nombre }}</div>
+    <div class="grupo-titulo" id="promos">🔥 Promociones y edición limitada</div>
     <div class="grid-productos">
-      {% for item in grupo.productos %}
-      <div class="card-producto">
-        <img src="{{ url_for('static', filename='img/' + item.img if item.img else 'img/placeholder.png') }}" alt="{{ item.nombre }}" onerror="this.src='{{ url_for('static', filename='img/placeholder.png') }}'" onclick="abrirLightbox(this.src, this.alt)">
-        <div class="nombre">{{ item.nombre }}</div>
-        <div class="detalle">{{ item.detalle }}</div>
-        {% if item.descripcion %}
-        <div class="descripcion">{{ item.descripcion }}</div>
-        {% endif %}
-        {% if item.precio_antes %}
-        <div><span class="precio-antes">{{ item.precio_antes }}€</span> <span class="descuento">-{{ item.descuento }}</span></div>
-        {% endif %}
-        <div class="precio">{{ item.precio }} €</div>
-        <div class="stepper">
-          <button type="button" class="stepper-btn menos" onclick="cambiarCantidad('{{ item.id }}', -1)">−</button>
-          <input type="number" id="cantidad_{{ item.id }}" name="cantidad_{{ item.id }}" min="0" value="0" readonly>
-          <button type="button" class="stepper-btn mas" onclick="cambiarCantidad('{{ item.id }}', 1)">+</button>
-        </div>
-      </div>
-      {% endfor %}
+      {% for item in promos %}{{ tarjeta(item) }}{% endfor %}
     </div>
-    {% endfor %}
+
+    <div id="individuales">
+      {% for cat in categorias %}
+      <details class="acordeon" {% if loop.first %}open{% endif %}>
+        <summary class="acordeon-titulo">{{ cat.icono }} {{ cat.nombre }}</summary>
+        <div class="grid-productos acordeon-contenido">
+          {% for item in cat.productos %}{{ tarjeta(item) }}{% endfor %}
+        </div>
+      </details>
+      {% endfor %}
+
+      <details class="acordeon">
+        <summary class="acordeon-titulo">🎁 Combos</summary>
+        <div class="grid-productos acordeon-contenido">
+          {% for item in combos %}{{ tarjeta(item) }}{% endfor %}
+        </div>
+      </details>
+    </div>
 
     <div class="form-datos">
       <h3>Tus datos</h3>
