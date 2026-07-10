@@ -1,32 +1,357 @@
 {
-  "negocio": {
-    "nombre_completo": "Milagros Fraga Herrera",
-    "nif": "48968846Y",
-    "telefono": "677004382",
-    "direccion_calle": "Plaza Mayor 16, 1º C",
-    "direccion_cp_ciudad": "47193 La Cistérniga, Valladolid",
-    "marca": "Mila Fraga",
-    "web": ""
-  },
-  "cobro": {
-    "bizum": "677004382",
-    "whatsapp": "+34677004382",
-    "iban_completo": "ES0415860001405024114711",
-    "iban_mostrar": "ES04 **** **** **** ****4711",
-    "titular_cuenta": "Milagros Fraga Herrera"
-  },
-  "rutas": {
-    "carpeta_base": "Documentos/MilaFraga",
-    "carpeta_facturas": "Documentos/MilaFraga/Facturas",
-    "carpeta_etiquetas": "Documentos/MilaFraga/Etiquetas",
-    "logo_factura": "static/img/logo.png",
-    "logo_marca": "static/img/logo_acuarela.png"
-  },
-  "marca_visual": {
-    "color_aqua": "#7FC7C4",
-    "color_lila": "#B9A6D6",
-    "color_texto": "#3A3A3A",
-    "fuente_titulos": "Playfair Display",
-    "fuente_texto": "Lato"
-  }
+  "productos": [
+    {
+      "id": "cafe50_7",
+      "categoria": "Café 5.0",
+      "nombre": "Café 5.0 (7 días)",
+      "detalle": "Formato 7 días",
+      "precio": 12,
+      "img": "cafe50_15.png",
+      "descripcion": "Café soluble con extracto de café verde que te ayuda a activar tu metabolismo mientras disfrutas de tu café de cada mañana."
+    },
+    {
+      "id": "cafe50_15",
+      "categoria": "Café 5.0",
+      "nombre": "Café 5.0 (15 sobres)",
+      "detalle": "Formato 15 días",
+      "precio": 22,
+      "img": "cafe50_15.png",
+      "descripcion": "Café soluble con extracto de café verde que te ayuda a activar tu metabolismo mientras disfrutas de tu café de cada mañana."
+    },
+    {
+      "id": "cafe50_30",
+      "categoria": "Café 5.0",
+      "nombre": "Café 5.0 (30 sobres)",
+      "detalle": "1 mes · 30 sobres",
+      "precio": 40,
+      "img": "cafe50_30.png",
+      "descripcion": "Café soluble con extracto de café verde que te ayuda a activar tu metabolismo mientras disfrutas de tu café de cada mañana."
+    },
+    {
+      "id": "id_7",
+      "categoria": "Bebida Inteligente",
+      "nombre": "Bebida Inteligente (7 días)",
+      "detalle": "Formato 7 días",
+      "precio": 12,
+      "img": "id_15.png",
+      "descripcion": "Bebida con jengibre, inulina e hibisco pensada para sentirte más ligera y con energía a lo largo del día."
+    },
+    {
+      "id": "id_15",
+      "categoria": "Bebida Inteligente",
+      "nombre": "Bebida Inteligente (15 sobres)",
+      "detalle": "Formato 15 días",
+      "precio": 22,
+      "img": "id_15.png",
+      "descripcion": "Bebida con jengibre, inulina e hibisco pensada para sentirte más ligera y con energía a lo largo del día."
+    },
+    {
+      "id": "id_30",
+      "categoria": "Bebida Inteligente",
+      "nombre": "Bebida Inteligente (30 sobres)",
+      "detalle": "1 mes · 30 sobres",
+      "precio": 40,
+      "img": "id_30.png",
+      "descripcion": "Bebida con jengibre, inulina e hibisco pensada para sentirte más ligera y con energía a lo largo del día."
+    },
+    {
+      "id": "choco_5",
+      "categoria": "ChocoSlender",
+      "nombre": "ChocoSlender (5 sobres)",
+      "detalle": "Pack prueba · 5 sobres",
+      "precio": 16,
+      "img": "choco_5.png",
+      "descripcion": "Chocolate saludable con el que controlar el antojo dulce sin renunciar al sabor."
+    },
+    {
+      "id": "choco_30",
+      "categoria": "ChocoSlender",
+      "nombre": "ChocoSlender (1 mes)",
+      "detalle": "1 mes · 30 días",
+      "precio": 40,
+      "img": "choco_30.png",
+      "descripcion": "Chocolate saludable con el que controlar el antojo dulce sin renunciar al sabor."
+    },
+    {
+      "id": "elixir_7",
+      "categoria": "Elixir de Juventud",
+      "nombre": "Elixir de Juventud (7 sobres)",
+      "detalle": "Pack prueba · 7 sobres",
+      "precio": 17,
+      "img": "elixir_7.png",
+      "descripcion": "Colágeno, magnesio, glucosamina, condroitina y vitamina C en un solo sobre, para cuidar tu piel y tus articulaciones."
+    },
+    {
+      "id": "elixir_30",
+      "categoria": "Elixir de Juventud",
+      "nombre": "Elixir de Juventud (1 mes)",
+      "detalle": "Colágeno · 1 mes",
+      "precio": 50,
+      "img": "elixir_30.png",
+      "descripcion": "Colágeno, magnesio, glucosamina, condroitina y vitamina C en un solo sobre, para cuidar tu piel y tus articulaciones."
+    },
+    {
+      "id": "cania",
+      "categoria": "Caña Zero",
+      "nombre": "Caña Zero",
+      "detalle": "Endulzante natural",
+      "precio": 14,
+      "img": "cania.png",
+      "descripcion": "Endulzante natural sin calorías, perfecto para acompañar tus bebidas favoritas sin remordimientos."
+    }
+  ],
+  "packs_duo": [
+    {
+      "id": "duo_cafe2",
+      "nombre": "Pack Duo 2 Cafés",
+      "detalle": "2 unidades",
+      "precio": 76,
+      "img": "duo_cafe2.png",
+      "descripcion": "Pack pensado para aprovechar 2 unidades en un solo pedido, ahorrando frente a comprarlos por separado."
+    },
+    {
+      "id": "duo_id2",
+      "nombre": "Pack Duo 2 Bebidas",
+      "detalle": "2 unidades",
+      "precio": 76,
+      "img": "duo_id2.png",
+      "descripcion": "Pack pensado para aprovechar 2 unidades en un solo pedido, ahorrando frente a comprarlos por separado."
+    },
+    {
+      "id": "duo_choco2",
+      "nombre": "Pack Duo 2 Chocos",
+      "detalle": "2 unidades",
+      "precio": 76,
+      "img": "duo_choco2.png",
+      "descripcion": "Pack pensado para aprovechar 2 unidades en un solo pedido, ahorrando frente a comprarlos por separado."
+    },
+    {
+      "id": "duo_elixir2",
+      "nombre": "Pack Duo 2 Elixires",
+      "detalle": "2 unidades",
+      "precio": 95,
+      "img": "duo_elixir2.png",
+      "descripcion": "Pack pensado para aprovechar 2 unidades en un solo pedido, ahorrando frente a comprarlos por separado."
+    },
+    {
+      "id": "duo_cania2",
+      "nombre": "Pack Duo 2 Cañas",
+      "detalle": "2 unidades",
+      "precio": 26,
+      "img": "duo_cania2.png",
+      "descripcion": "Pack pensado para aprovechar 2 unidades en un solo pedido, ahorrando frente a comprarlos por separado."
+    },
+    {
+      "id": "duo_cafe_cania",
+      "nombre": "Pack Duo Café y Caña",
+      "detalle": "Café + Caña Zero",
+      "precio": 50,
+      "img": "duo_cafe_cania.png",
+      "descripcion": "Pack pensado para aprovechar café + caña zero en un solo pedido, ahorrando frente a comprarlos por separado."
+    },
+    {
+      "id": "duo_cafe_id",
+      "nombre": "Pack Duo Café y Bebida",
+      "detalle": "Café + Bebida Inteligente",
+      "precio": 75,
+      "img": "duo_cafe_id.png",
+      "descripcion": "Pack pensado para aprovechar café + bebida inteligente en un solo pedido, ahorrando frente a comprarlos por separado."
+    },
+    {
+      "id": "duo_cafe_choco",
+      "nombre": "Pack Duo Café y Choco",
+      "detalle": "Café + ChocoSlender",
+      "precio": 75,
+      "img": "duo_cafe_choco.png",
+      "descripcion": "Pack pensado para aprovechar café + chocoslender en un solo pedido, ahorrando frente a comprarlos por separado."
+    },
+    {
+      "id": "duo_cafe_elixir",
+      "nombre": "Pack Duo Café y Elixir",
+      "detalle": "Café + Elixir",
+      "precio": 82,
+      "img": "duo_cafe_elixir.png",
+      "descripcion": "Pack pensado para aprovechar café + elixir en un solo pedido, ahorrando frente a comprarlos por separado."
+    },
+    {
+      "id": "duo_id_choco",
+      "nombre": "Pack Duo Bebida y Choco",
+      "detalle": "Bebida + ChocoSlender",
+      "precio": 75,
+      "img": "duo_id_choco.png",
+      "descripcion": "Pack pensado para aprovechar bebida + chocoslender en un solo pedido, ahorrando frente a comprarlos por separado."
+    },
+    {
+      "id": "duo_id_elixir",
+      "nombre": "Pack Duo Bebida y Elixir",
+      "detalle": "Bebida + Elixir",
+      "precio": 82,
+      "img": "duo_id_elixir.png",
+      "descripcion": "Pack pensado para aprovechar bebida + elixir en un solo pedido, ahorrando frente a comprarlos por separado."
+    },
+    {
+      "id": "duo_choco_elixir",
+      "nombre": "Pack Duo Choco y Elixir",
+      "detalle": "Choco + Elixir",
+      "precio": 82,
+      "img": "duo_choco_elixir.png",
+      "descripcion": "Pack pensado para aprovechar choco + elixir en un solo pedido, ahorrando frente a comprarlos por separado."
+    }
+  ],
+  "packs_trio": [
+    {
+      "id": "trio_cafe3",
+      "nombre": "Pack Trío Café 5.0",
+      "detalle": "3 unidades",
+      "precio": 110,
+      "img": "trio_cafe3.png",
+      "descripcion": "Pack pensado para aprovechar 3 unidades en un solo pedido, ahorrando frente a comprarlos por separado."
+    },
+    {
+      "id": "trio_id3",
+      "nombre": "Pack Trío ID (Bebida Inteligente)",
+      "detalle": "3 unidades",
+      "precio": 110,
+      "img": "trio_id3.png",
+      "descripcion": "Pack pensado para aprovechar 3 unidades en un solo pedido, ahorrando frente a comprarlos por separado."
+    },
+    {
+      "id": "trio_choco3",
+      "nombre": "Pack Trío ChocoSlender",
+      "detalle": "3 unidades",
+      "precio": 110,
+      "img": "trio_choco3.png",
+      "descripcion": "Pack pensado para aprovechar 3 unidades en un solo pedido, ahorrando frente a comprarlos por separado."
+    },
+    {
+      "id": "trio_elixir3",
+      "nombre": "Pack Trío Elixir de Juventud",
+      "detalle": "3 unidades",
+      "precio": 138,
+      "img": "trio_elixir3.png",
+      "descripcion": "Pack pensado para aprovechar 3 unidades en un solo pedido, ahorrando frente a comprarlos por separado."
+    },
+    {
+      "id": "trio_cania3",
+      "nombre": "Pack Trío Caña Zero",
+      "detalle": "3 unidades",
+      "precio": 38,
+      "img": "trio_cania3.png",
+      "descripcion": "Pack pensado para aprovechar 3 unidades en un solo pedido, ahorrando frente a comprarlos por separado."
+    },
+    {
+      "id": "trio_cafe_choco_id",
+      "nombre": "Pack Trío Café+Choco+ID",
+      "detalle": "Café · ChocoSlender · Bebida",
+      "precio": 110,
+      "img": "trio_cafe_choco_id.png",
+      "descripcion": "Pack pensado para aprovechar café · chocoslender · bebida en un solo pedido, ahorrando frente a comprarlos por separado."
+    },
+    {
+      "id": "trio_cafe_elixir_id",
+      "nombre": "Pack Trío Café+Elixir+ID",
+      "detalle": "Café · Elixir · Bebida",
+      "precio": 118,
+      "img": "trio_cafe_elixir_id.png",
+      "descripcion": "Pack pensado para aprovechar café · elixir · bebida en un solo pedido, ahorrando frente a comprarlos por separado."
+    }
+  ],
+  "packs_5": [
+    {
+      "id": "5_cafe",
+      "nombre": "Pack 5 Café 5.0",
+      "detalle": "5 unidades",
+      "precio": 170,
+      "img": "5_cafe.png",
+      "descripcion": "Pack pensado para aprovechar 5 unidades en un solo pedido, ahorrando frente a comprarlos por separado."
+    },
+    {
+      "id": "5_id",
+      "nombre": "Pack 5 ID (Bebida Inteligente)",
+      "detalle": "5 unidades",
+      "precio": 170,
+      "img": "5_id.png",
+      "descripcion": "Pack pensado para aprovechar 5 unidades en un solo pedido, ahorrando frente a comprarlos por separado."
+    },
+    {
+      "id": "5_choco",
+      "nombre": "Pack 5 ChocoSlender",
+      "detalle": "5 unidades",
+      "precio": 170,
+      "img": "5_choco.png",
+      "descripcion": "Pack pensado para aprovechar 5 unidades en un solo pedido, ahorrando frente a comprarlos por separado."
+    },
+    {
+      "id": "5_elixir",
+      "nombre": "Pack 5 Elixir de Juventud",
+      "detalle": "5 unidades",
+      "precio": 212,
+      "img": "5_elixir.png",
+      "descripcion": "Pack pensado para aprovechar 5 unidades en un solo pedido, ahorrando frente a comprarlos por separado."
+    },
+    {
+      "id": "5_cania",
+      "nombre": "Pack 5 Cañas Zero",
+      "detalle": "5 unidades",
+      "precio": 60,
+      "img": "5_cania.png",
+      "descripcion": "Pack pensado para aprovechar 5 unidades en un solo pedido, ahorrando frente a comprarlos por separado."
+    }
+  ],
+  "combos_permanentes": [
+    {
+      "id": "combo_bienestar",
+      "nombre": "Combo Bienestar Integral",
+      "detalle": "Pack completo bienestar",
+      "precio": 165,
+      "img": "combo_bienestar.png",
+      "descripcion": "El combo ideal para cuidar tu bienestar general día a día, combinando varios de nuestros productos estrella."
+    },
+    {
+      "id": "combo_familiar",
+      "nombre": "Combo Familiar",
+      "detalle": "Lo más completo · envío gratis",
+      "precio": 240,
+      "img": "combo_familiar.png",
+      "descripcion": "Nuestro pack más completo, pensado para que toda la familia disfrute de los beneficios de Artabria."
+    }
+  ],
+  "edicion_limitada": [
+    {
+      "id": "primavera",
+      "nombre": "Primavera Artabria",
+      "detalle": "2 Café 5.0 + 2 Elixir de Juventud + 🎁 esponja Konjac de regalo",
+      "precio": 130,
+      "precio_antes": 187,
+      "descuento": "30%",
+      "img": "primavera.png",
+      "descripcion": "Pack de temporada con un ahorro especial, ideal para empezar tu rutina de bienestar de primavera con energía y colágeno."
+    },
+    {
+      "id": "bienestar_primavera",
+      "nombre": "Paquete Bienestar Especial Primavera",
+      "detalle": "Café + Bebida Inteligente + ChocoSlender + Caña Zero + 2 Elixir + 🎁 esponja Konjac",
+      "precio": 161,
+      "precio_antes": 251,
+      "descuento": "35%",
+      "img": "bienestar_primavera.png",
+      "descripcion": "Nuestro pack de bienestar más completo, en edición limitada de primavera, con un regalo incluido."
+    },
+    {
+      "id": "ensaladera_choco",
+      "nombre": "Ensaladera Gratis - Pack Energía y Control",
+      "detalle": "Café + Bebida Inteligente + ChocoSlender + 🥗 Ensaladera de regalo",
+      "precio": 110,
+      "img": "ensaladera_gratis_pack_2.png",
+      "descripcion": "Energía, enfoque, control del apetito y bienestar total — con ensaladera portátil de regalo incluida."
+    },
+    {
+      "id": "ensaladera_elixir",
+      "nombre": "Ensaladera Gratis - Pack Energía y Colágeno",
+      "detalle": "Café + Bebida Inteligente + Elixir de Juventud + 🥗 Ensaladera de regalo",
+      "precio": 118,
+      "img": "ensaladera_gratis_pack_1.png",
+      "descripcion": "Belleza desde el interior, energía y equilibrio — con ensaladera portátil de regalo incluida."
+    }
+  ]
 }
