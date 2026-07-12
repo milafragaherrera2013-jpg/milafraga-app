@@ -23,12 +23,31 @@ WHATSAPP_TELEFONO = os.environ.get("WHATSAPP_TELEFONO", "")
 CALLMEBOT_APIKEY = os.environ.get("CALLMEBOT_APIKEY", "")
 
 
-def notificar_pedido_whatsapp(pedido_id, cliente, total):
-    """Envia un aviso por WhatsApp a Mila cuando entra un pedido nuevo.
+def notificar_pedido_whatsapp(pedido_id, cliente, telefono_cliente, direccion_cliente,
+                                items_pedido, total, metodo_pago, notas):
+    """Envia un aviso por WhatsApp a Mila cuando entra un pedido nuevo, con el detalle
+    completo. Sirve como respaldo del pedido por si el panel llegara a perderlo
+    (el plan gratuito de Render borra la base de datos al reiniciarse).
     Si no hay telefono/apikey configurados, o falla el envio, no rompe el pedido."""
     if not WHATSAPP_TELEFONO or not CALLMEBOT_APIKEY:
         return
-    mensaje = f"Nuevo pedido #{pedido_id} de {cliente} - Total: {total:.2f} EUR"
+
+    lineas_productos = "\n".join(
+        f"- {i['cantidad']}x {i['nombre']} ({i['precio_unitario']:.2f}€/u)"
+        for i in items_pedido
+    )
+    mensaje = (
+        f"🛍️ NUEVO PEDIDO #{pedido_id}\n\n"
+        f"Cliente: {cliente}\n"
+        f"Teléfono: {telefono_cliente or 'no indicado'}\n"
+        f"Dirección: {direccion_cliente or 'no indicada'}\n\n"
+        f"Productos:\n{lineas_productos}\n\n"
+        f"Total: {total:.2f}€\n"
+        f"Pago: {metodo_pago}"
+    )
+    if notas:
+        mensaje += f"\nNotas: {notas}"
+
     try:
         requests.get(
             "https://api.callmebot.com/whatsapp.php",
@@ -432,7 +451,8 @@ def crear_pedido():
     pedido_id = conn.execute("SELECT last_insert_rowid()").fetchone()[0]
     conn.close()
 
-    notificar_pedido_whatsapp(pedido_id, cliente, total_con_envio)
+    notificar_pedido_whatsapp(pedido_id, cliente, telefono_cliente, direccion_cliente,
+                               items_pedido, total_con_envio, metodo_pago, notas)
 
     return redirect(url_for("confirmacion", pedido_id=pedido_id))
 
