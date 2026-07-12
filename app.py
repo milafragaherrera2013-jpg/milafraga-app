@@ -8,12 +8,35 @@ import sqlite3
 from datetime import datetime
 from functools import wraps
 
+import requests
 from flask import Flask, render_template, request, redirect, url_for, send_file, flash, session, Response
 
 from invoice import generar_factura, generar_etiqueta
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, "pedidos.db")
+
+# Notificacion de nuevos pedidos por WhatsApp (via CallMeBot)
+# El telefono y la apikey se configuran como variables de entorno en Render,
+# nunca se escriben aqui directamente (el repositorio es publico).
+WHATSAPP_TELEFONO = os.environ.get("WHATSAPP_TELEFONO", "")
+CALLMEBOT_APIKEY = os.environ.get("CALLMEBOT_APIKEY", "")
+
+
+def notificar_pedido_whatsapp(pedido_id, cliente, total):
+    """Envia un aviso por WhatsApp a Mila cuando entra un pedido nuevo.
+    Si no hay telefono/apikey configurados, o falla el envio, no rompe el pedido."""
+    if not WHATSAPP_TELEFONO or not CALLMEBOT_APIKEY:
+        return
+    mensaje = f"Nuevo pedido #{pedido_id} de {cliente} - Total: {total:.2f} EUR"
+    try:
+        requests.get(
+            "https://api.callmebot.com/whatsapp.php",
+            params={"phone": WHATSAPP_TELEFONO, "text": mensaje, "apikey": CALLMEBOT_APIKEY},
+            timeout=5,
+        )
+    except Exception as e:
+        print(f"No se pudo enviar la notificacion de WhatsApp: {e}")
 
 with open(os.path.join(BASE_DIR, "config.json"), encoding="utf-8") as f:
     CONFIG = json.load(f)
@@ -408,6 +431,8 @@ def crear_pedido():
     conn.commit()
     pedido_id = conn.execute("SELECT last_insert_rowid()").fetchone()[0]
     conn.close()
+
+    notificar_pedido_whatsapp(pedido_id, cliente, total_con_envio)
 
     return redirect(url_for("confirmacion", pedido_id=pedido_id))
 
