@@ -57,6 +57,57 @@ def notificar_pedido_whatsapp(pedido_id, cliente, telefono_cliente, direccion_cl
     except Exception as e:
         print(f"No se pudo enviar la notificacion de Telegram: {e}")
 
+
+def _enviar_documento_telegram(ruta_archivo, caption):
+    """Envia un archivo (factura o etiqueta) por Telegram como documento,
+    para que quede respaldado fuera del disco temporal de Render."""
+    if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
+        return
+    try:
+        with open(ruta_archivo, "rb") as f:
+            requests.post(
+                f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendDocument",
+                data={"chat_id": TELEGRAM_CHAT_ID, "caption": caption},
+                files={"document": f},
+                timeout=15,
+            )
+    except Exception as e:
+        print(f"No se pudo enviar el documento por Telegram: {e}")
+
+
+def respaldar_documentos_pedido(pedido_id, cliente, telefono_cliente, direccion_cliente,
+                                  items_pedido, gastos_envio, metodo_pago, notas, fecha):
+    """Genera la factura y la etiqueta del pedido y las envia por Telegram como
+    respaldo permanente, independiente de la base de datos de Render."""
+    if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
+        return
+
+    pedido = {
+        "id": pedido_id,
+        "fecha": fecha,
+        "cliente": cliente,
+        "telefono_cliente": telefono_cliente,
+        "direccion_cliente": direccion_cliente,
+        "items": items_pedido,
+        "gastos_envio": gastos_envio,
+        "metodo_pago": metodo_pago,
+        "notas": notas,
+    }
+
+    try:
+        carpeta_facturas = os.path.join(BASE_DIR, "static", "facturas")
+        ruta_factura = generar_factura(pedido, carpeta_facturas)
+        _enviar_documento_telegram(ruta_factura, f"🧾 Factura del pedido #{pedido_id}")
+    except Exception as e:
+        print(f"No se pudo generar/enviar la factura: {e}")
+
+    try:
+        carpeta_etiquetas = os.path.join(BASE_DIR, "static", "etiquetas")
+        ruta_etiqueta = generar_etiqueta(pedido, carpeta_etiquetas)
+        _enviar_documento_telegram(ruta_etiqueta, f"📦 Etiqueta de envío del pedido #{pedido_id}")
+    except Exception as e:
+        print(f"No se pudo generar/enviar la etiqueta: {e}")
+
 with open(os.path.join(BASE_DIR, "config.json"), encoding="utf-8") as f:
     CONFIG = json.load(f)
 
@@ -427,13 +478,14 @@ def crear_pedido():
     total_con_envio = total + gastos_envio
 
     conn = get_db()
+    fecha_pedido = datetime.now().strftime("%d/%m/%Y %H:%M")
     conn.execute(
         """INSERT INTO pedidos (fecha, cliente, telefono_cliente, direccion_cliente,
                                  items, total, notas, estado, gastos_envio, metodo_pago,
                                  email_cliente, codigo_descuento)
            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
         (
-            datetime.now().strftime("%d/%m/%Y %H:%M"),
+            fecha_pedido,
             cliente,
             telefono_cliente,
             direccion_cliente,
@@ -453,6 +505,8 @@ def crear_pedido():
 
     notificar_pedido_whatsapp(pedido_id, cliente, telefono_cliente, direccion_cliente,
                                items_pedido, total_con_envio, metodo_pago, notas)
+    respaldar_documentos_pedido(pedido_id, cliente, telefono_cliente, direccion_cliente,
+                                 items_pedido, gastos_envio, metodo_pago, notas, fecha_pedido)
 
     return redirect(url_for("confirmacion", pedido_id=pedido_id))
 
