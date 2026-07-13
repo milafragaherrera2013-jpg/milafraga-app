@@ -16,20 +16,20 @@ from invoice import generar_factura, generar_etiqueta
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, "pedidos.db")
 
-# Notificacion de nuevos pedidos por WhatsApp (via CallMeBot)
-# El telefono y la apikey se configuran como variables de entorno en Render,
+# Notificacion de nuevos pedidos por Telegram
+# El token del bot y el chat_id se configuran como variables de entorno en Render,
 # nunca se escriben aqui directamente (el repositorio es publico).
-WHATSAPP_TELEFONO = os.environ.get("WHATSAPP_TELEFONO", "")
-CALLMEBOT_APIKEY = os.environ.get("CALLMEBOT_APIKEY", "")
+TELEGRAM_BOT_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "")
+TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "")
 
 
 def notificar_pedido_whatsapp(pedido_id, cliente, telefono_cliente, direccion_cliente,
                                 items_pedido, total, metodo_pago, notas):
-    """Envia un aviso por WhatsApp a Mila cuando entra un pedido nuevo, con el detalle
+    """Envia un aviso por Telegram a Mila cuando entra un pedido nuevo, con el detalle
     completo. Sirve como respaldo del pedido por si el panel llegara a perderlo
     (el plan gratuito de Render borra la base de datos al reiniciarse).
-    Si no hay telefono/apikey configurados, o falla el envio, no rompe el pedido."""
-    if not WHATSAPP_TELEFONO or not CALLMEBOT_APIKEY:
+    Si no hay token/chat_id configurados, o falla el envio, no rompe el pedido."""
+    if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
         return
 
     lineas_productos = "\n".join(
@@ -49,13 +49,13 @@ def notificar_pedido_whatsapp(pedido_id, cliente, telefono_cliente, direccion_cl
         mensaje += f"\nNotas: {notas}"
 
     try:
-        requests.get(
-            "https://api.callmebot.com/whatsapp.php",
-            params={"phone": WHATSAPP_TELEFONO, "text": mensaje, "apikey": CALLMEBOT_APIKEY},
+        requests.post(
+            f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage",
+            data={"chat_id": TELEGRAM_CHAT_ID, "text": mensaje},
             timeout=5,
         )
     except Exception as e:
-        print(f"No se pudo enviar la notificacion de WhatsApp: {e}")
+        print(f"No se pudo enviar la notificacion de Telegram: {e}")
 
 with open(os.path.join(BASE_DIR, "config.json"), encoding="utf-8") as f:
     CONFIG = json.load(f)
