@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -233,8 +232,104 @@
 </head>
 <body>
 
+<style>
+  body { position: relative; overflow-x: hidden; }
+  .blob-deco {
+    position: absolute;
+    filter: blur(45px);
+    opacity: .28;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .blob-deco.b1 { width: 320px; height: 320px; top: -100px; left: -100px; background: radial-gradient(circle at 30% 30%, var(--aqua), transparent 70%); }
+  .blob-deco.b2 { width: 300px; height: 300px; top: 500px; right: -130px; background: radial-gradient(circle at 60% 40%, var(--lila), transparent 70%); }
+  .blob-deco.b3 { width: 280px; height: 280px; bottom: 200px; left: -80px; background: radial-gradient(circle at 50% 50%, var(--dorado), transparent 70%); opacity: .18; }
+
+  .seccion-tinte {
+    position: relative;
+    z-index: 1;
+    background: linear-gradient(180deg, var(--lila-suave) 0%, transparent 100%);
+    border-radius: 0 0 40px 40px;
+  }
+  .seccion { position: relative; z-index: 1; }
+
+  .portada-foto-wrap {
+    position: relative;
+    width: 220px;
+    height: 220px;
+    margin: 0 auto 20px;
+  }
+  .portada-foto-wrap::before {
+    content: '';
+    position: absolute;
+    inset: -10px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--aqua), var(--lila), var(--dorado));
+    opacity: .5;
+    z-index: 0;
+  }
+  .portada-foto {
+    position: relative;
+    z-index: 1;
+    width: 220px;
+    height: 220px;
+    margin: 0;
+  }
+
+  .como-funciona {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 20px;
+    max-width: 780px;
+    margin: 0 auto;
+  }
+  .paso-card {
+    text-align: center;
+    padding: 20px 14px;
+    position: relative;
+  }
+  .paso-numero {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: var(--lila);
+    color: white;
+    font-weight: 900;
+    font-family: 'Playfair Display', serif;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 12px;
+    font-size: 1.1rem;
+  }
+  .paso-titulo { font-weight: 700; margin-bottom: 6px; }
+  .paso-texto { font-size: .85rem; color: var(--texto-suave); }
+
+  .testimonios-wrap {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1.5px dashed var(--lila);
+    border-radius: 16px;
+    background: white;
+  }
+  .testimonio-ejemplo {
+    padding: 14px 0;
+    border-bottom: 1px solid var(--borde);
+    font-size: .9rem;
+    color: var(--texto-suave);
+    font-style: italic;
+  }
+  .testimonio-ejemplo:last-child { border-bottom: none; }
+  .testimonio-ejemplo b { color: var(--lila-dark); font-style: normal; }
+</style>
+
+<div class="blob-deco b1"></div>
+<div class="blob-deco b2"></div>
+<div class="blob-deco b3"></div>
+
+<div class="seccion-tinte">
 <div class="portada-hero">
-  <img class="portada-foto" src="{{ url_for('static', filename='img/mila_foto_hero.jpg') }}" alt="{{ negocio.marca }}">
+  <div class="portada-foto-wrap">
+    <img class="portada-foto" src="{{ url_for('static', filename='img/mila_foto_hero.jpg') }}" alt="{{ negocio.marca }}">
+  </div>
   <p class="portada-frase">"Soy Mila. Después de cambiar mis propios hábitos, acompaño a mujeres que quieren volver a cuidarse de una forma sencilla y real."</p>
 
   <div class="portada-placeholder">
@@ -244,7 +339,30 @@
 
   <a href="{{ url_for('formulario') }}" class="portada-cta">☕ Descubre mis productos</a>
 </div>
+</div>
 
+<div class="seccion">
+  <div class="seccion-titulo">Cómo funciona</div>
+  <div class="como-funciona">
+    <div class="paso-card">
+      <div class="paso-numero">1</div>
+      <div class="paso-titulo">Elige tu producto</div>
+      <div class="paso-texto">Mira el catálogo o cuéntame qué necesitas y te aconsejo.</div>
+    </div>
+    <div class="paso-card">
+      <div class="paso-numero">2</div>
+      <div class="paso-titulo">Hablamos por WhatsApp</div>
+      <div class="paso-texto">Resolvemos dudas y confirmamos tu pedido, sin compromiso.</div>
+    </div>
+    <div class="paso-card">
+      <div class="paso-numero">3</div>
+      <div class="paso-titulo">Lo recibes en casa</div>
+      <div class="paso-texto">Envío rápido y acompañamiento mientras lo pruebas.</div>
+    </div>
+  </div>
+</div>
+
+<div class="seccion-tinte">
 <div class="seccion">
   <div class="seccion-titulo">Lo que me representa</div>
   <div class="valores-grid">
@@ -265,6 +383,7 @@
       <div class="valor-nombre">Autenticidad<span class="valor-ejemplo-tag">(ejemplo — cámbialo)</span></div>
     </div>
   </div>
+</div>
 </div>
 
 <div class="seccion">
@@ -324,18 +443,34 @@
   <div class="seccion-titulo">🍽️ Recetas con mis productos</div>
   <div class="recetas-grid">
     <div class="receta-card">
-      <div class="receta-icono">☕</div>
+      <img src="{{ url_for('static', filename='img/cafe50_30.png') }}" alt="Receta con Café 5.0" style="width:100%;height:140px;object-fit:cover;border-radius:12px;margin-bottom:10px;">
       <div class="receta-nombre">[PENDIENTE — nombre de la receta]</div>
       <div class="receta-teaser">[PENDIENTE — 1 línea que enganche sobre esta receta]</div>
       <a href="https://www.tiktok.com/@mila.fragacafeybienestar" class="receta-boton" target="_blank">Ver receta en TikTok</a>
     </div>
     <div class="receta-card">
-      <div class="receta-icono">🍫</div>
+      <img src="{{ url_for('static', filename='img/choco_30.png') }}" alt="Receta con ChocoSlender" style="width:100%;height:140px;object-fit:cover;border-radius:12px;margin-bottom:10px;">
+      <div class="receta-nombre">[PENDIENTE — nombre de la receta]</div>
+      <div class="receta-teaser">[PENDIENTE — 1 línea que enganche sobre esta receta]</div>
+      <a href="https://www.tiktok.com/@mila.fragacafeybienestar" class="receta-boton" target="_blank">Ver receta en TikTok</a>
+    </div>
+    <div class="receta-card">
+      <img src="{{ url_for('static', filename='img/elixir_30.png') }}" alt="Receta con Elixir de Juventud" style="width:100%;height:140px;object-fit:cover;border-radius:12px;margin-bottom:10px;">
       <div class="receta-nombre">[PENDIENTE — nombre de la receta]</div>
       <div class="receta-teaser">[PENDIENTE — 1 línea que enganche sobre esta receta]</div>
       <a href="https://www.tiktok.com/@mila.fragacafeybienestar" class="receta-boton" target="_blank">Ver receta en TikTok</a>
     </div>
   </div>
+</div>
+
+<div class="seccion-tinte">
+<div class="seccion">
+  <div class="seccion-titulo">💬 Lo que dicen mis clientas</div>
+  <div class="testimonios-wrap">
+    <div class="testimonio-ejemplo">"[PENDIENTE — pega aquí un testimonio real, aunque sea una captura de WhatsApp que te haya escrito una clienta]" <b>— Nombre real</b></div>
+    <div class="testimonio-ejemplo">"[PENDIENTE — un segundo testimonio real]" <b>— Nombre real</b></div>
+  </div>
+</div>
 </div>
 
 <div class="cta-final">
