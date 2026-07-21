@@ -424,6 +424,15 @@ ANCLAS_GRUPOS = {
 }
 
 
+@app.route("/sobre-mi", methods=["GET"])
+def portada():
+    return render_template(
+        "portada.html",
+        negocio=CONFIG["negocio"],
+        cobro=CONFIG["cobro"],
+    )
+
+
 @app.route("/", methods=["GET"])
 def formulario():
     promos = CATALOGO["edicion_limitada"]
