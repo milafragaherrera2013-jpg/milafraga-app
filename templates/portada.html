@@ -1,1 +1,367 @@
 
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ negocio.marca }} · Hábitos y bienestar</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<style>
+  .portada-hero {
+    text-align: center;
+    padding: 40px 20px 30px;
+  }
+  .portada-foto {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid white;
+    box-shadow: 0 6px 20px rgba(124,77,158,.18);
+    margin-bottom: 18px;
+  }
+  .portada-frase {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1.15rem;
+    max-width: 560px;
+    margin: 0 auto 18px;
+    color: var(--texto);
+    line-height: 1.5;
+  }
+  .portada-placeholder {
+    max-width: 560px;
+    margin: 0 auto 24px;
+    padding: 14px 18px;
+    border: 1.5px dashed var(--lila);
+    border-radius: 12px;
+    color: var(--texto-suave);
+    font-size: .9rem;
+    background: var(--crema);
+    text-align: left;
+  }
+  .portada-placeholder b { color: var(--lila-dark); }
+
+  .portada-cta {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 13px 28px;
+    border-radius: 30px;
+    background: var(--lila);
+    color: white;
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .portada-cta:hover { background: var(--lila-dark); }
+
+  .seccion {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 30px 20px;
+  }
+  .seccion-titulo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    color: var(--lila-dark);
+    text-align: center;
+    margin-bottom: 22px;
+  }
+
+  /* Valores */
+  .valores-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 16px;
+  }
+  .valor-card {
+    text-align: center;
+    padding: 18px 12px;
+    background: white;
+    border: 1px solid var(--borde);
+    border-radius: 16px;
+  }
+  .valor-icono { font-size: 1.8rem; margin-bottom: 8px; }
+  .valor-nombre { font-weight: 700; font-size: .95rem; }
+  .valor-ejemplo-tag {
+    display: block;
+    font-size: .68rem;
+    color: var(--lila-dark);
+    margin-top: 4px;
+    font-style: italic;
+  }
+
+  /* Calculadora de agua */
+  .calculadora {
+    background: white;
+    border: 1px solid var(--borde);
+    border-radius: 18px;
+    padding: 24px;
+    max-width: 460px;
+    margin: 0 auto;
+  }
+  .calculadora label {
+    display: block;
+    font-weight: 700;
+    font-size: .88rem;
+    margin: 14px 0 6px;
+  }
+  .calculadora input[type=number] {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1.5px solid var(--borde);
+    border-radius: 10px;
+    font-family: 'Lato';
+    font-size: .95rem;
+  }
+  .actividad-opciones {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .actividad-opciones label {
+    flex: 1;
+    margin: 0;
+    font-weight: 400;
+    font-size: .82rem;
+    background: var(--crema);
+    border: 1.5px solid var(--borde);
+    border-radius: 10px;
+    padding: 8px 6px;
+    text-align: center;
+    cursor: pointer;
+  }
+  .actividad-opciones input { display: none; }
+  .actividad-opciones input:checked + span {
+    font-weight: 700;
+    color: var(--lila-dark);
+  }
+  .actividad-opciones label:has(input:checked) {
+    border-color: var(--lila);
+    background: var(--lila-suave);
+  }
+  .calc-boton {
+    width: 100%;
+    margin-top: 18px;
+    padding: 12px;
+    border: none;
+    border-radius: 12px;
+    background: var(--aqua-dark);
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .calc-boton:hover { background: var(--aqua); }
+  .calc-resultado {
+    margin-top: 16px;
+    padding: 14px;
+    border-radius: 12px;
+    background: var(--lila-suave);
+    text-align: center;
+    font-weight: 700;
+    color: var(--lila-dark);
+    display: none;
+  }
+  .calc-resultado.visible { display: block; }
+  .calc-resultado span { display: block; font-size: 1.4rem; margin-top: 4px; }
+
+  /* Carrusel deslizante */
+  .carrusel-wrap {
+    display: flex;
+    gap: 14px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding: 6px 4px 16px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .carrusel-wrap::-webkit-scrollbar { height: 6px; }
+  .carrusel-wrap::-webkit-scrollbar-thumb { background: var(--lila-suave); border-radius: 10px; }
+  .carrusel-item {
+    flex: 0 0 auto;
+    width: 220px;
+    scroll-snap-align: center;
+    background: white;
+    border: 1px solid var(--borde);
+    border-radius: 16px;
+    overflow: hidden;
+    text-align: center;
+  }
+  .carrusel-item img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    display: block;
+  }
+  .carrusel-item .cap {
+    padding: 10px;
+    font-size: .85rem;
+    font-weight: 700;
+  }
+
+  /* Recetas */
+  .recetas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 18px;
+  }
+  .receta-card {
+    background: white;
+    border: 1px solid var(--borde);
+    border-radius: 16px;
+    padding: 18px;
+    text-align: center;
+  }
+  .receta-icono { font-size: 2rem; margin-bottom: 8px; }
+  .receta-nombre { font-weight: 700; margin-bottom: 6px; }
+  .receta-teaser { font-size: .85rem; color: var(--texto-suave); margin-bottom: 14px; }
+  .receta-boton {
+    display: inline-block;
+    padding: 9px 16px;
+    border-radius: 20px;
+    background: var(--aqua);
+    color: white;
+    text-decoration: none;
+    font-size: .82rem;
+    font-weight: 700;
+  }
+  .receta-boton:hover { background: var(--aqua-dark); }
+
+  .cta-final {
+    text-align: center;
+    padding: 40px 20px 60px;
+  }
+</style>
+</head>
+<body>
+
+<div class="portada-hero">
+  <img class="portada-foto" src="{{ url_for('static', filename='img/mila_foto_hero.jpg') }}" alt="{{ negocio.marca }}">
+  <p class="portada-frase">"Soy Mila. Después de cambiar mis propios hábitos, acompaño a mujeres que quieren volver a cuidarse de una forma sencilla y real."</p>
+
+  <div class="portada-placeholder">
+    <b>[PENDIENTE — Mila, escribe aquí 2-3 frases]</b><br>
+    Cuenta qué cambió en ti exactamente, cómo te sentías antes, y por qué decidiste compartirlo con otras mujeres en vez de quedártelo para ti. Esto sustituye este cuadro entero.
+  </div>
+
+  <a href="{{ url_for('formulario') }}" class="portada-cta">☕ Descubre mis productos</a>
+</div>
+
+<div class="seccion">
+  <div class="seccion-titulo">Lo que me representa</div>
+  <div class="valores-grid">
+    <div class="valor-card">
+      <div class="valor-icono">💜</div>
+      <div class="valor-nombre">Cercanía<span class="valor-ejemplo-tag">(ejemplo — cámbialo)</span></div>
+    </div>
+    <div class="valor-card">
+      <div class="valor-icono">🌱</div>
+      <div class="valor-nombre">Constancia<span class="valor-ejemplo-tag">(ejemplo — cámbialo)</span></div>
+    </div>
+    <div class="valor-card">
+      <div class="valor-icono">👨‍👩‍👧</div>
+      <div class="valor-nombre">Familia primero<span class="valor-ejemplo-tag">(ejemplo — cámbialo)</span></div>
+    </div>
+    <div class="valor-card">
+      <div class="valor-icono">✨</div>
+      <div class="valor-nombre">Autenticidad<span class="valor-ejemplo-tag">(ejemplo — cámbialo)</span></div>
+    </div>
+  </div>
+</div>
+
+<div class="seccion">
+  <div class="seccion-titulo">💧 ¿Cuánta agua necesitas al día?</div>
+  <div class="calculadora">
+    <label for="calc-peso">Tu peso (kg)</label>
+    <input type="number" id="calc-peso" min="30" max="200" placeholder="Ej: 65">
+
+    <label>Tu nivel de actividad</label>
+    <div class="actividad-opciones">
+      <label><input type="radio" name="actividad" value="0" checked><span>Sedentaria</span></label>
+      <label><input type="radio" name="actividad" value="0.35"><span>Moderada</span></label>
+      <label><input type="radio" name="actividad" value="0.7"><span>Activa</span></label>
+    </div>
+
+    <button type="button" class="calc-boton" onclick="calcularAgua()">Calcular</button>
+
+    <div class="calc-resultado" id="calc-resultado">
+      Deberías beber aproximadamente
+      <span id="calc-litros">-- L</span>
+      al día (unos <span id="calc-vasos">-- vasos</span> de 250ml)
+    </div>
+  </div>
+</div>
+
+<div class="seccion">
+  <div class="seccion-titulo">Descubre mis productos</div>
+  <div class="carrusel-wrap">
+    <div class="carrusel-item">
+      <img src="{{ url_for('static', filename='img/primavera.png') }}" alt="Pack Primavera">
+      <div class="cap">Pack Primavera</div>
+    </div>
+    <div class="carrusel-item">
+      <img src="{{ url_for('static', filename='img/ensaladera_gratis_pack_1.png') }}" alt="Ensaladera Gratis">
+      <div class="cap">Ensaladera Gratis</div>
+    </div>
+    <div class="carrusel-item">
+      <img src="{{ url_for('static', filename='img/combo_bienestar.png') }}" alt="Combo Bienestar Integral">
+      <div class="cap">Combo Bienestar Integral</div>
+    </div>
+    <div class="carrusel-item">
+      <img src="{{ url_for('static', filename='img/cafe50_30.png') }}" alt="Café 5.0">
+      <div class="cap">Café 5.0</div>
+    </div>
+    <div class="carrusel-item">
+      <img src="{{ url_for('static', filename='img/elixir_30.png') }}" alt="Elixir de Juventud">
+      <div class="cap">Elixir de Juventud</div>
+    </div>
+    <div class="carrusel-item">
+      <img src="{{ url_for('static', filename='img/cania.png') }}" alt="Caña Zero">
+      <div class="cap">Caña Zero</div>
+    </div>
+  </div>
+</div>
+
+<div class="seccion">
+  <div class="seccion-titulo">🍽️ Recetas con mis productos</div>
+  <div class="recetas-grid">
+    <div class="receta-card">
+      <div class="receta-icono">☕</div>
+      <div class="receta-nombre">[PENDIENTE — nombre de la receta]</div>
+      <div class="receta-teaser">[PENDIENTE — 1 línea que enganche sobre esta receta]</div>
+      <a href="https://www.tiktok.com/@mila.fragacafeybienestar" class="receta-boton" target="_blank">Ver receta en TikTok</a>
+    </div>
+    <div class="receta-card">
+      <div class="receta-icono">🍫</div>
+      <div class="receta-nombre">[PENDIENTE — nombre de la receta]</div>
+      <div class="receta-teaser">[PENDIENTE — 1 línea que enganche sobre esta receta]</div>
+      <a href="https://www.tiktok.com/@mila.fragacafeybienestar" class="receta-boton" target="_blank">Ver receta en TikTok</a>
+    </div>
+  </div>
+</div>
+
+<div class="cta-final">
+  <a href="{{ url_for('formulario') }}" class="portada-cta">Ver todo el catálogo y hacer pedido →</a>
+</div>
+
+<a href="https://wa.me/{{ cobro.whatsapp | replace('+','') }}?text=Hola%20{{ negocio.marca | urlencode }}%2C%20tengo%20una%20pregunta"
+   class="whatsapp-flotante" target="_blank" title="Escríbeme por WhatsApp">
+  💬
+</a>
+
+<script>
+function calcularAgua() {
+  const peso = parseFloat(document.getElementById('calc-peso').value);
+  const actividad = parseFloat(document.querySelector('input[name="actividad"]:checked').value);
+  if (!peso || peso <= 0) {
+    alert('Escribe tu peso para calcularlo.');
+    return;
+  }
+  const litros = (peso * 0.033) + actividad;
+  const vasos = Math.round((litros * 1000) / 250);
+  document.getElementById('calc-litros').textContent = litros.toFixed(1) + ' L';
+  document.getElementById('calc-vasos').textContent = vasos + ' vasos';
+  document.getElementById('calc-resultado').classList.add('visible');
+}
+</script>
+
+</body>
+</html>
