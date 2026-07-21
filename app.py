@@ -426,6 +426,10 @@ ANCLAS_GRUPOS = {
 
 @app.route("/sobre-mi", methods=["GET"])
 def portada():
+    # Pagina en construccion: solo visible con la clave de vista previa en la URL,
+    # para que ningun visitante la vea a medias mientras se termina.
+    if request.args.get("preview") != "mila-preview-2026":
+        return redirect(url_for("formulario"))
     return render_template(
         "portada.html",
         negocio=CONFIG["negocio"],
