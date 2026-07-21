@@ -318,7 +318,22 @@
     font-style: italic;
   }
   .testimonio-ejemplo:last-child { border-bottom: none; }
-  .testimonio-ejemplo b { color: var(--lila-dark); font-style: normal; }
+  .historia-wrap {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+    max-width: 560px;
+    margin: 0 auto 18px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .historia-foto {
+    width: 200px;
+    border-radius: 16px;
+    box-shadow: 0 6px 18px rgba(124,77,158,.15);
+  }
+  .historia-texto { flex: 1; min-width: 260px; text-align: left; }
+  .historia-texto .portada-placeholder { margin: 0; }
 </style>
 
 <div class="blob-deco b1"></div>
@@ -332,9 +347,14 @@
   </div>
   <p class="portada-frase">"Soy Mila. Después de cambiar mis propios hábitos, acompaño a mujeres que quieren volver a cuidarse de una forma sencilla y real."</p>
 
-  <div class="portada-placeholder">
-    <b>[PENDIENTE — Mila, escribe aquí 2-3 frases]</b><br>
-    Cuenta qué cambió en ti exactamente, cómo te sentías antes, y por qué decidiste compartirlo con otras mujeres en vez de quedártelo para ti. Esto sustituye este cuadro entero.
+  <div class="historia-wrap">
+    <img class="historia-foto" src="{{ url_for('static', filename='img/mila_transformacion.jpg') }}" alt="Mi cambio de hábitos 2024-2026">
+    <div class="historia-texto">
+      <div class="portada-placeholder">
+        <b>[PENDIENTE — Mila, escribe aquí 2-3 frases]</b><br>
+        Cuenta qué cambió en ti exactamente, cómo te sentías antes, y por qué decidiste compartirlo con otras mujeres en vez de quedártelo para ti. Esto sustituye este cuadro entero.
+      </div>
+    </div>
   </div>
 
   <a href="{{ url_for('formulario') }}" class="portada-cta">☕ Descubre mis productos</a>
@@ -465,10 +485,10 @@
 
 <div class="seccion-tinte">
 <div class="seccion">
-  <div class="seccion-titulo">💬 Lo que dicen mis clientas</div>
+  <div class="seccion-titulo">💬 Reseñas reales de clientas</div>
   <div class="testimonios-wrap">
-    <div class="testimonio-ejemplo">"[PENDIENTE — pega aquí un testimonio real, aunque sea una captura de WhatsApp que te haya escrito una clienta]" <b>— Nombre real</b></div>
-    <div class="testimonio-ejemplo">"[PENDIENTE — un segundo testimonio real]" <b>— Nombre real</b></div>
+    <div class="testimonio-ejemplo">"[PENDIENTE — pega aquí una reseña real, aunque sea una captura de WhatsApp que te haya escrito una clienta sobre tus productos]" <b>— Nombre real</b></div>
+    <div class="testimonio-ejemplo">"[PENDIENTE — una segunda reseña real de otra clienta]" <b>— Nombre real</b></div>
   </div>
 </div>
 </div>
