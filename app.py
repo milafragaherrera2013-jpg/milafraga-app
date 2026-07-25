@@ -460,7 +460,22 @@ def crear_pedido():
     cliente = request.form.get("cliente", "").strip()
     telefono_cliente = request.form.get("telefono_cliente", "").strip()
     email_cliente = request.form.get("email_cliente", "").strip()
-    direccion_cliente = request.form.get("direccion_cliente", "").strip()
+
+    direccion_calle = request.form.get("direccion_calle", "").strip()
+    direccion_numero = request.form.get("direccion_numero", "").strip()
+    direccion_piso = request.form.get("direccion_piso", "").strip()
+    direccion_localidad = request.form.get("direccion_localidad", "").strip()
+    direccion_provincia = request.form.get("direccion_provincia", "").strip()
+    direccion_cp = request.form.get("direccion_cp", "").strip()
+
+    partes_calle = " ".join(p for p in [direccion_calle, direccion_numero] if p)
+    if direccion_piso:
+        partes_calle = f"{partes_calle}, {direccion_piso}" if partes_calle else direccion_piso
+    partes_localidad = " ".join(p for p in [direccion_cp, direccion_localidad] if p)
+    direccion_cliente = ", ".join(
+        p for p in [partes_calle, partes_localidad, direccion_provincia] if p
+    )
+
     notas = request.form.get("notas", "").strip()
     metodo_pago = request.form.get("metodo_pago", "No especificado").strip()
     codigo_descuento = request.form.get("codigo_descuento", "").strip().upper()
