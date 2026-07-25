@@ -565,6 +565,12 @@ table.pedidos tr:last-child td { border-bottom: none; }
   font-size: 14px;
 }
 
+.fila-direccion {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
 .metodos-pago {
   display: grid;
   grid-template-columns: 1fr 1fr;
