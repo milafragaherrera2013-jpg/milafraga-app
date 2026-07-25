@@ -102,8 +102,33 @@
       <label>Código de bienvenida (opcional)</label>
       <input type="text" name="codigo_descuento" placeholder="¿Tienes un código? Escríbelo aquí (ej. BIENVENIDAWEB)">
 
-      <label>Dirección de envío</label>
-      <input type="text" name="direccion_cliente">
+      <label>Calle</label>
+      <input type="text" name="direccion_calle" placeholder="Nombre de la calle">
+
+      <div class="fila-direccion">
+        <div>
+          <label>Número</label>
+          <input type="text" name="direccion_numero" placeholder="Ej: 12">
+        </div>
+        <div>
+          <label>Piso / puerta</label>
+          <input type="text" name="direccion_piso" placeholder="Ej: 2º A">
+        </div>
+      </div>
+
+      <label>Localidad</label>
+      <input type="text" name="direccion_localidad" placeholder="Ej: Cádiz">
+
+      <div class="fila-direccion">
+        <div>
+          <label>Provincia</label>
+          <input type="text" name="direccion_provincia" placeholder="Ej: Cádiz">
+        </div>
+        <div>
+          <label>Código postal</label>
+          <input type="text" name="direccion_cp" placeholder="Ej: 11001">
+        </div>
+      </div>
 
       <label>¿Algo que deba saber? (alergias, preferencias, horario de entrega...)</label>
       <textarea name="notas" rows="3"></textarea>
