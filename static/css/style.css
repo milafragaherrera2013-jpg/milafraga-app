@@ -269,6 +269,73 @@ table.pedidos tr:last-child td { border-bottom: none; }
   border-color: #BEE9CE;
 }
 
+.ruta-btn-recurso {
+  background: var(--lila-suave);
+  border-color: var(--lila);
+  color: var(--lila-dark);
+  cursor: pointer;
+  font-family: 'Lato', sans-serif;
+}
+
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(28, 28, 28, 0.55);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.modal-overlay.activo { display: flex; }
+
+.modal-caja {
+  background: white;
+  border-radius: 20px;
+  padding: 32px 28px;
+  max-width: 420px;
+  width: 100%;
+  position: relative;
+  text-align: center;
+  border-top: 4px solid var(--lila-dark);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.2);
+}
+.modal-caja h3 {
+  font-family: 'Playfair Display', serif;
+  color: var(--lila-dark);
+  margin: 0 0 12px;
+  font-size: 1.4rem;
+}
+.modal-caja p { color: var(--texto); font-size: 0.95rem; margin-bottom: 18px; }
+.modal-caja form { display: flex; flex-direction: column; gap: 12px; }
+.modal-caja input {
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--borde);
+  font-family: 'Lato', sans-serif;
+  font-size: 14px;
+}
+.modal-boton {
+  background: var(--dorado);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 14px;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+}
+.modal-boton:hover { opacity: 0.9; }
+.modal-nota { font-size: 0.78rem; color: var(--texto-suave); margin: 14px 0 0; }
+.modal-cerrar {
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  font-size: 1.4rem;
+  cursor: pointer;
+  color: var(--texto-suave);
+}
+
 @media (max-width: 600px) {
   .rutas-guiadas { flex-direction: column; align-items: stretch; }
 }
