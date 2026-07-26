@@ -334,6 +334,62 @@
   }
   .historia-texto { flex: 1; min-width: 260px; text-align: left; }
   .historia-texto .portada-placeholder { margin: 0; }
+
+  .producto-slide {
+    flex: 0 0 auto;
+    width: 260px;
+    scroll-snap-align: center;
+    background: white;
+    border: 1px solid var(--borde);
+    border-radius: 20px;
+    overflow: hidden;
+    text-align: center;
+    padding-bottom: 16px;
+  }
+  .producto-slide img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    display: block;
+  }
+  .producto-slide h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    margin: 12px 14px 2px;
+    color: var(--lila-dark);
+  }
+  .producto-slide .ingredientes {
+    font-size: .78rem;
+    color: var(--texto-suave);
+    margin: 0 14px 10px;
+    font-style: italic;
+  }
+  .producto-beneficios {
+    list-style: none;
+    margin: 0 14px 10px;
+    padding: 0;
+    text-align: left;
+  }
+  .producto-beneficios li {
+    font-size: .82rem;
+    padding: 3px 0;
+    color: var(--texto);
+  }
+  .producto-beneficios li::before { content: "✓ "; color: var(--aqua-dark); font-weight: 700; }
+  .producto-formato {
+    font-size: .75rem;
+    font-weight: 700;
+    color: var(--dorado);
+    margin: 6px 14px 0;
+  }
+  .registro-sanitario {
+    text-align: center;
+    font-size: .75rem;
+    color: var(--texto-suave);
+    max-width: 700px;
+    margin: 10px auto 0;
+    padding: 0 20px;
+  }
 </style>
 
 <div class="blob-deco b1"></div>
@@ -430,33 +486,76 @@
 </div>
 
 <div class="seccion">
-  <div class="seccion-titulo">Descubre mis productos</div>
+  <div class="seccion-titulo">✨ Conoce nuestros productos</div>
   <div class="carrusel-wrap">
-    <div class="carrusel-item">
-      <img src="{{ url_for('static', filename='img/primavera.png') }}" alt="Pack Primavera">
-      <div class="cap">Pack Primavera</div>
-    </div>
-    <div class="carrusel-item">
-      <img src="{{ url_for('static', filename='img/ensaladera_gratis_pack_1.png') }}" alt="Ensaladera Gratis">
-      <div class="cap">Ensaladera Gratis</div>
-    </div>
-    <div class="carrusel-item">
-      <img src="{{ url_for('static', filename='img/combo_bienestar.png') }}" alt="Combo Bienestar Integral">
-      <div class="cap">Combo Bienestar Integral</div>
-    </div>
-    <div class="carrusel-item">
+    <div class="producto-slide">
       <img src="{{ url_for('static', filename='img/cafe50_30.png') }}" alt="Café 5.0">
-      <div class="cap">Café 5.0</div>
+      <h4>Café 5.0</h4>
+      <p class="ingredientes">Café verde · Naranja amarga · Guaraná</p>
+      <ul class="producto-beneficios">
+        <li>Energía natural para arrancar el día</li>
+        <li>Favorece tu rutina de bienestar</li>
+        <li>El café de siempre, con un extra</li>
+      </ul>
+      <p class="producto-formato">30 sobres · 1 mes</p>
     </div>
-    <div class="carrusel-item">
+    <div class="producto-slide">
+      <img src="{{ url_for('static', filename='img/id_30.png') }}" alt="Bebida Inteligente">
+      <h4>Bebida Inteligente</h4>
+      <p class="ingredientes">Jengibre · Inulina · Hibisco</p>
+      <ul class="producto-beneficios">
+        <li>Te ayuda a sentirte más ligera</li>
+        <li>Ideal para tu rutina diaria</li>
+        <li>Un momento de cuidado en tu día</li>
+      </ul>
+      <p class="producto-formato">30 sobres · 1 mes</p>
+    </div>
+    <div class="producto-slide">
+      <img src="{{ url_for('static', filename='img/choco_30.png') }}" alt="ChocoSlender">
+      <h4>ChocoSlender</h4>
+      <p class="ingredientes">Cacao · Complemento alimenticio</p>
+      <ul class="producto-beneficios">
+        <li>El capricho de chocolate sin renunciar al sabor</li>
+        <li>Pensado para acompañar tus antojos dulces</li>
+        <li>Se prepara en segundos</li>
+      </ul>
+      <p class="producto-formato">Bote de 300 g</p>
+    </div>
+    <div class="producto-slide">
       <img src="{{ url_for('static', filename='img/elixir_30.png') }}" alt="Elixir de Juventud">
-      <div class="cap">Elixir de Juventud</div>
+      <h4>Elixir de Juventud</h4>
+      <p class="ingredientes">Colágeno · Magnesio · Glucosamina · Condroitina · Vitamina C</p>
+      <ul class="producto-beneficios">
+        <li>Cuida tu piel desde dentro</li>
+        <li>Acompaña tus articulaciones</li>
+        <li>Un ritual de belleza diario</li>
+      </ul>
+      <p class="producto-formato">Bote de 400 g</p>
     </div>
-    <div class="carrusel-item">
+    <div class="producto-slide">
       <img src="{{ url_for('static', filename='img/cania.png') }}" alt="Caña Zero">
-      <div class="cap">Caña Zero</div>
+      <h4>Caña Zero</h4>
+      <p class="ingredientes">Edulcorante a base de eritritol</p>
+      <ul class="producto-beneficios">
+        <li>Endulza sin calorías</li>
+        <li>Perfecto para acompañar tus bebidas</li>
+        <li>Apto para toda la familia</li>
+      </ul>
+      <p class="producto-formato">Sobres individuales</p>
+    </div>
+    <div class="producto-slide">
+      <img src="{{ url_for('static', filename='img/combo_bienestar.png') }}" alt="Combo Bienestar Integral">
+      <h4>Combo Bienestar Integral</h4>
+      <p class="ingredientes">Nuestros productos estrella, juntos</p>
+      <ul class="producto-beneficios">
+        <li>La forma más completa de empezar</li>
+        <li>Pensado para tu día a día</li>
+        <li>Mejor precio que por separado</li>
+      </ul>
+      <p class="producto-formato">Pack completo</p>
     </div>
   </div>
+  <p class="registro-sanitario">Registro Sanitario (RGSEAA): 26.024066/C y 31.03706/C — Registro General Sanitario de Empresas Alimentarias y Alimentos. Complementos alimenticios Artabria.</p>
 </div>
 
 <div class="seccion">
