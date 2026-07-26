@@ -49,6 +49,7 @@
     <button type="button" class="ruta-btn ruta-btn-recurso" onclick="document.getElementById('modal-control-peso').classList.add('activo')">⚖️ Descarga gratis mi Control de Peso</button>
     <button type="button" class="ruta-btn ruta-btn-recurso" onclick="document.getElementById('modal-control-agua').classList.add('activo')">💧 Descarga gratis mi Control de Agua</button>
     <button type="button" class="ruta-btn ruta-btn-recurso" onclick="document.getElementById('modal-control-caminatas').classList.add('activo')">🚶 Descarga gratis mi Control de Caminatas</button>
+    <button type="button" class="ruta-btn ruta-btn-recurso" onclick="document.getElementById('modal-habitos-mes').classList.add('activo')">📅 Descarga gratis mis Hábitos del Mes</button>
   </div>
 </div>
 
@@ -103,6 +104,20 @@
       <input type="text" name="nombre_lead" placeholder="Tu nombre" required>
       <input type="text" name="telefono_lead" placeholder="Tu WhatsApp" required>
       <button type="submit" class="modal-boton">⬇️ Descargar mi plantilla</button>
+    </form>
+    <p class="modal-nota">Solo usaré tus datos para acompañarte — nada de spam. 🌿</p>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-habitos-mes">
+  <div class="modal-caja">
+    <span class="modal-cerrar" onclick="document.getElementById('modal-habitos-mes').classList.remove('activo')">&times;</span>
+    <h3>Casi lo tienes 💜</h3>
+    <p>Dime tu nombre y tu WhatsApp y te llevas tu calendario de <b>Hábitos del Mes</b> en PDF, gratis.</p>
+    <form action="{{ url_for('habitos_mes') }}" method="POST">
+      <input type="text" name="nombre_lead" placeholder="Tu nombre" required>
+      <input type="text" name="telefono_lead" placeholder="Tu WhatsApp" required>
+      <button type="submit" class="modal-boton">⬇️ Descargar mi calendario</button>
     </form>
     <p class="modal-nota">Solo usaré tus datos para acompañarte — nada de spam. 🌿</p>
   </div>
