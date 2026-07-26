@@ -63,6 +63,134 @@
   </div>
 </div>
 
+<div class="historia-wrap">
+  <img class="historia-foto" src="{{ url_for('static', filename='img/mila_transformacion.jpg') }}" alt="Mi cambio de hábitos 2024-2026">
+</div>
+
+<div class="seccion">
+  <div class="seccion-titulo">Cómo funciona</div>
+  <div class="como-funciona">
+    <div class="paso-card">
+      <div class="paso-numero">1</div>
+      <div class="paso-titulo">Elige tu producto</div>
+      <div class="paso-texto">Mira el catálogo o cuéntame qué necesitas y te aconsejo.</div>
+    </div>
+    <div class="paso-card">
+      <div class="paso-numero">2</div>
+      <div class="paso-titulo">Hablamos por WhatsApp</div>
+      <div class="paso-texto">Resolvemos dudas y confirmamos tu pedido, sin compromiso.</div>
+    </div>
+    <div class="paso-card">
+      <div class="paso-numero">3</div>
+      <div class="paso-titulo">Lo recibes en casa</div>
+      <div class="paso-texto">Envío rápido y acompañamiento mientras lo pruebas.</div>
+    </div>
+  </div>
+</div>
+
+<div class="seccion-tinte">
+<div class="seccion">
+  <img src="{{ url_for('static', filename='img/mi_proposito.jpg') }}" alt="Mi propósito y mis valores"
+       style="width:100%; max-width:900px; display:block; margin:0 auto; border-radius:20px; box-shadow:0 8px 24px rgba(124,77,158,.12);">
+</div>
+</div>
+
+<div class="seccion">
+  <div class="seccion-titulo">💧 ¿Cuánta agua necesitas al día?</div>
+  <div class="calculadora">
+    <label for="calc-peso">Tu peso (kg)</label>
+    <input type="number" id="calc-peso" min="30" max="200" placeholder="Ej: 65">
+
+    <label>Tu nivel de actividad</label>
+    <div class="actividad-opciones">
+      <label><input type="radio" name="actividad" value="0" checked><span>Sedentaria</span></label>
+      <label><input type="radio" name="actividad" value="0.35"><span>Moderada</span></label>
+      <label><input type="radio" name="actividad" value="0.7"><span>Activa</span></label>
+    </div>
+
+    <button type="button" class="calc-boton" onclick="calcularAgua()">Calcular</button>
+
+    <div class="calc-resultado" id="calc-resultado">
+      Deberías beber aproximadamente
+      <span id="calc-litros">-- L</span>
+      al día (unos <span id="calc-vasos">-- vasos</span> de 250ml)
+    </div>
+  </div>
+</div>
+
+<div class="seccion">
+  <div class="seccion-titulo">✨ Conoce nuestros productos</div>
+  <div class="carrusel-wrap">
+    <div class="producto-slide">
+      <img src="{{ url_for('static', filename='img/cafe50_30.png') }}" alt="Café 5.0">
+      <h4>Café 5.0</h4>
+      <p class="ingredientes">Café verde · Naranja amarga · Guaraná</p>
+      <ul class="producto-beneficios">
+        <li>Energía natural para arrancar el día</li>
+        <li>Favorece tu rutina de bienestar</li>
+        <li>El café de siempre, con un extra</li>
+      </ul>
+      <p class="producto-formato">30 sobres · 1 mes</p>
+    </div>
+    <div class="producto-slide">
+      <img src="{{ url_for('static', filename='img/id_30.png') }}" alt="Bebida Inteligente">
+      <h4>Bebida Inteligente</h4>
+      <p class="ingredientes">Jengibre · Inulina · Hibisco</p>
+      <ul class="producto-beneficios">
+        <li>Te ayuda a sentirte más ligera</li>
+        <li>Ideal para tu rutina diaria</li>
+        <li>Un momento de cuidado en tu día</li>
+      </ul>
+      <p class="producto-formato">30 sobres · 1 mes</p>
+    </div>
+    <div class="producto-slide">
+      <img src="{{ url_for('static', filename='img/choco_30.png') }}" alt="ChocoSlender">
+      <h4>ChocoSlender</h4>
+      <p class="ingredientes">Cacao · Complemento alimenticio</p>
+      <ul class="producto-beneficios">
+        <li>El capricho de chocolate sin renunciar al sabor</li>
+        <li>Pensado para acompañar tus antojos dulces</li>
+        <li>Se prepara en segundos</li>
+      </ul>
+      <p class="producto-formato">Bote de 300 g</p>
+    </div>
+    <div class="producto-slide">
+      <img src="{{ url_for('static', filename='img/elixir_30.png') }}" alt="Elixir de Juventud">
+      <h4>Elixir de Juventud</h4>
+      <p class="ingredientes">Colágeno · Magnesio · Glucosamina · Condroitina · Vitamina C</p>
+      <ul class="producto-beneficios">
+        <li>Cuida tu piel desde dentro</li>
+        <li>Acompaña tus articulaciones</li>
+        <li>Un ritual de belleza diario</li>
+      </ul>
+      <p class="producto-formato">Bote de 400 g</p>
+    </div>
+    <div class="producto-slide">
+      <img src="{{ url_for('static', filename='img/cania.png') }}" alt="Caña Zero">
+      <h4>Caña Zero</h4>
+      <p class="ingredientes">Edulcorante a base de eritritol</p>
+      <ul class="producto-beneficios">
+        <li>Endulza sin calorías</li>
+        <li>Perfecto para acompañar tus bebidas</li>
+        <li>Apto para toda la familia</li>
+      </ul>
+      <p class="producto-formato">Sobres individuales</p>
+    </div>
+    <div class="producto-slide">
+      <img src="{{ url_for('static', filename='img/combo_bienestar.png') }}" alt="Combo Bienestar Integral">
+      <h4>Combo Bienestar Integral</h4>
+      <p class="ingredientes">Nuestros productos estrella, juntos</p>
+      <ul class="producto-beneficios">
+        <li>La forma más completa de empezar</li>
+        <li>Pensado para tu día a día</li>
+        <li>Mejor precio que por separado</li>
+      </ul>
+      <p class="producto-formato">Pack completo</p>
+    </div>
+  </div>
+  <p class="registro-sanitario">Registro Sanitario (RGSEAA): 26.024066/C y 31.03706/C — Registro General Sanitario de Empresas Alimentarias y Alimentos. Complementos alimenticios Artabria.</p>
+</div>
+
 <div class="container">
 
   {% with messages = get_flashed_messages() %}
@@ -198,6 +326,20 @@ function abrirLightbox(src, alt) {
 
 function cerrarLightbox() {
   document.getElementById('lightbox').classList.remove('activo');
+}
+
+function calcularAgua() {
+  const peso = parseFloat(document.getElementById('calc-peso').value);
+  const actividad = parseFloat(document.querySelector('input[name="actividad"]:checked').value);
+  if (!peso || peso <= 0) {
+    alert('Escribe tu peso para calcularlo.');
+    return;
+  }
+  const litros = (peso * 0.033) + actividad;
+  const vasos = Math.round((litros * 1000) / 250);
+  document.getElementById('calc-litros').textContent = litros.toFixed(1) + ' L';
+  document.getElementById('calc-vasos').textContent = vasos + ' vasos';
+  document.getElementById('calc-resultado').classList.add('visible');
 }
 </script>
 
