@@ -424,6 +424,42 @@ ANCLAS_GRUPOS = {
 }
 
 
+@app.route("/recursos/recetario-batidos", methods=["GET", "POST"])
+def recetario_batidos():
+    if request.method == "GET":
+        # Sin datos, no hay descarga directa: se vuelve al catalogo para pasar por el formulario.
+        return redirect(url_for("formulario"))
+
+    nombre_lead = request.form.get("nombre_lead", "").strip()
+    telefono_lead = request.form.get("telefono_lead", "").strip()
+
+    if not nombre_lead or not telefono_lead:
+        return redirect(url_for("formulario"))
+
+    # Registro por Telegram: asi Mila tiene el contacto para hacer seguimiento,
+    # aunque la base de datos se reinicie.
+    if TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID:
+        try:
+            ahora = datetime.now().strftime("%d/%m/%Y %H:%M")
+            requests.post(
+                f"https://api.telegram.org/bot{TELEGRAM_BOT_TOKEN}/sendMessage",
+                data={
+                    "chat_id": TELEGRAM_CHAT_ID,
+                    "text": (
+                        f"📥 Nueva descarga del Recetario de Batidos ({ahora})\n\n"
+                        f"Nombre: {nombre_lead}\n"
+                        f"WhatsApp: {telefono_lead}"
+                    ),
+                },
+                timeout=5,
+            )
+        except Exception as e:
+            print(f"No se pudo registrar la descarga por Telegram: {e}")
+
+    ruta = os.path.join(BASE_DIR, "static", "recursos", "Recetario_Batidos_MilaFraga.pdf")
+    return send_file(ruta, as_attachment=True, download_name="Recetario de Batidos - Mila Fraga.pdf")
+
+
 @app.route("/sobre-mi", methods=["GET"])
 def portada():
     # Pagina en construccion: solo visible con la clave de vista previa en la URL,
