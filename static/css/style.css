@@ -1061,15 +1061,16 @@ table.pedidos tr:last-child td { border-bottom: none; }
     display: flex;
     gap: 24px;
     align-items: center;
-    max-width: 560px;
+    max-width: 700px;
     margin: 0 auto 18px;
     flex-wrap: wrap;
     justify-content: center;
   }
   .historia-foto {
-    width: 200px;
-    border-radius: 16px;
-    box-shadow: 0 6px 18px rgba(124,77,158,.15);
+    width: 340px;
+    max-width: 90%;
+    border-radius: 18px;
+    box-shadow: 0 8px 22px rgba(124,77,158,.18);
   }
   .historia-texto { flex: 1; min-width: 260px; text-align: left; }
   .historia-texto .portada-placeholder { margin: 0; }
