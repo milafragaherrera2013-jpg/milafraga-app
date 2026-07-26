@@ -424,10 +424,10 @@ ANCLAS_GRUPOS = {
 }
 
 
-@app.route("/recursos/recetario-batidos", methods=["GET", "POST"])
-def recetario_batidos():
+def _servir_recurso_con_registro(nombre_recurso, nombre_archivo, nombre_descarga):
+    """Logica comun para todos los recursos gratuitos descargables: pide nombre y
+    WhatsApp, avisa a Mila por Telegram, y sirve el PDF."""
     if request.method == "GET":
-        # Sin datos, no hay descarga directa: se vuelve al catalogo para pasar por el formulario.
         return redirect(url_for("formulario"))
 
     nombre_lead = request.form.get("nombre_lead", "").strip()
@@ -436,8 +436,6 @@ def recetario_batidos():
     if not nombre_lead or not telefono_lead:
         return redirect(url_for("formulario"))
 
-    # Registro por Telegram: asi Mila tiene el contacto para hacer seguimiento,
-    # aunque la base de datos se reinicie.
     if TELEGRAM_BOT_TOKEN and TELEGRAM_CHAT_ID:
         try:
             ahora = datetime.now().strftime("%d/%m/%Y %H:%M")
@@ -446,7 +444,7 @@ def recetario_batidos():
                 data={
                     "chat_id": TELEGRAM_CHAT_ID,
                     "text": (
-                        f"📥 Nueva descarga del Recetario de Batidos ({ahora})\n\n"
+                        f"📥 Nueva descarga: {nombre_recurso} ({ahora})\n\n"
                         f"Nombre: {nombre_lead}\n"
                         f"WhatsApp: {telefono_lead}"
                     ),
@@ -456,8 +454,26 @@ def recetario_batidos():
         except Exception as e:
             print(f"No se pudo registrar la descarga por Telegram: {e}")
 
-    ruta = os.path.join(BASE_DIR, "static", "recursos", "Recetario_Batidos_MilaFraga.pdf")
-    return send_file(ruta, as_attachment=True, download_name="Recetario de Batidos - Mila Fraga.pdf")
+    ruta = os.path.join(BASE_DIR, "static", "recursos", nombre_archivo)
+    return send_file(ruta, as_attachment=True, download_name=nombre_descarga)
+
+
+@app.route("/recursos/recetario-batidos", methods=["GET", "POST"])
+def recetario_batidos():
+    return _servir_recurso_con_registro(
+        "Recetario de Batidos",
+        "Recetario_Batidos_MilaFraga.pdf",
+        "Recetario de Batidos - Mila Fraga.pdf",
+    )
+
+
+@app.route("/recursos/control-peso", methods=["GET", "POST"])
+def control_peso():
+    return _servir_recurso_con_registro(
+        "Control de Peso",
+        "Control_Peso_MilaFraga.pdf",
+        "Control de Peso - Mila Fraga.pdf",
+    )
 
 
 @app.route("/sobre-mi", methods=["GET"])
