@@ -476,6 +476,24 @@ def control_peso():
     )
 
 
+@app.route("/recursos/control-agua", methods=["GET", "POST"])
+def control_agua():
+    return _servir_recurso_con_registro(
+        "Control de Agua",
+        "Control_Agua_MilaFraga.pdf",
+        "Control de Agua - Mila Fraga.pdf",
+    )
+
+
+@app.route("/recursos/control-caminatas", methods=["GET", "POST"])
+def control_caminatas():
+    return _servir_recurso_con_registro(
+        "Control de Caminatas",
+        "Control_Caminatas_MilaFraga.pdf",
+        "Control de Caminatas - Mila Fraga.pdf",
+    )
+
+
 @app.route("/sobre-mi", methods=["GET"])
 def portada():
     # Pagina en construccion: solo visible con la clave de vista previa en la URL,
