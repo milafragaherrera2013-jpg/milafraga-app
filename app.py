@@ -494,6 +494,15 @@ def control_caminatas():
     )
 
 
+@app.route("/recursos/habitos-mes", methods=["GET", "POST"])
+def habitos_mes():
+    return _servir_recurso_con_registro(
+        "Hábitos del Mes",
+        "Habitos_Mes_MilaFraga.pdf",
+        "Habitos del Mes - Mila Fraga.pdf",
+    )
+
+
 @app.route("/sobre-mi", methods=["GET"])
 def portada():
     # Pagina en construccion: solo visible con la clave de vista previa en la URL,
