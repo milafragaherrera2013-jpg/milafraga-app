@@ -46,6 +46,7 @@
 
   <div class="rutas-guiadas" style="margin-top: 10px;">
     <button type="button" class="ruta-btn ruta-btn-recurso" onclick="document.getElementById('modal-recetario').classList.add('activo')">🍓 Descarga gratis mi Recetario de Batidos</button>
+    <button type="button" class="ruta-btn ruta-btn-recurso" onclick="document.getElementById('modal-control-peso').classList.add('activo')">⚖️ Descarga gratis mi Control de Peso</button>
   </div>
 </div>
 
@@ -58,6 +59,20 @@
       <input type="text" name="nombre_lead" placeholder="Tu nombre" required>
       <input type="text" name="telefono_lead" placeholder="Tu WhatsApp" required>
       <button type="submit" class="modal-boton">⬇️ Descargar mi recetario</button>
+    </form>
+    <p class="modal-nota">Solo usaré tus datos para acompañarte — nada de spam. 🌿</p>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-control-peso">
+  <div class="modal-caja">
+    <span class="modal-cerrar" onclick="document.getElementById('modal-control-peso').classList.remove('activo')">&times;</span>
+    <h3>Casi lo tienes 💜</h3>
+    <p>Dime tu nombre y tu WhatsApp y te llevas tu plantilla de <b>Control de Peso</b> en PDF, gratis.</p>
+    <form action="{{ url_for('control_peso') }}" method="POST">
+      <input type="text" name="nombre_lead" placeholder="Tu nombre" required>
+      <input type="text" name="telefono_lead" placeholder="Tu WhatsApp" required>
+      <button type="submit" class="modal-boton">⬇️ Descargar mi plantilla</button>
     </form>
     <p class="modal-nota">Solo usaré tus datos para acompañarte — nada de spam. 🌿</p>
   </div>
