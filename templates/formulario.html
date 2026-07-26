@@ -46,10 +46,6 @@
 
   <div class="rutas-guiadas" style="margin-top: 10px;">
     <button type="button" class="ruta-btn ruta-btn-recurso" onclick="document.getElementById('modal-recetario').classList.add('activo')">🍓 Descarga gratis mi Recetario de Batidos</button>
-    <button type="button" class="ruta-btn ruta-btn-recurso" onclick="document.getElementById('modal-control-peso').classList.add('activo')">⚖️ Descarga gratis mi Control de Peso</button>
-    <button type="button" class="ruta-btn ruta-btn-recurso" onclick="document.getElementById('modal-control-agua').classList.add('activo')">💧 Descarga gratis mi Control de Agua</button>
-    <button type="button" class="ruta-btn ruta-btn-recurso" onclick="document.getElementById('modal-control-caminatas').classList.add('activo')">🚶 Descarga gratis mi Control de Caminatas</button>
-    <button type="button" class="ruta-btn ruta-btn-recurso" onclick="document.getElementById('modal-habitos-mes').classList.add('activo')">📅 Descarga gratis mis Hábitos del Mes</button>
   </div>
 </div>
 
@@ -156,25 +152,68 @@
 </div>
 
 <div class="seccion">
-  <div class="seccion-titulo">💧 ¿Cuánta agua necesitas al día?</div>
-  <div class="calculadora">
-    <label for="calc-peso">Tu peso (kg)</label>
-    <input type="number" id="calc-peso" min="30" max="200" placeholder="Ej: 65">
+  <div class="mis-controles-caja">
+    <div class="seccion-titulo" style="margin-bottom:2px;">📋 Mis Controles</div>
+    <p class="mis-controles-subtitulo">Pequeños hábitos que se apuntan, se cumplen</p>
+    <p class="mis-controles-nota">Descarga tus plantillas, imprímelas y ponlas en la nevera ♡</p>
 
-    <label>Tu nivel de actividad</label>
-    <div class="actividad-opciones">
-      <label><input type="radio" name="actividad" value="0" checked><span>Sedentaria</span></label>
-      <label><input type="radio" name="actividad" value="0.35"><span>Moderada</span></label>
-      <label><input type="radio" name="actividad" value="0.7"><span>Activa</span></label>
+    <div class="calculadora calculadora-embebida">
+      <div class="seccion-titulo" style="font-size:1.05rem; margin-bottom:10px;">💧 ¿Cuánta agua necesitas al día?</div>
+      <label for="calc-peso">Tu peso (kg)</label>
+      <input type="number" id="calc-peso" min="30" max="200" placeholder="Ej: 65">
+
+      <label>Tu nivel de actividad</label>
+      <div class="actividad-opciones">
+        <label><input type="radio" name="actividad" value="0" checked><span>Sedentaria</span></label>
+        <label><input type="radio" name="actividad" value="0.35"><span>Moderada</span></label>
+        <label><input type="radio" name="actividad" value="0.7"><span>Activa</span></label>
+      </div>
+
+      <button type="button" class="calc-boton" onclick="calcularAgua()">Calcular</button>
+
+      <div class="calc-resultado" id="calc-resultado">
+        Deberías beber aproximadamente
+        <span id="calc-litros">-- L</span>
+        al día (unos <span id="calc-vasos">-- vasos</span> de 250ml)
+      </div>
     </div>
 
-    <button type="button" class="calc-boton" onclick="calcularAgua()">Calcular</button>
-
-    <div class="calc-resultado" id="calc-resultado">
-      Deberías beber aproximadamente
-      <span id="calc-litros">-- L</span>
-      al día (unos <span id="calc-vasos">-- vasos</span> de 250ml)
+    <div class="mini-controles-grid">
+      <div class="mini-control-card">
+        <div class="mini-control-icono" style="background:#7C4D9E;">⚖️</div>
+        <div class="mini-control-texto">
+          <h4>Control de peso</h4>
+          <p>6 semanas con peso, cintura y cómo te sientes</p>
+        </div>
+        <button type="button" class="mini-control-boton" onclick="document.getElementById('modal-control-peso').classList.add('activo')">⬇️ Descargar</button>
+      </div>
+      <div class="mini-control-card">
+        <div class="mini-control-icono" style="background:#C99A3B;">💧</div>
+        <div class="mini-control-texto">
+          <h4>Control de agua</h4>
+          <p>8 vasos al día para colorear, semana a semana</p>
+        </div>
+        <button type="button" class="mini-control-boton" onclick="document.getElementById('modal-control-agua').classList.add('activo')">⬇️ Descargar</button>
+      </div>
+      <div class="mini-control-card">
+        <div class="mini-control-icono" style="background:#6B8E5A;">🚶</div>
+        <div class="mini-control-texto">
+          <h4>Control de caminatas</h4>
+          <p>Tu semana de paseos: minutos, pasos y sensaciones</p>
+        </div>
+        <button type="button" class="mini-control-boton" onclick="document.getElementById('modal-control-caminatas').classList.add('activo')">⬇️ Descargar</button>
+      </div>
+      <div class="mini-control-card">
+        <div class="mini-control-icono" style="background:#D97BA0;">📅</div>
+        <div class="mini-control-texto">
+          <h4>Hábitos del mes</h4>
+          <p>31 días para marcar agua, paseos, sueño y más</p>
+        </div>
+        <button type="button" class="mini-control-boton" onclick="document.getElementById('modal-habitos-mes').classList.add('activo')">⬇️ Descargar</button>
+      </div>
     </div>
+
+    <p class="mis-controles-nota">📌 Imprímelas las veces que quieras — y si me enseñas tu plantilla completada por WhatsApp, ¡celebramos juntas tus logros! 💜</p>
   </div>
 </div>
 
