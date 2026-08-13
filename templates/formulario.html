@@ -198,7 +198,7 @@
     <div class="calc-mini">
       <div class="calc-mini-icono">🔥</div>
       <h4>Calorías diarias</h4>
-      <p>Calorías de mantenimiento según tu metabolismo basal.</p>
+      <p>Tu mantenimiento y un déficit moderado y saludable, según tu metabolismo basal.</p>
       <label>Sexo</label>
       <select id="cal-sexo">
         <option value="mujer">Mujer</option>
@@ -220,7 +220,8 @@
       </select>
       <button type="button" class="calc-boton calc-boton-lila" onclick="calcularCalorias()">Calcular</button>
       <div class="calc-resultado" id="cal-resultado">
-        Necesitas aproximadamente <span id="cal-valor">-- kcal</span> al día para mantener tu peso
+        Mantenimiento: <span id="cal-valor">-- kcal</span> al día<br>
+        <span class="calc-deficit-linea">Déficit moderado y saludable: <span id="cal-deficit">-- kcal</span> al día</span>
       </div>
     </div>
   </div>
@@ -521,8 +522,19 @@ function calcularCalorias() {
   }
   let tmb = (10 * peso) + (6.25 * altura) - (5 * edad);
   tmb += (sexo === 'mujer') ? -161 : 5;
-  const total = Math.round(tmb * actividad);
-  document.getElementById('cal-valor').textContent = total + ' kcal';
+  const mantenimiento = Math.round(tmb * actividad);
+
+  // Deficit moderado y seguro (15%), nunca por debajo del minimo recomendado
+  const minimoSeguro = (sexo === 'mujer') ? 1200 : 1500;
+  let deficit = Math.round(mantenimiento * 0.85);
+  let avisoMinimo = '';
+  if (deficit < minimoSeguro) {
+    deficit = minimoSeguro;
+    avisoMinimo = ' (ajustado al mínimo saludable recomendado)';
+  }
+
+  document.getElementById('cal-valor').textContent = mantenimiento + ' kcal';
+  document.getElementById('cal-deficit').textContent = deficit + ' kcal' + avisoMinimo;
   document.getElementById('cal-resultado').classList.add('visible');
 }
 </script>
