@@ -152,34 +152,90 @@
 </div>
 
 <div class="seccion">
+  <div class="calc-eyebrow">✦ HERRAMIENTAS GRATUITAS</div>
+  <div class="seccion-titulo" style="font-size:1.7rem;">Calcula tus <em>necesidades</em></div>
+  <p class="mis-controles-subtitulo" style="margin-bottom:26px;">Conoce tus objetivos diarios de proteínas, agua y calorías.</p>
+
+  <div class="calc-3-grid">
+    <div class="calc-mini">
+      <div class="calc-mini-icono">🍗</div>
+      <h4>Proteínas diarias</h4>
+      <p>¿Cuántas proteínas necesitas según tu peso y actividad?</p>
+      <label>Peso (kg)</label>
+      <input type="number" id="prot-peso" min="30" max="200" placeholder="Ej: 65">
+      <label>Nivel de actividad</label>
+      <select id="prot-actividad">
+        <option value="0.8">Sedentaria</option>
+        <option value="1.2">Moderada</option>
+        <option value="1.6">Activa (ejercicio intenso 5+ días)</option>
+      </select>
+      <button type="button" class="calc-boton calc-boton-lila" onclick="calcularProteina()">Calcular</button>
+      <div class="calc-resultado" id="prot-resultado">
+        Necesitas aproximadamente <span id="prot-valor">-- g</span> de proteína al día
+      </div>
+    </div>
+
+    <div class="calc-mini">
+      <div class="calc-mini-icono">💧</div>
+      <h4>Agua diaria</h4>
+      <p>La cantidad de agua que tu cuerpo necesita cada día.</p>
+      <label>Peso (kg)</label>
+      <input type="number" id="agua-peso" min="30" max="200" placeholder="Ej: 65">
+      <label>Nivel de actividad</label>
+      <select id="agua-actividad">
+        <option value="0">Sedentaria</option>
+        <option value="0.35">Moderada</option>
+        <option value="0.7">Activa</option>
+      </select>
+      <button type="button" class="calc-boton calc-boton-lila" onclick="calcularAgua()">Calcular</button>
+      <div class="calc-resultado" id="agua-resultado">
+        Deberías beber aproximadamente
+        <span id="agua-litros">-- L</span>
+        al día (unos <span id="agua-vasos">-- vasos</span> de 250ml)
+      </div>
+    </div>
+
+    <div class="calc-mini">
+      <div class="calc-mini-icono">🔥</div>
+      <h4>Calorías diarias</h4>
+      <p>Calorías de mantenimiento según tu metabolismo basal.</p>
+      <label>Sexo</label>
+      <select id="cal-sexo">
+        <option value="mujer">Mujer</option>
+        <option value="hombre">Hombre</option>
+      </select>
+      <label>Peso (kg)</label>
+      <input type="number" id="cal-peso" min="30" max="200" placeholder="Ej: 65">
+      <label>Altura (cm)</label>
+      <input type="number" id="cal-altura" min="120" max="220" placeholder="Ej: 165">
+      <label>Edad</label>
+      <input type="number" id="cal-edad" min="14" max="99" placeholder="Ej: 35">
+      <label>Nivel de actividad</label>
+      <select id="cal-actividad">
+        <option value="1.2">Sedentaria</option>
+        <option value="1.375">Ligeramente activa (1-3 días/sem)</option>
+        <option value="1.55">Moderada (3-5 días/sem)</option>
+        <option value="1.725">Activa (6-7 días/sem)</option>
+        <option value="1.9">Muy activa (ejercicio intenso diario)</option>
+      </select>
+      <button type="button" class="calc-boton calc-boton-lila" onclick="calcularCalorias()">Calcular</button>
+      <div class="calc-resultado" id="cal-resultado">
+        Necesitas aproximadamente <span id="cal-valor">-- kcal</span> al día para mantener tu peso
+      </div>
+    </div>
+  </div>
+  <p class="mis-controles-nota" style="margin-top:22px;">Cálculo orientativo. Si tienes alguna condición médica, consulta con tu profesional de salud.</p>
+</div>
+
+<div class="seccion">
   <div class="mis-controles-caja">
     <div class="seccion-titulo" style="margin-bottom:2px;">📋 Mis Controles</div>
     <p class="mis-controles-subtitulo">Pequeños hábitos que se apuntan, se cumplen</p>
     <p class="mis-controles-nota">Descarga tus plantillas, imprímelas y ponlas en la nevera ♡</p>
 
-    <div class="calculadora calculadora-embebida">
-      <div class="seccion-titulo" style="font-size:1.05rem; margin-bottom:10px;">💧 ¿Cuánta agua necesitas al día?</div>
-      <label for="calc-peso">Tu peso (kg)</label>
-      <input type="number" id="calc-peso" min="30" max="200" placeholder="Ej: 65">
-
-      <label>Tu nivel de actividad</label>
-      <div class="actividad-opciones">
-        <label><input type="radio" name="actividad" value="0" checked><span>Sedentaria</span></label>
-        <label><input type="radio" name="actividad" value="0.35"><span>Moderada</span></label>
-        <label><input type="radio" name="actividad" value="0.7"><span>Activa</span></label>
-      </div>
-
-      <button type="button" class="calc-boton" onclick="calcularAgua()">Calcular</button>
-
-      <div class="calc-resultado" id="calc-resultado">
-        Deberías beber aproximadamente
-        <span id="calc-litros">-- L</span>
-        al día (unos <span id="calc-vasos">-- vasos</span> de 250ml)
-      </div>
-    </div>
-
     <div class="mini-controles-grid">
       <div class="mini-control-card">
+
         <div class="mini-control-icono" style="background:#7C4D9E;">⚖️</div>
         <div class="mini-control-texto">
           <h4>Control de peso</h4>
@@ -428,17 +484,46 @@ function cerrarLightbox() {
 }
 
 function calcularAgua() {
-  const peso = parseFloat(document.getElementById('calc-peso').value);
-  const actividad = parseFloat(document.querySelector('input[name="actividad"]:checked').value);
+  const peso = parseFloat(document.getElementById('agua-peso').value);
+  const actividad = parseFloat(document.getElementById('agua-actividad').value);
   if (!peso || peso <= 0) {
     alert('Escribe tu peso para calcularlo.');
     return;
   }
   const litros = (peso * 0.033) + actividad;
   const vasos = Math.round((litros * 1000) / 250);
-  document.getElementById('calc-litros').textContent = litros.toFixed(1) + ' L';
-  document.getElementById('calc-vasos').textContent = vasos + ' vasos';
-  document.getElementById('calc-resultado').classList.add('visible');
+  document.getElementById('agua-litros').textContent = litros.toFixed(1) + ' L';
+  document.getElementById('agua-vasos').textContent = vasos + ' vasos';
+  document.getElementById('agua-resultado').classList.add('visible');
+}
+
+function calcularProteina() {
+  const peso = parseFloat(document.getElementById('prot-peso').value);
+  const factor = parseFloat(document.getElementById('prot-actividad').value);
+  if (!peso || peso <= 0) {
+    alert('Escribe tu peso para calcularlo.');
+    return;
+  }
+  const gramos = Math.round(peso * factor);
+  document.getElementById('prot-valor').textContent = gramos + ' g';
+  document.getElementById('prot-resultado').classList.add('visible');
+}
+
+function calcularCalorias() {
+  const peso = parseFloat(document.getElementById('cal-peso').value);
+  const altura = parseFloat(document.getElementById('cal-altura').value);
+  const edad = parseFloat(document.getElementById('cal-edad').value);
+  const actividad = parseFloat(document.getElementById('cal-actividad').value);
+  const sexo = document.getElementById('cal-sexo').value;
+  if (!peso || !altura || !edad) {
+    alert('Rellena peso, altura y edad para calcularlo.');
+    return;
+  }
+  let tmb = (10 * peso) + (6.25 * altura) - (5 * edad);
+  tmb += (sexo === 'mujer') ? -161 : 5;
+  const total = Math.round(tmb * actividad);
+  document.getElementById('cal-valor').textContent = total + ' kcal';
+  document.getElementById('cal-resultado').classList.add('visible');
 }
 </script>
 
