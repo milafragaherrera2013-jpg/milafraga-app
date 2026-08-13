@@ -909,6 +909,13 @@ table.pedidos tr:last-child td { border-bottom: none; }
     cursor: pointer;
   }
   .calc-boton-lila:hover { opacity: .92; }
+  .calc-deficit-linea {
+    display: block;
+    margin-top: 6px;
+    padding-top: 8px;
+    border-top: 1px dashed rgba(124,77,158,.25);
+    font-size: .88em;
+  }
 
   .mis-controles-caja {
     background: white;
