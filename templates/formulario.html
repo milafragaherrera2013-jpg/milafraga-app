@@ -1,554 +1,1291 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Catálogo · {{ negocio.marca }}</title>
-<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
-<body>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,600&family=Lato:wght@400;700&display=swap');
 
-{% macro tarjeta(item) %}
-<div class="card-producto">
-  <img src="{{ url_for('static', filename='img/' + item.img if item.img else 'img/placeholder.png') }}" alt="{{ item.nombre }}" onerror="this.src='{{ url_for('static', filename='img/placeholder.png') }}'" onclick="abrirLightbox(this.src, this.alt)">
-  <div class="nombre">{{ item.nombre }}</div>
-  <div class="detalle">{{ item.detalle }}</div>
-  {% if item.descripcion %}
-  <div class="descripcion">{{ item.descripcion }}</div>
-  {% endif %}
-  {% if item.precio_antes %}
-  <div><span class="precio-antes">{{ item.precio_antes }}€</span> <span class="descuento">-{{ item.descuento }}</span></div>
-  {% endif %}
-  <div class="precio">{{ item.precio }} €</div>
-  <div class="stepper">
-    <button type="button" class="stepper-btn menos" onclick="cambiarCantidad('{{ item.id }}', -1)">−</button>
-    <input type="number" id="cantidad_{{ item.id }}" name="cantidad_{{ item.id }}" min="0" value="0" readonly>
-    <button type="button" class="stepper-btn mas" onclick="cambiarCantidad('{{ item.id }}', 1)">+</button>
-  </div>
-</div>
-{% endmacro %}
-
-<div class="hero">
-  <img class="logo-marca" src="{{ url_for('static', filename='img/logo_acuarela.png') }}" alt="{{ negocio.marca }}">
-  <p class="hero-frase">"Soy Mila. Después de cambiar mis propios hábitos, acompaño a mujeres que quieren volver a cuidarse de una forma sencilla y real."</p>
-  <div class="hero-badges">
-    <div class="hero-badge">🚚 Envío gratis desde 50€</div>
-    <div class="hero-badge">💛 Atención cercana y personal</div>
-    <div class="hero-badge">🌿 Ingredientes naturales</div>
-  </div>
-
-  <div class="rutas-guiadas">
-    <a href="#promos" class="ruta-btn">🌸 No sé por dónde empezar</a>
-    <a href="#individuales" class="ruta-btn">☕ Quiero empezar mi rutina</a>
-    <a href="https://wa.me/{{ cobro.whatsapp | replace('+','') }}?text=Hola%20Mila%2C%20me%20gustar%C3%ADa%20que%20me%20aconsejaras%20qu%C3%A9%20producto%20encaja%20mejor%20conmigo"
-       class="ruta-btn ruta-btn-whatsapp" target="_blank">💜 Quiero que Mila me aconseje</a>
-  </div>
-
-  <div class="rutas-guiadas" style="margin-top: 10px;">
-    <button type="button" class="ruta-btn ruta-btn-recurso" onclick="document.getElementById('modal-recetario').classList.add('activo')">🍓 Descarga gratis mi Recetario de Batidos</button>
-  </div>
-</div>
-
-<div class="modal-overlay" id="modal-recetario">
-  <div class="modal-caja">
-    <span class="modal-cerrar" onclick="document.getElementById('modal-recetario').classList.remove('activo')">&times;</span>
-    <h3>Casi lo tienes 💜</h3>
-    <p>Dime tu nombre y tu WhatsApp y te llevas el <b>Recetario de Batidos</b> en PDF, gratis.</p>
-    <form action="{{ url_for('recetario_batidos') }}" method="POST">
-      <input type="text" name="nombre_lead" placeholder="Tu nombre" required>
-      <input type="text" name="telefono_lead" placeholder="Tu WhatsApp" required>
-      <button type="submit" class="modal-boton">⬇️ Descargar mi recetario</button>
-    </form>
-    <p class="modal-nota">Solo usaré tus datos para acompañarte — nada de spam. 🌿</p>
-  </div>
-</div>
-
-<div class="modal-overlay" id="modal-control-peso">
-  <div class="modal-caja">
-    <span class="modal-cerrar" onclick="document.getElementById('modal-control-peso').classList.remove('activo')">&times;</span>
-    <h3>Casi lo tienes 💜</h3>
-    <p>Dime tu nombre y tu WhatsApp y te llevas tu plantilla de <b>Control de Peso</b> en PDF, gratis.</p>
-    <form action="{{ url_for('control_peso') }}" method="POST">
-      <input type="text" name="nombre_lead" placeholder="Tu nombre" required>
-      <input type="text" name="telefono_lead" placeholder="Tu WhatsApp" required>
-      <button type="submit" class="modal-boton">⬇️ Descargar mi plantilla</button>
-    </form>
-    <p class="modal-nota">Solo usaré tus datos para acompañarte — nada de spam. 🌿</p>
-  </div>
-</div>
-
-<div class="modal-overlay" id="modal-control-agua">
-  <div class="modal-caja">
-    <span class="modal-cerrar" onclick="document.getElementById('modal-control-agua').classList.remove('activo')">&times;</span>
-    <h3>Casi lo tienes 💜</h3>
-    <p>Dime tu nombre y tu WhatsApp y te llevas tu plantilla de <b>Control de Agua</b> en PDF, gratis.</p>
-    <form action="{{ url_for('control_agua') }}" method="POST">
-      <input type="text" name="nombre_lead" placeholder="Tu nombre" required>
-      <input type="text" name="telefono_lead" placeholder="Tu WhatsApp" required>
-      <button type="submit" class="modal-boton">⬇️ Descargar mi plantilla</button>
-    </form>
-    <p class="modal-nota">Solo usaré tus datos para acompañarte — nada de spam. 🌿</p>
-  </div>
-</div>
-
-<div class="modal-overlay" id="modal-control-caminatas">
-  <div class="modal-caja">
-    <span class="modal-cerrar" onclick="document.getElementById('modal-control-caminatas').classList.remove('activo')">&times;</span>
-    <h3>Casi lo tienes 💜</h3>
-    <p>Dime tu nombre y tu WhatsApp y te llevas tu plantilla de <b>Control de Caminatas</b> en PDF, gratis.</p>
-    <form action="{{ url_for('control_caminatas') }}" method="POST">
-      <input type="text" name="nombre_lead" placeholder="Tu nombre" required>
-      <input type="text" name="telefono_lead" placeholder="Tu WhatsApp" required>
-      <button type="submit" class="modal-boton">⬇️ Descargar mi plantilla</button>
-    </form>
-    <p class="modal-nota">Solo usaré tus datos para acompañarte — nada de spam. 🌿</p>
-  </div>
-</div>
-
-<div class="modal-overlay" id="modal-habitos-mes">
-  <div class="modal-caja">
-    <span class="modal-cerrar" onclick="document.getElementById('modal-habitos-mes').classList.remove('activo')">&times;</span>
-    <h3>Casi lo tienes 💜</h3>
-    <p>Dime tu nombre y tu WhatsApp y te llevas tu calendario de <b>Hábitos del Mes</b> en PDF, gratis.</p>
-    <form action="{{ url_for('habitos_mes') }}" method="POST">
-      <input type="text" name="nombre_lead" placeholder="Tu nombre" required>
-      <input type="text" name="telefono_lead" placeholder="Tu WhatsApp" required>
-      <button type="submit" class="modal-boton">⬇️ Descargar mi calendario</button>
-    </form>
-    <p class="modal-nota">Solo usaré tus datos para acompañarte — nada de spam. 🌿</p>
-  </div>
-</div>
-
-<div class="historia-wrap">
-  <img class="historia-foto" src="{{ url_for('static', filename='img/mila_transformacion.jpg') }}" alt="Mi cambio de hábitos 2024-2026">
-</div>
-
-<div class="seccion">
-  <div class="seccion-titulo">Cómo funciona</div>
-  <div class="como-funciona">
-    <div class="paso-card">
-      <div class="paso-numero">1</div>
-      <div class="paso-titulo">Elige tu producto</div>
-      <div class="paso-texto">Mira el catálogo o cuéntame qué necesitas y te aconsejo.</div>
-    </div>
-    <div class="paso-card">
-      <div class="paso-numero">2</div>
-      <div class="paso-titulo">Hablamos por WhatsApp</div>
-      <div class="paso-texto">Resolvemos dudas y confirmamos tu pedido, sin compromiso.</div>
-    </div>
-    <div class="paso-card">
-      <div class="paso-numero">3</div>
-      <div class="paso-titulo">Lo recibes en casa</div>
-      <div class="paso-texto">Envío rápido y acompañamiento mientras lo pruebas.</div>
-    </div>
-  </div>
-</div>
-
-<div class="seccion-tinte">
-<div class="seccion">
-  <img src="{{ url_for('static', filename='img/mi_proposito.jpg') }}" alt="Mi propósito y mis valores"
-       style="width:100%; max-width:900px; display:block; margin:0 auto; border-radius:20px; box-shadow:0 8px 24px rgba(124,77,158,.12);">
-</div>
-</div>
-
-<div class="seccion">
-  <div class="calc-eyebrow">✦ HERRAMIENTAS GRATUITAS</div>
-  <div class="seccion-titulo" style="font-size:1.7rem;">Calcula tus <em>necesidades</em></div>
-  <p class="mis-controles-subtitulo" style="margin-bottom:26px;">Conoce tus objetivos diarios de proteínas, agua y calorías.</p>
-
-  <div class="calc-3-grid">
-    <div class="calc-mini">
-      <div class="calc-mini-icono">🍗</div>
-      <h4>Proteínas diarias</h4>
-      <p>¿Cuántas proteínas necesitas según tu peso y actividad?</p>
-      <label>Peso (kg)</label>
-      <input type="number" id="prot-peso" min="30" max="200" placeholder="Ej: 65">
-      <label>Nivel de actividad</label>
-      <select id="prot-actividad">
-        <option value="0.8">Sedentaria</option>
-        <option value="1.2">Moderada</option>
-        <option value="1.6">Activa (ejercicio intenso 5+ días)</option>
-      </select>
-      <button type="button" class="calc-boton calc-boton-lila" onclick="calcularProteina()">Calcular</button>
-      <div class="calc-resultado" id="prot-resultado">
-        Necesitas aproximadamente <span id="prot-valor">-- g</span> de proteína al día
-      </div>
-    </div>
-
-    <div class="calc-mini">
-      <div class="calc-mini-icono">💧</div>
-      <h4>Agua diaria</h4>
-      <p>La cantidad de agua que tu cuerpo necesita cada día.</p>
-      <label>Peso (kg)</label>
-      <input type="number" id="agua-peso" min="30" max="200" placeholder="Ej: 65">
-      <label>Nivel de actividad</label>
-      <select id="agua-actividad">
-        <option value="0">Sedentaria</option>
-        <option value="0.35">Moderada</option>
-        <option value="0.7">Activa</option>
-      </select>
-      <button type="button" class="calc-boton calc-boton-lila" onclick="calcularAgua()">Calcular</button>
-      <div class="calc-resultado" id="agua-resultado">
-        Deberías beber aproximadamente
-        <span id="agua-litros">-- L</span>
-        al día (unos <span id="agua-vasos">-- vasos</span> de 250ml)
-      </div>
-    </div>
-
-    <div class="calc-mini">
-      <div class="calc-mini-icono">🔥</div>
-      <h4>Calorías diarias</h4>
-      <p>Tu mantenimiento y un déficit moderado y saludable, según tu metabolismo basal.</p>
-      <label>Sexo</label>
-      <select id="cal-sexo">
-        <option value="mujer">Mujer</option>
-        <option value="hombre">Hombre</option>
-      </select>
-      <label>Peso (kg)</label>
-      <input type="number" id="cal-peso" min="30" max="200" placeholder="Ej: 65">
-      <label>Altura (cm)</label>
-      <input type="number" id="cal-altura" min="120" max="220" placeholder="Ej: 165">
-      <label>Edad</label>
-      <input type="number" id="cal-edad" min="14" max="99" placeholder="Ej: 35">
-      <label>Nivel de actividad</label>
-      <select id="cal-actividad">
-        <option value="1.2">Sedentaria</option>
-        <option value="1.375">Ligeramente activa (1-3 días/sem)</option>
-        <option value="1.55">Moderada (3-5 días/sem)</option>
-        <option value="1.725">Activa (6-7 días/sem)</option>
-        <option value="1.9">Muy activa (ejercicio intenso diario)</option>
-      </select>
-      <button type="button" class="calc-boton calc-boton-lila" onclick="calcularCalorias()">Calcular</button>
-      <div class="calc-resultado" id="cal-resultado">
-        Mantenimiento: <span id="cal-valor">-- kcal</span> al día<br>
-        <span class="calc-deficit-linea">Déficit moderado y saludable: <span id="cal-deficit">-- kcal</span> al día</span>
-      </div>
-    </div>
-  </div>
-  <p class="mis-controles-nota" style="margin-top:22px;">Cálculo orientativo. Si tienes alguna condición médica, consulta con tu profesional de salud.</p>
-</div>
-
-<div class="seccion">
-  <div class="mis-controles-caja">
-    <div class="seccion-titulo" style="margin-bottom:2px;">📋 Mis Controles</div>
-    <p class="mis-controles-subtitulo">Pequeños hábitos que se apuntan, se cumplen</p>
-    <p class="mis-controles-nota">Descarga tus plantillas, imprímelas y ponlas en la nevera ♡</p>
-
-    <div class="mini-controles-grid">
-      <div class="mini-control-card">
-
-        <div class="mini-control-icono" style="background:#7C4D9E;">⚖️</div>
-        <div class="mini-control-texto">
-          <h4>Control de peso</h4>
-          <p>6 semanas con peso, cintura y cómo te sientes</p>
-        </div>
-        <button type="button" class="mini-control-boton" onclick="document.getElementById('modal-control-peso').classList.add('activo')">⬇️ Descargar</button>
-      </div>
-      <div class="mini-control-card">
-        <div class="mini-control-icono" style="background:#C99A3B;">💧</div>
-        <div class="mini-control-texto">
-          <h4>Control de agua</h4>
-          <p>8 vasos al día para colorear, semana a semana</p>
-        </div>
-        <button type="button" class="mini-control-boton" onclick="document.getElementById('modal-control-agua').classList.add('activo')">⬇️ Descargar</button>
-      </div>
-      <div class="mini-control-card">
-        <div class="mini-control-icono" style="background:#6B8E5A;">🚶</div>
-        <div class="mini-control-texto">
-          <h4>Control de caminatas</h4>
-          <p>Tu semana de paseos: minutos, pasos y sensaciones</p>
-        </div>
-        <button type="button" class="mini-control-boton" onclick="document.getElementById('modal-control-caminatas').classList.add('activo')">⬇️ Descargar</button>
-      </div>
-      <div class="mini-control-card">
-        <div class="mini-control-icono" style="background:#D97BA0;">📅</div>
-        <div class="mini-control-texto">
-          <h4>Hábitos del mes</h4>
-          <p>31 días para marcar agua, paseos, sueño y más</p>
-        </div>
-        <button type="button" class="mini-control-boton" onclick="document.getElementById('modal-habitos-mes').classList.add('activo')">⬇️ Descargar</button>
-      </div>
-    </div>
-
-    <p class="mis-controles-nota">📌 Imprímelas las veces que quieras — y si me enseñas tu plantilla completada por WhatsApp, ¡celebramos juntas tus logros! 💜</p>
-  </div>
-</div>
-
-<div class="seccion">
-  <div class="seccion-titulo">✨ Conoce nuestros productos</div>
-  <div class="carrusel-wrap">
-    <div class="producto-slide">
-      <img src="{{ url_for('static', filename='img/cafe50_30.png') }}" alt="Café 5.0">
-      <h4>Café 5.0</h4>
-      <p class="ingredientes">Café verde · Naranja amarga · Guaraná</p>
-      <ul class="producto-beneficios">
-        <li>Energía natural para arrancar el día</li>
-        <li>Favorece tu rutina de bienestar</li>
-        <li>El café de siempre, con un extra</li>
-      </ul>
-      <p class="producto-formato">30 sobres · 1 mes</p>
-    </div>
-    <div class="producto-slide">
-      <img src="{{ url_for('static', filename='img/id_30.png') }}" alt="Bebida Inteligente">
-      <h4>Bebida Inteligente</h4>
-      <p class="ingredientes">Jengibre · Inulina · Hibisco</p>
-      <ul class="producto-beneficios">
-        <li>Te ayuda a sentirte más ligera</li>
-        <li>Ideal para tu rutina diaria</li>
-        <li>Un momento de cuidado en tu día</li>
-      </ul>
-      <p class="producto-formato">30 sobres · 1 mes</p>
-    </div>
-    <div class="producto-slide">
-      <img src="{{ url_for('static', filename='img/choco_30.png') }}" alt="ChocoSlender">
-      <h4>ChocoSlender</h4>
-      <p class="ingredientes">Cacao · Complemento alimenticio</p>
-      <ul class="producto-beneficios">
-        <li>El capricho de chocolate sin renunciar al sabor</li>
-        <li>Pensado para acompañar tus antojos dulces</li>
-        <li>Se prepara en segundos</li>
-      </ul>
-      <p class="producto-formato">Bote de 300 g</p>
-    </div>
-    <div class="producto-slide">
-      <img src="{{ url_for('static', filename='img/elixir_30.png') }}" alt="Elixir de Juventud">
-      <h4>Elixir de Juventud</h4>
-      <p class="ingredientes">Colágeno · Magnesio · Glucosamina · Condroitina · Vitamina C</p>
-      <ul class="producto-beneficios">
-        <li>Cuida tu piel desde dentro</li>
-        <li>Acompaña tus articulaciones</li>
-        <li>Un ritual de belleza diario</li>
-      </ul>
-      <p class="producto-formato">Bote de 400 g</p>
-    </div>
-    <div class="producto-slide">
-      <img src="{{ url_for('static', filename='img/cania.png') }}" alt="Caña Zero">
-      <h4>Caña Zero</h4>
-      <p class="ingredientes">Edulcorante a base de eritritol</p>
-      <ul class="producto-beneficios">
-        <li>Endulza sin calorías</li>
-        <li>Perfecto para acompañar tus bebidas</li>
-        <li>Apto para toda la familia</li>
-      </ul>
-      <p class="producto-formato">Sobres individuales</p>
-    </div>
-    <div class="producto-slide">
-      <img src="{{ url_for('static', filename='img/combo_bienestar.png') }}" alt="Combo Bienestar Integral">
-      <h4>Combo Bienestar Integral</h4>
-      <p class="ingredientes">Nuestros productos estrella, juntos</p>
-      <ul class="producto-beneficios">
-        <li>La forma más completa de empezar</li>
-        <li>Pensado para tu día a día</li>
-        <li>Mejor precio que por separado</li>
-      </ul>
-      <p class="producto-formato">Pack completo</p>
-    </div>
-  </div>
-  <p class="registro-sanitario">Registro Sanitario (RGSEAA): 26.024066/C y 31.03706/C — Registro General Sanitario de Empresas Alimentarias y Alimentos. Complementos alimenticios Artabria.</p>
-</div>
-
-<div class="container">
-
-  {% with messages = get_flashed_messages() %}
-    {% if messages %}
-      {% for m in messages %}<div class="flash">{{ m }}</div>{% endfor %}
-    {% endif %}
-  {% endwith %}
-
-  <form method="post" action="{{ url_for('crear_pedido') }}">
-
-    <div class="grupo-titulo" id="promos">🔥 Promociones y edición limitada</div>
-    <div class="grid-productos">
-      {% for item in promos %}{{ tarjeta(item) }}{% endfor %}
-    </div>
-
-    <div id="individuales">
-      {% for cat in categorias %}
-      <details class="acordeon">
-        <summary class="acordeon-titulo">
-          <span class="acordeon-titulo-texto">
-            <img class="acordeon-miniatura" src="{{ url_for('static', filename='img/' + cat.imagen) }}" alt="">
-            {{ cat.nombre }}
-          </span>
-        </summary>
-        <div class="grid-productos acordeon-contenido">
-          {% for item in cat.productos %}{{ tarjeta(item) }}{% endfor %}
-        </div>
-      </details>
-      {% endfor %}
-
-      <details class="acordeon">
-        <summary class="acordeon-titulo">
-          <span class="acordeon-titulo-texto">
-            <img class="acordeon-miniatura" src="{{ url_for('static', filename='img/combo_bienestar.png') }}" alt="">
-            🎁 Combos
-          </span>
-        </summary>
-        <div class="grid-productos acordeon-contenido">
-          {% for item in combos %}{{ tarjeta(item) }}{% endfor %}
-        </div>
-      </details>
-    </div>
-
-    <div class="form-datos">
-      <h3>Tus datos</h3>
-      <label>Nombre y apellidos *</label>
-      <input type="text" name="cliente" required>
-
-      <label>Teléfono / WhatsApp</label>
-      <input type="text" name="telefono_cliente">
-
-      <label>Email (opcional)</label>
-      <input type="email" name="email_cliente" placeholder="tuemail@ejemplo.com">
-
-      <label>Código de bienvenida (opcional)</label>
-      <input type="text" name="codigo_descuento" placeholder="¿Tienes un código? Escríbelo aquí (ej. BIENVENIDAWEB)">
-
-      <label>Calle</label>
-      <input type="text" name="direccion_calle" placeholder="Nombre de la calle">
-
-      <div class="fila-direccion">
-        <div>
-          <label>Número</label>
-          <input type="text" name="direccion_numero" placeholder="Ej: 12">
-        </div>
-        <div>
-          <label>Piso / puerta</label>
-          <input type="text" name="direccion_piso" placeholder="Ej: 2º A">
-        </div>
-      </div>
-
-      <label>Localidad</label>
-      <input type="text" name="direccion_localidad" placeholder="Ej: Cádiz">
-
-      <div class="fila-direccion">
-        <div>
-          <label>Provincia</label>
-          <input type="text" name="direccion_provincia" placeholder="Ej: Cádiz">
-        </div>
-        <div>
-          <label>Código postal</label>
-          <input type="text" name="direccion_cp" placeholder="Ej: 11001">
-        </div>
-      </div>
-
-      <label>¿Algo que deba saber? (alergias, preferencias, horario de entrega...)</label>
-      <textarea name="notas" rows="3"></textarea>
-
-      <label>¿Cómo prefieres pagar?</label>
-      <div class="metodos-pago">
-        <label class="metodo-opcion">
-          <input type="radio" name="metodo_pago" value="Efectivo (entrega en mano)" checked>
-          <span>💶 Efectivo (entrega en mano)</span>
-        </label>
-        <label class="metodo-opcion">
-          <input type="radio" name="metodo_pago" value="Bizum">
-          <span>📲 Bizum</span>
-        </label>
-        <label class="metodo-opcion">
-          <input type="radio" name="metodo_pago" value="Transferencia bancaria">
-          <span>🏦 Transferencia bancaria</span>
-        </label>
-        <label class="metodo-opcion">
-          <input type="radio" name="metodo_pago" value="Contrareembolso">
-          <span>📦 Contrareembolso</span>
-        </label>
-      </div>
-
-      <p style="font-size:13px; color:var(--texto-suave); margin-top:14px; text-align:center;">
-        🚚 Envío gratis a partir de 50€ de pedido. Pedidos inferiores: 3€ de gastos de envío.<br>
-        📦 El contrareembolso siempre incluye 3€ de gastos de envío, sea cual sea el importe.
-      </p>
-
-      <button type="submit" class="btn-enviar">Enviar mi pedido</button>
-    </div>
-
-  </form>
-</div>
-
-<script>
-function cambiarCantidad(id, delta) {
-  const input = document.getElementById('cantidad_' + id);
-  let val = parseInt(input.value || '0', 10) + delta;
-  if (val < 0) val = 0;
-  input.value = val;
+:root {
+  --aqua: #8FCBC0;
+  --aqua-dark: #5FAEA2;
+  --lila: #B68BD6;
+  --lila-dark: #7C4D9E;
+  --lila-suave: #D9CBEA;
+  --salvia: #A9C2AC;
+  --dorado: #C99A3B;
+  --crema: #FFF9F3;
+  --texto: #1C1C1C;
+  --texto-suave: #6B6B6B;
+  --borde: #EDE1F5;
 }
 
-function abrirLightbox(src, alt) {
-  document.getElementById('lightbox-img').src = src;
-  document.getElementById('lightbox-img').alt = alt;
-  document.getElementById('lightbox').classList.add('activo');
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: 'Lato', sans-serif;
+  color: var(--texto);
+  background-color: var(--crema);
+  background-image: linear-gradient(160deg, #FFF9F3 0%, #F7EEFB 60%, #FFF9F3 100%);
+  min-height: 100vh;
 }
 
-function cerrarLightbox() {
-  document.getElementById('lightbox').classList.remove('activo');
+h1, h2, h3 {
+  font-family: 'Playfair Display', serif;
+  margin: 0 0 8px 0;
 }
 
-function calcularAgua() {
-  const peso = parseFloat(document.getElementById('agua-peso').value);
-  const actividad = parseFloat(document.getElementById('agua-actividad').value);
-  if (!peso || peso <= 0) {
-    alert('Escribe tu peso para calcularlo.');
-    return;
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 18px 28px;
+  background: rgba(255,255,255,0.7);
+  border-bottom: 1px solid var(--borde);
+  backdrop-filter: blur(6px);
+}
+
+.topbar img { height: 48px; }
+
+.topbar .marca {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--aqua-dark);
+}
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 28px 20px 60px;
+}
+
+.stats {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.stat-card {
+  flex: 1;
+  min-width: 160px;
+  background: white;
+  border-radius: 14px;
+  padding: 18px 20px;
+  box-shadow: 0 4px 16px rgba(150,130,190,0.10);
+  border: 1px solid var(--borde);
+}
+
+.stat-card .num {
+  font-family: 'Playfair Display', serif;
+  font-size: 28px;
+  color: var(--lila-dark);
+}
+
+.stat-card .label {
+  color: var(--texto-suave);
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.filtros {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+
+.filtros a {
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid var(--borde);
+  background: white;
+  color: var(--texto-suave);
+  text-decoration: none;
+  font-size: 13px;
+}
+
+.filtros a.activo, .filtros a:hover {
+  background: var(--aqua);
+  color: white;
+  border-color: var(--aqua);
+}
+
+table.pedidos {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(150,130,190,0.10);
+}
+
+table.pedidos th {
+  background: var(--lila);
+  color: white;
+  text-align: left;
+  padding: 12px 14px;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+table.pedidos td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--borde);
+  font-size: 14px;
+  vertical-align: top;
+}
+
+table.pedidos tr:last-child td { border-bottom: none; }
+
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+}
+.badge.Nuevo { background: #FDECC8; color: #9A6B00; }
+.badge.Confirmado { background: #DCEFFB; color: #1D6FA5; }
+.badge.Enviado { background: #DFF3E3; color: #2E8B57; }
+.badge.Entregado { background: #E3E9C2; color: #556B2F; }
+
+.acciones a, .acciones select {
+  font-size: 12px;
+  margin-right: 6px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  border: 1px solid var(--borde);
+  text-decoration: none;
+  color: var(--texto);
+  background: var(--crema);
+}
+
+.acciones a.factura { background: var(--aqua); color: white; border-color: var(--aqua); }
+.acciones a.etiqueta { background: var(--lila); color: white; border-color: var(--lila); }
+
+.btn-eliminar {
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 8px;
+  border: 1px solid #E8B4B0;
+  background: #FCE3E0;
+  cursor: pointer;
+}
+
+.btn-eliminar:hover {
+  background: #F5A9A3;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--texto-suave);
+}
+
+/* ---- FORMULARIO / CATALOGO ---- */
+.hero {
+  position: relative;
+  text-align: center;
+  padding: 50px 20px 30px;
+  overflow: hidden;
+}
+
+.hero::before, .hero::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(40px);
+  z-index: 0;
+  opacity: 0.35;
+}
+
+.hero::before {
+  width: 220px;
+  height: 220px;
+  background: var(--salvia);
+  top: -60px;
+  left: -60px;
+}
+
+.hero::after {
+  width: 260px;
+  height: 260px;
+  background: var(--lila-suave);
+  top: -80px;
+  right: -80px;
+}
+
+.hero > * {
+  position: relative;
+  z-index: 1;
+}
+
+.hero img.logo-marca {
+  max-width: 260px;
+  margin-bottom: 10px;
+}
+
+.hero p {
+  color: var(--texto-suave);
+  font-size: 15px;
+}
+
+.hero p.hero-frase {
+  font-family: 'Playfair Display', serif;
+  font-style: italic;
+  font-size: 17px;
+  color: var(--lila-dark);
+  max-width: 480px;
+  margin: 0 auto 6px;
+  line-height: 1.45;
+}
+
+.rutas-guiadas {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 26px;
+}
+
+.ruta-btn {
+  background: white;
+  border: 1px solid var(--borde);
+  border-radius: 14px;
+  padding: 16px 22px;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--texto);
+  text-decoration: none;
+  box-shadow: 0 3px 12px rgba(150,130,190,0.10);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.ruta-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(150,130,190,0.18);
+}
+
+.ruta-btn-whatsapp {
+  background: #EAFBF1;
+  border-color: #BEE9CE;
+}
+
+.ruta-btn-recurso {
+  background: var(--lila-suave);
+  border-color: var(--lila);
+  color: var(--lila-dark);
+  cursor: pointer;
+  font-family: 'Lato', sans-serif;
+}
+
+.modal-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(28, 28, 28, 0.55);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+.modal-overlay.activo { display: flex; }
+
+.modal-caja {
+  background: white;
+  border-radius: 20px;
+  padding: 32px 28px;
+  max-width: 420px;
+  width: 100%;
+  position: relative;
+  text-align: center;
+  border-top: 4px solid var(--lila-dark);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.2);
+}
+.modal-caja h3 {
+  font-family: 'Playfair Display', serif;
+  color: var(--lila-dark);
+  margin: 0 0 12px;
+  font-size: 1.4rem;
+}
+.modal-caja p { color: var(--texto); font-size: 0.95rem; margin-bottom: 18px; }
+.modal-caja form { display: flex; flex-direction: column; gap: 12px; }
+.modal-caja input {
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--borde);
+  font-family: 'Lato', sans-serif;
+  font-size: 14px;
+}
+.modal-boton {
+  background: var(--dorado);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 14px;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+}
+.modal-boton:hover { opacity: 0.9; }
+.modal-nota { font-size: 0.78rem; color: var(--texto-suave); margin: 14px 0 0; }
+.modal-cerrar {
+  position: absolute;
+  top: 14px;
+  right: 18px;
+  font-size: 1.4rem;
+  cursor: pointer;
+  color: var(--texto-suave);
+}
+
+@media (max-width: 600px) {
+  .rutas-guiadas { flex-direction: column; align-items: stretch; }
+}
+
+.hero-subtitulo {
+  font-size: 13px;
+  color: var(--lila-dark);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.hero-badges {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.hero-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: white;
+  border: 1px solid var(--borde);
+  border-radius: 30px;
+  padding: 10px 18px;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--texto);
+  box-shadow: 0 3px 10px rgba(150,130,190,0.08);
+}
+
+.acordeon {
+  background: white;
+  border: 1px solid var(--borde);
+  border-radius: 14px;
+  margin-bottom: 14px;
+  overflow: hidden;
+  box-shadow: 0 3px 10px rgba(150,130,190,0.07);
+}
+
+.acordeon-titulo {
+  list-style: none;
+  cursor: pointer;
+  padding: 16px 20px;
+  font-family: 'Playfair Display', serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--lila-dark);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--crema);
+}
+
+.acordeon-titulo::-webkit-details-marker { display: none; }
+
+.acordeon-titulo-texto {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.acordeon-miniatura {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--borde);
+  flex-shrink: 0;
+}
+
+.acordeon-titulo::after {
+  content: "+";
+  font-size: 22px;
+  color: var(--aqua-dark);
+  font-weight: 700;
+}
+
+.acordeon[open] .acordeon-titulo::after {
+  content: "−";
+}
+
+.acordeon-contenido {
+  padding: 16px;
+}
+
+.grupo-titulo {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  color: var(--lila-dark);
+  margin: 34px 0 14px;
+  padding-bottom: 6px;
+  border-bottom: 2px solid var(--dorado);
+  display: inline-block;
+}
+
+.grid-productos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.card-producto {
+  background: white;
+  border-radius: 14px;
+  padding: 14px;
+  border: 1px solid var(--borde);
+  box-shadow: 0 3px 10px rgba(150,130,190,0.07);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.card-producto:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(150,130,190,0.14);
+}
+
+.card-producto img {
+  width: 100%;
+  border-radius: 10px;
+  margin-bottom: 8px;
+  aspect-ratio: 1/1;
+  object-fit: cover;
+  cursor: pointer;
+}
+
+.lightbox {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.85);
+  z-index: 2000;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.lightbox.activo {
+  display: flex;
+}
+
+.lightbox img {
+  max-width: 90%;
+  max-height: 90%;
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  cursor: default;
+}
+
+.lightbox-cerrar {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  color: white;
+  font-size: 36px;
+  font-weight: 700;
+  cursor: pointer;
+  line-height: 1;
+}
+
+.card-producto .nombre {
+  font-weight: 700;
+  font-size: 14px;
+  margin-bottom: 4px;
+  line-height: 1.35;
+}
+
+.card-producto .detalle {
+  font-size: 12px;
+  color: var(--texto-suave);
+  line-height: 1.5;
+  margin-bottom: 8px;
+}
+
+.card-producto .descripcion {
+  font-size: 12px;
+  color: var(--texto-suave);
+  font-style: italic;
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
+
+.card-producto .precio {
+  font-family: 'Playfair Display', serif;
+  font-size: 16px;
+  color: var(--aqua-dark);
+  margin-bottom: 4px;
+}
+
+.card-producto .precio-antes {
+  font-size: 11px;
+  color: #C0645A;
+  text-decoration: line-through;
+  margin-right: 6px;
+}
+
+.card-producto .descuento {
+  display: inline-block;
+  background: #FCE3E0;
+  color: #C0645A;
+  font-size: 10px;
+  padding: 2px 7px;
+  border-radius: 10px;
+  margin-bottom: 6px;
+  width: fit-content;
+}
+
+.card-producto input[type=number] {
+  margin-top: auto;
+  width: 100%;
+  padding: 7px;
+  border-radius: 8px;
+  border: 1px solid var(--borde);
+  text-align: center;
+  font-size: 13px;
+}
+
+.stepper {
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--crema);
+}
+
+.stepper-btn {
+  border: none;
+  background: var(--aqua);
+  color: white;
+  width: 32px;
+  height: 32px;
+  font-size: 18px;
+  font-weight: 700;
+  cursor: pointer;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.stepper-btn:active { background: var(--aqua-dark); }
+.stepper-btn.menos { background: var(--lila); }
+.stepper-btn.menos:active { background: var(--lila-dark); }
+
+.stepper input {
+  border: none;
+  background: transparent;
+  text-align: center;
+  width: 100%;
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--texto);
+  -moz-appearance: textfield;
+}
+
+.stepper input::-webkit-outer-spin-button,
+.stepper input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.form-datos {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+  margin-top: 36px;
+  border: 1px solid var(--borde);
+  box-shadow: 0 4px 16px rgba(150,130,190,0.10);
+}
+
+.form-datos label {
+  display: block;
+  font-size: 13px;
+  font-weight: 700;
+  margin: 12px 0 4px;
+  color: var(--texto-suave);
+}
+
+.form-datos input, .form-datos textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--borde);
+  font-family: 'Lato', sans-serif;
+  font-size: 14px;
+}
+
+.fila-direccion {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.metodos-pago {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 6px;
+}
+
+.metodo-opcion {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 13px;
+  background: var(--crema);
+}
+
+.metodo-opcion input {
+  width: auto;
+  accent-color: var(--aqua-dark);
+}
+
+.metodo-opcion:has(input:checked) {
+  border-color: var(--aqua);
+  background: white;
+  box-shadow: 0 0 0 2px rgba(127,199,196,0.25);
+}
+
+@media (max-width: 480px) {
+  .metodos-pago { grid-template-columns: 1fr; }
+}
+
+.btn-enviar {
+  margin-top: 20px;
+  width: 100%;
+  padding: 14px;
+  border: none;
+  border-radius: 30px;
+  background: linear-gradient(120deg, var(--aqua), var(--lila));
+  color: white;
+  font-size: 16px;
+  font-weight: 700;
+  font-family: 'Playfair Display', serif;
+  cursor: pointer;
+}
+
+.btn-enviar:hover { opacity: 0.92; }
+
+.flash {
+  background: #FCE3E0;
+  color: #A5453B;
+  padding: 10px 16px;
+  border-radius: 10px;
+  margin-bottom: 16px;
+  font-size: 14px;
+}
+
+.confirmacion-box {
+  max-width: 520px;
+  margin: 60px auto;
+  background: white;
+  border-radius: 18px;
+  padding: 40px;
+  text-align: center;
+  border: 1px solid var(--borde);
+  box-shadow: 0 6px 24px rgba(150,130,190,0.14);
+}
+
+.confirmacion-box .icono { font-size: 46px; margin-bottom: 10px; }
+
+.btn-whatsapp {
+  display: inline-block;
+  margin-top: 20px;
+  padding: 12px 26px;
+  background: #25D366;
+  color: white;
+  border-radius: 30px;
+  text-decoration: none;
+  font-weight: 700;
+}
+
+.whatsapp-flotante {
+  position: fixed;
+  bottom: 22px;
+  right: 22px;
+  width: 56px;
+  height: 56px;
+  background: #25D366;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+  text-decoration: none;
+  z-index: 999;
+  transition: transform 0.15s ease;
+}
+
+.whatsapp-flotante:hover {
+  transform: scale(1.08);
+}
+
+@media (max-width: 600px) {
+  .topbar { padding: 14px 16px; }
+  .container { padding: 18px 12px 40px; }
+}
+
+/* --- Secciones fusionadas desde /sobre-mi: historia, como funciona, calculadora, carrusel enriquecido --- */
+  .portada-hero {
+    text-align: center;
+    padding: 40px 20px 30px;
   }
-  const litros = (peso * 0.033) + actividad;
-  const vasos = Math.round((litros * 1000) / 250);
-  document.getElementById('agua-litros').textContent = litros.toFixed(1) + ' L';
-  document.getElementById('agua-vasos').textContent = vasos + ' vasos';
-  document.getElementById('agua-resultado').classList.add('visible');
-}
-
-function calcularProteina() {
-  const peso = parseFloat(document.getElementById('prot-peso').value);
-  const factor = parseFloat(document.getElementById('prot-actividad').value);
-  if (!peso || peso <= 0) {
-    alert('Escribe tu peso para calcularlo.');
-    return;
+  .portada-foto {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid white;
+    box-shadow: 0 6px 20px rgba(124,77,158,.18);
+    margin-bottom: 18px;
   }
-  const gramos = Math.round(peso * factor);
-  document.getElementById('prot-valor').textContent = gramos + ' g';
-  document.getElementById('prot-resultado').classList.add('visible');
-}
-
-function calcularCalorias() {
-  const peso = parseFloat(document.getElementById('cal-peso').value);
-  const altura = parseFloat(document.getElementById('cal-altura').value);
-  const edad = parseFloat(document.getElementById('cal-edad').value);
-  const actividad = parseFloat(document.getElementById('cal-actividad').value);
-  const sexo = document.getElementById('cal-sexo').value;
-  if (!peso || !altura || !edad) {
-    alert('Rellena peso, altura y edad para calcularlo.');
-    return;
+  .portada-frase {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1.15rem;
+    max-width: 560px;
+    margin: 0 auto 18px;
+    color: var(--texto);
+    line-height: 1.5;
   }
-  let tmb = (10 * peso) + (6.25 * altura) - (5 * edad);
-  tmb += (sexo === 'mujer') ? -161 : 5;
-  const mantenimiento = Math.round(tmb * actividad);
+  .portada-placeholder {
+    max-width: 560px;
+    margin: 0 auto 24px;
+    padding: 14px 18px;
+    border: 1.5px dashed var(--lila);
+    border-radius: 12px;
+    color: var(--texto-suave);
+    font-size: .9rem;
+    background: var(--crema);
+    text-align: left;
+  }
+  .portada-placeholder b { color: var(--lila-dark); }
 
-  // Deficit moderado y seguro (15%), nunca por debajo del minimo recomendado
-  const minimoSeguro = (sexo === 'mujer') ? 1200 : 1500;
-  let deficit = Math.round(mantenimiento * 0.85);
-  let avisoMinimo = '';
-  if (deficit < minimoSeguro) {
-    deficit = minimoSeguro;
-    avisoMinimo = ' (ajustado al mínimo saludable recomendado)';
+  .portada-cta {
+    display: inline-block;
+    margin-top: 10px;
+    padding: 13px 28px;
+    border-radius: 30px;
+    background: var(--lila);
+    color: white;
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .portada-cta:hover { background: var(--lila-dark); }
+
+  .seccion {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 30px 20px;
+  }
+  .seccion-titulo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4rem;
+    color: var(--lila-dark);
+    text-align: center;
+    margin-bottom: 22px;
   }
 
-  document.getElementById('cal-valor').textContent = mantenimiento + ' kcal';
-  document.getElementById('cal-deficit').textContent = deficit + ' kcal' + avisoMinimo;
-  document.getElementById('cal-resultado').classList.add('visible');
-}
-</script>
+  /* Valores */
+  .valores-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 16px;
+  }
+  .valor-card {
+    text-align: center;
+    padding: 18px 12px;
+    background: white;
+    border: 1px solid var(--borde);
+    border-radius: 16px;
+  }
+  .valor-icono { font-size: 1.8rem; margin-bottom: 8px; }
+  .valor-nombre { font-weight: 700; font-size: .95rem; }
+  .valor-ejemplo-tag {
+    display: block;
+    font-size: .68rem;
+    color: var(--lila-dark);
+    margin-top: 4px;
+    font-style: italic;
+  }
 
-<div class="lightbox" id="lightbox" onclick="cerrarLightbox()">
-  <span class="lightbox-cerrar" onclick="cerrarLightbox()">&times;</span>
-  <img id="lightbox-img" src="" alt="">
-</div>
+  /* Calculadora de agua */
+  .calculadora {
+    background: white;
+    border: 1px solid var(--borde);
+    border-radius: 18px;
+    padding: 24px;
+    max-width: 460px;
+    margin: 0 auto;
+  }
 
-<a href="https://wa.me/{{ cobro.whatsapp | replace('+','') }}?text=Hola%20{{ negocio.marca | urlencode }}%2C%20tengo%20una%20pregunta%20antes%20de%20hacer%20mi%20pedido"
-   class="whatsapp-flotante" target="_blank" title="Escríbeme por WhatsApp">
-  💬
-</a>
+  /* Tarjeta agrupada "Mis Controles" */
+  .calc-eyebrow {
+    text-align: center;
+    font-size: .75rem;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--lila-dark);
+    margin-bottom: 6px;
+  }
+  .calc-3-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+  .calc-mini {
+    background: white;
+    border: 1px solid var(--borde);
+    border-radius: 18px;
+    padding: 22px;
+    text-align: left;
+    box-shadow: 0 4px 16px rgba(150,130,190,0.08);
+  }
+  .calc-mini-icono { font-size: 1.6rem; margin-bottom: 8px; }
+  .calc-mini h4 {
+    font-family: 'Playfair Display', serif;
+    color: var(--lila-dark);
+    margin: 0 0 4px;
+    font-size: 1.05rem;
+  }
+  .calc-mini > p {
+    font-size: .82rem;
+    color: var(--texto-suave);
+    margin: 0 0 14px;
+  }
+  .calc-mini label {
+    display: block;
+    font-size: .75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+    color: var(--texto-suave);
+    margin: 10px 0 4px;
+  }
+  .calc-mini input, .calc-mini select {
+    width: 100%;
+    padding: 9px 11px;
+    border-radius: 10px;
+    border: 1px solid var(--borde);
+    font-family: 'Lato', sans-serif;
+    font-size: 14px;
+    background: var(--crema);
+  }
+  .calc-boton-lila {
+    width: 100%;
+    margin-top: 16px;
+    background: linear-gradient(90deg, var(--lila-dark), var(--lila));
+    color: white;
+    border: none;
+    border-radius: 10px;
+    padding: 11px;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .calc-boton-lila:hover { opacity: .92; }
+  .calc-deficit-linea {
+    display: block;
+    margin-top: 6px;
+    padding-top: 8px;
+    border-top: 1px dashed rgba(124,77,158,.25);
+    font-size: .88em;
+  }
 
-<!-- Cloudflare Web Analytics --><script type='module' src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "edde18f69cf94b3599a277d7f55adc78"}'></script><!-- End Cloudflare Web Analytics -->
-</body>
-</html>
+  .mis-controles-caja {
+    background: white;
+    border: 1px solid var(--borde);
+    border-radius: 22px;
+    padding: 28px 24px;
+    max-width: 820px;
+    margin: 0 auto;
+    text-align: center;
+    box-shadow: 0 8px 24px rgba(124,77,158,.08);
+  }
+  .mis-controles-subtitulo {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    color: #D97BA0;
+    font-size: 1.1rem;
+    margin: 2px 0 6px;
+  }
+  .mis-controles-nota {
+    font-size: .85rem;
+    color: var(--texto-suave);
+    margin: 10px 0 20px;
+  }
+  .calculadora-embebida {
+    background: var(--crema);
+    border: none;
+    max-width: 100%;
+    margin: 0 0 24px;
+    text-align: left;
+  }
+  .mini-controles-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+    text-align: left;
+  }
+  .mini-control-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--crema);
+    border: 1px solid var(--borde);
+    border-radius: 14px;
+    padding: 14px;
+  }
+  .mini-control-icono {
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+  }
+  .mini-control-texto { flex: 1; }
+  .mini-control-texto h4 {
+    margin: 0 0 3px;
+    font-family: 'Playfair Display', serif;
+    color: var(--lila-dark);
+    font-size: 1rem;
+  }
+  .mini-control-texto p {
+    margin: 0;
+    font-size: .8rem;
+    color: var(--texto-suave);
+  }
+  .mini-control-boton {
+    flex-shrink: 0;
+    background: var(--dorado);
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 9px 14px;
+    font-size: .8rem;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .mini-control-boton:hover { opacity: .9; }
+  @media (max-width: 480px) {
+    .mini-control-card { flex-wrap: wrap; }
+    .mini-control-boton { margin-left: 58px; }
+  }
+  .calculadora label {
+    display: block;
+    font-weight: 700;
+    font-size: .88rem;
+    margin: 14px 0 6px;
+  }
+  .calculadora input[type=number] {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1.5px solid var(--borde);
+    border-radius: 10px;
+    font-family: 'Lato';
+    font-size: .95rem;
+  }
+  .actividad-opciones {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .actividad-opciones label {
+    flex: 1;
+    margin: 0;
+    font-weight: 400;
+    font-size: .82rem;
+    background: var(--crema);
+    border: 1.5px solid var(--borde);
+    border-radius: 10px;
+    padding: 8px 6px;
+    text-align: center;
+    cursor: pointer;
+  }
+  .actividad-opciones input { display: none; }
+  .actividad-opciones input:checked + span {
+    font-weight: 700;
+    color: var(--lila-dark);
+  }
+  .actividad-opciones label:has(input:checked) {
+    border-color: var(--lila);
+    background: var(--lila-suave);
+  }
+  .calc-boton {
+    width: 100%;
+    margin-top: 18px;
+    padding: 12px;
+    border: none;
+    border-radius: 12px;
+    background: var(--aqua-dark);
+    color: white;
+    font-weight: 700;
+    cursor: pointer;
+  }
+  .calc-boton:hover { background: var(--aqua); }
+  .calc-resultado {
+    margin-top: 16px;
+    padding: 14px;
+    border-radius: 12px;
+    background: var(--lila-suave);
+    text-align: center;
+    font-weight: 700;
+    color: var(--lila-dark);
+    display: none;
+  }
+  .calc-resultado.visible { display: block; }
+  .calc-resultado span { display: block; font-size: 1.4rem; margin-top: 4px; }
+
+  /* Carrusel deslizante */
+  .carrusel-wrap {
+    display: flex;
+    gap: 14px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding: 6px 4px 16px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .carrusel-wrap::-webkit-scrollbar { height: 6px; }
+  .carrusel-wrap::-webkit-scrollbar-thumb { background: var(--lila-suave); border-radius: 10px; }
+  .carrusel-item {
+    flex: 0 0 auto;
+    width: 220px;
+    scroll-snap-align: center;
+    background: white;
+    border: 1px solid var(--borde);
+    border-radius: 16px;
+    overflow: hidden;
+    text-align: center;
+  }
+  .carrusel-item img {
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    display: block;
+  }
+  .carrusel-item .cap {
+    padding: 10px;
+    font-size: .85rem;
+    font-weight: 700;
+  }
+
+  /* Recetas */
+  .recetas-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 18px;
+  }
+  .receta-card {
+    background: white;
+    border: 1px solid var(--borde);
+    border-radius: 16px;
+    padding: 18px;
+    text-align: center;
+  }
+  .receta-icono { font-size: 2rem; margin-bottom: 8px; }
+  .receta-nombre { font-weight: 700; margin-bottom: 6px; }
+  .receta-teaser { font-size: .85rem; color: var(--texto-suave); margin-bottom: 14px; }
+  .receta-boton {
+    display: inline-block;
+    padding: 9px 16px;
+    border-radius: 20px;
+    background: var(--aqua);
+    color: white;
+    text-decoration: none;
+    font-size: .82rem;
+    font-weight: 700;
+  }
+  .receta-boton:hover { background: var(--aqua-dark); }
+
+  .cta-final {
+    text-align: center;
+    padding: 40px 20px 60px;
+  }
+
+  body { position: relative; overflow-x: hidden; }
+  .blob-deco {
+    position: absolute;
+    filter: blur(45px);
+    opacity: .28;
+    z-index: 0;
+    pointer-events: none;
+  }
+  .blob-deco.b1 { width: 320px; height: 320px; top: -100px; left: -100px; background: radial-gradient(circle at 30% 30%, var(--aqua), transparent 70%); }
+  .blob-deco.b2 { width: 300px; height: 300px; top: 500px; right: -130px; background: radial-gradient(circle at 60% 40%, var(--lila), transparent 70%); }
+  .blob-deco.b3 { width: 280px; height: 280px; bottom: 200px; left: -80px; background: radial-gradient(circle at 50% 50%, var(--dorado), transparent 70%); opacity: .18; }
+
+  .seccion-tinte {
+    position: relative;
+    z-index: 1;
+    background: linear-gradient(180deg, var(--lila-suave) 0%, transparent 100%);
+    border-radius: 0 0 40px 40px;
+  }
+  .seccion { position: relative; z-index: 1; }
+
+  .portada-foto-wrap {
+    position: relative;
+    width: 220px;
+    height: 220px;
+    margin: 0 auto 20px;
+  }
+  .portada-foto-wrap::before {
+    content: '';
+    position: absolute;
+    inset: -10px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--aqua), var(--lila), var(--dorado));
+    opacity: .5;
+    z-index: 0;
+  }
+  .portada-foto {
+    position: relative;
+    z-index: 1;
+    width: 220px;
+    height: 220px;
+    margin: 0;
+  }
+
+  .como-funciona {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 20px;
+    max-width: 780px;
+    margin: 0 auto;
+  }
+  .paso-card {
+    text-align: center;
+    padding: 20px 14px;
+    position: relative;
+  }
+  .paso-numero {
+    width: 40px; height: 40px;
+    border-radius: 50%;
+    background: var(--lila);
+    color: white;
+    font-weight: 900;
+    font-family: 'Playfair Display', serif;
+    display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 12px;
+    font-size: 1.1rem;
+  }
+  .paso-titulo { font-weight: 700; margin-bottom: 6px; }
+  .paso-texto { font-size: .85rem; color: var(--texto-suave); }
+
+  .testimonios-wrap {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1.5px dashed var(--lila);
+    border-radius: 16px;
+    background: white;
+  }
+  .testimonio-ejemplo {
+    padding: 14px 0;
+    border-bottom: 1px solid var(--borde);
+    font-size: .9rem;
+    color: var(--texto-suave);
+    font-style: italic;
+  }
+  .testimonio-ejemplo:last-child { border-bottom: none; }
+  .historia-wrap {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+    max-width: 700px;
+    margin: 0 auto 18px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .historia-foto {
+    width: 340px;
+    max-width: 90%;
+    border-radius: 18px;
+    box-shadow: 0 8px 22px rgba(124,77,158,.18);
+  }
+  .historia-texto { flex: 1; min-width: 260px; text-align: left; }
+  .historia-texto .portada-placeholder { margin: 0; }
+
+  .producto-slide {
+    flex: 0 0 auto;
+    width: 260px;
+    scroll-snap-align: center;
+    background: white;
+    border: 1px solid var(--borde);
+    border-radius: 20px;
+    overflow: hidden;
+    text-align: center;
+    padding-bottom: 16px;
+  }
+  .producto-slide img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    display: block;
+  }
+  .producto-slide h4 {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.05rem;
+    margin: 12px 14px 2px;
+    color: var(--lila-dark);
+  }
+  .producto-slide .ingredientes {
+    font-size: .78rem;
+    color: var(--texto-suave);
+    margin: 0 14px 10px;
+    font-style: italic;
+  }
+  .producto-beneficios {
+    list-style: none;
+    margin: 0 14px 10px;
+    padding: 0;
+    text-align: left;
+  }
+  .producto-beneficios li {
+    font-size: .82rem;
+    padding: 3px 0;
+    color: var(--texto);
+  }
+  .producto-beneficios li::before { content: "✓ "; color: var(--aqua-dark); font-weight: 700; }
+  .producto-formato {
+    font-size: .75rem;
+    font-weight: 700;
+    color: var(--dorado);
+    margin: 6px 14px 0;
+  }
+  .registro-sanitario {
+    text-align: center;
+    font-size: .75rem;
+    color: var(--texto-suave);
+    max-width: 700px;
+    margin: 10px auto 0;
+    padding: 0 20px;
+  }
