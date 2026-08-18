@@ -1233,6 +1233,14 @@ table.pedidos tr:last-child td { border-bottom: none; }
   }
   .historia-texto { flex: 1; min-width: 260px; text-align: left; }
   .historia-texto .portada-placeholder { margin: 0; }
+  .historia-caption {
+    text-align: center;
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    color: var(--lila-dark);
+    font-size: .95rem;
+    margin: 10px auto 30px;
+  }
 
   .producto-slide {
     flex: 0 0 auto;
