@@ -1202,7 +1202,7 @@ table.pedidos tr:last-child td { border-bottom: none; }
     padding: 40px 20px 60px;
   }
 
-  body { position: relative; overflow-x: hidden; }
+  body { position: relative; }
   .blob-deco {
     position: absolute;
     filter: blur(45px);
