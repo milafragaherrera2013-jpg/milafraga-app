@@ -168,8 +168,43 @@ def init_db():
     conn.close()
 
 
-UMBRAL_ENVIO_GRATIS = 50.0
+UMBRAL_ENVIO_GRATIS = 53.0
 COSTE_ENVIO = 3.0
+
+UMBRAL_ISLAS_TRAMO1 = 30.0  # hasta aqui, 5 euros
+UMBRAL_ISLAS_TRAMO2 = 53.0  # de tramo1 a aqui, 3 euros; desde aqui, gratis
+COSTE_ENVIO_ISLAS_TRAMO1 = 5.0
+COSTE_ENVIO_ISLAS_TRAMO2 = 3.0
+
+PROVINCIAS_ISLAS = (
+    "las palmas",
+    "santa cruz de tenerife",
+    "tenerife",
+    "gran canaria",
+    "canarias",
+    "illes balears",
+    "islas baleares",
+    "baleares",
+    "mallorca",
+    "menorca",
+    "ibiza",
+    "eivissa",
+)
+
+
+def es_envio_a_islas(provincia):
+    provincia = (provincia or "").strip().lower()
+    return any(nombre in provincia for nombre in PROVINCIAS_ISLAS)
+
+
+def calcular_envio_base(subtotal, provincia):
+    if es_envio_a_islas(provincia):
+        if subtotal < UMBRAL_ISLAS_TRAMO1:
+            return COSTE_ENVIO_ISLAS_TRAMO1
+        if subtotal < UMBRAL_ISLAS_TRAMO2:
+            return COSTE_ENVIO_ISLAS_TRAMO2
+        return 0.0
+    return 0.0 if subtotal >= UMBRAL_ENVIO_GRATIS else COSTE_ENVIO
 
 
 # Crear la base de datos ya al importar el módulo (necesario para gunicorn en producción)
@@ -607,7 +642,7 @@ def crear_pedido():
         flash("Falta el nombre de la clienta o no se ha seleccionado ningún producto.")
         return redirect(url_for("formulario"))
 
-    envio_base = 0.0 if total >= UMBRAL_ENVIO_GRATIS else COSTE_ENVIO
+    envio_base = calcular_envio_base(total, direccion_provincia)
     recargo_contrareembolso = COSTE_ENVIO if metodo_pago == "Contrareembolso" else 0.0
     gastos_envio = envio_base + recargo_contrareembolso
     total_con_envio = total + gastos_envio
