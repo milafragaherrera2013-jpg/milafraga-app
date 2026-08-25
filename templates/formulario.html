@@ -291,7 +291,7 @@
       <div class="fila-direccion">
         <div>
           <label>Provincia</label>
-          <input type="text" name="direccion_provincia" placeholder="Ej: Cádiz">
+          <input type="text" id="input-provincia" name="direccion_provincia" placeholder="Ej: Cádiz" oninput="actualizarResumen()">
         </div>
         <div>
           <label>Código postal</label>
@@ -323,8 +323,9 @@
       </div>
 
       <p style="font-size:13px; color:var(--texto-suave); margin-top:14px; text-align:center;">
-        🚚 Envío gratis a partir de 50€ de pedido. Pedidos inferiores: 3€ de gastos de envío.<br>
-        📦 El contrareembolso siempre incluye 3€ de gastos de envío, sea cual sea el importe.
+        🚚 Envío gratis a partir de 53€ de pedido. Pedidos inferiores: 3€ de gastos de envío.<br>
+        📦 El contrareembolso siempre incluye 3€ de gastos de envío, sea cual sea el importe.<br>
+        🏝️ Envíos a Canarias/Baleares: 5€ hasta 30€ de pedido, 3€ de 30€ a 53€, gratis a partir de 53€.
       </p>
 
       <button type="submit" class="btn-enviar">Enviar mi pedido</button>
@@ -522,10 +523,24 @@ function actualizarResumen() {
     listaItems.appendChild(li);
   });
 
+  const PROVINCIAS_ISLAS = [
+    'las palmas', 'santa cruz de tenerife', 'tenerife', 'gran canaria', 'canarias',
+    'illes balears', 'islas baleares', 'baleares', 'mallorca', 'menorca', 'ibiza', 'eivissa'
+  ];
+  const provinciaTexto = (document.getElementById('input-provincia').value || '').trim().toLowerCase();
+  const esIslas = PROVINCIAS_ISLAS.some(function (nombre) { return provinciaTexto.includes(nombre); });
+
   const metodoSeleccionado = document.querySelector('input[name="metodo_pago"]:checked');
   const esContrareembolso = metodoSeleccionado && metodoSeleccionado.value === 'Contrareembolso';
 
-  let envio = subtotal >= 50 ? 0 : 3;
+  let envio;
+  if (esIslas) {
+    if (subtotal < 30) envio = 5;
+    else if (subtotal < 53) envio = 3;
+    else envio = 0;
+  } else {
+    envio = subtotal >= 53 ? 0 : 3;
+  }
   if (esContrareembolso) envio += 3;
 
   const total = subtotal + envio;
