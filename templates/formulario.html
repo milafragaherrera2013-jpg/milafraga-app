@@ -22,7 +22,7 @@
   <div class="precio">{{ item.precio }} €</div>
   <div class="stepper">
     <button type="button" class="stepper-btn menos" onclick="cambiarCantidad('{{ item.id }}', -1)">−</button>
-    <input type="number" id="cantidad_{{ item.id }}" name="cantidad_{{ item.id }}" min="0" value="0" readonly>
+    <input type="number" id="cantidad_{{ item.id }}" name="cantidad_{{ item.id }}" min="0" value="0" readonly data-precio="{{ item.precio }}" data-nombre="{{ item.nombre }}">
     <button type="button" class="stepper-btn mas" onclick="cambiarCantidad('{{ item.id }}', 1)">+</button>
   </div>
 </div>
@@ -305,19 +305,19 @@
       <label>¿Cómo prefieres pagar?</label>
       <div class="metodos-pago">
         <label class="metodo-opcion">
-          <input type="radio" name="metodo_pago" value="Efectivo (entrega en mano)" checked>
+          <input type="radio" name="metodo_pago" value="Efectivo (entrega en mano)" checked onchange="actualizarResumen()">
           <span>💶 Efectivo (entrega en mano)</span>
         </label>
         <label class="metodo-opcion">
-          <input type="radio" name="metodo_pago" value="Bizum">
+          <input type="radio" name="metodo_pago" value="Bizum" onchange="actualizarResumen()">
           <span>📲 Bizum</span>
         </label>
         <label class="metodo-opcion">
-          <input type="radio" name="metodo_pago" value="Transferencia bancaria">
+          <input type="radio" name="metodo_pago" value="Transferencia bancaria" onchange="actualizarResumen()">
           <span>🏦 Transferencia bancaria</span>
         </label>
         <label class="metodo-opcion">
-          <input type="radio" name="metodo_pago" value="Contrareembolso">
+          <input type="radio" name="metodo_pago" value="Contrareembolso" onchange="actualizarResumen()">
           <span>📦 Contrareembolso</span>
         </label>
       </div>
@@ -333,12 +333,27 @@
   </form>
 </div>
 
+<div class="resumen-flotante" id="resumen-flotante">
+  <div class="resumen-flotante-header" onclick="document.getElementById('resumen-flotante').classList.toggle('colapsado')">
+    <span>🧺 Ver total del pedido</span>
+    <span class="resumen-total-mini" id="resumen-total-mini">0,00 €</span>
+  </div>
+  <div class="resumen-flotante-cuerpo">
+    <ul class="resumen-items" id="resumen-items"></ul>
+    <div class="resumen-linea"><span>Subtotal</span><span id="resumen-subtotal">0,00 €</span></div>
+    <div class="resumen-linea"><span>Envío</span><span id="resumen-envio">0,00 €</span></div>
+    <div class="resumen-linea resumen-total"><span>Total</span><span id="resumen-total">0,00 €</span></div>
+    <p class="resumen-nota">🚚 Envío gratis desde 50€ · Contrareembolso siempre +3€</p>
+  </div>
+</div>
+
 <div class="seccion-tinte">
 <div class="seccion">
   <img src="{{ url_for('static', filename='img/mi_proposito.jpg') }}" alt="Mi propósito y mis valores"
        style="width:100%; max-width:900px; display:block; margin:0 auto; border-radius:20px; box-shadow:0 8px 24px rgba(124,77,158,.12);">
 </div>
 </div>
+
 
 <div class="seccion">
   <div class="calc-eyebrow">✦ HERRAMIENTAS GRATUITAS</div>
@@ -478,6 +493,54 @@ function cambiarCantidad(id, delta) {
   let val = parseInt(input.value || '0', 10) + delta;
   if (val < 0) val = 0;
   input.value = val;
+  actualizarResumen();
+}
+
+function formatoEuros(n) {
+  return n.toLocaleString('es-ES', {minimumFractionDigits: 2, maximumFractionDigits: 2}) + ' €';
+}
+
+function actualizarResumen() {
+  const inputs = document.querySelectorAll('input[id^="cantidad_"]');
+  let subtotal = 0;
+  const items = [];
+  inputs.forEach(function (input) {
+    const cantidad = parseInt(input.value || '0', 10);
+    const precio = parseFloat(input.dataset.precio || '0');
+    if (cantidad > 0) {
+      items.push({ nombre: input.dataset.nombre || '', cantidad: cantidad, precio: precio });
+      subtotal += cantidad * precio;
+    }
+  });
+
+  const listaItems = document.getElementById('resumen-items');
+  listaItems.innerHTML = '';
+  items.forEach(function (item) {
+    const li = document.createElement('li');
+    li.innerHTML = '<span>' + item.nombre + ' × ' + item.cantidad + '</span><span>' +
+      formatoEuros(item.precio * item.cantidad) + '</span>';
+    listaItems.appendChild(li);
+  });
+
+  const metodoSeleccionado = document.querySelector('input[name="metodo_pago"]:checked');
+  const esContrareembolso = metodoSeleccionado && metodoSeleccionado.value === 'Contrareembolso';
+
+  let envio = subtotal >= 50 ? 0 : 3;
+  if (esContrareembolso) envio += 3;
+
+  const total = subtotal + envio;
+
+  document.getElementById('resumen-subtotal').textContent = formatoEuros(subtotal);
+  document.getElementById('resumen-envio').textContent = envio === 0 ? 'Gratis' : formatoEuros(envio);
+  document.getElementById('resumen-total').textContent = formatoEuros(total);
+  document.getElementById('resumen-total-mini').textContent = formatoEuros(total);
+
+  const flotante = document.getElementById('resumen-flotante');
+  if (subtotal > 0) {
+    flotante.classList.add('visible');
+  } else {
+    flotante.classList.remove('visible');
+  }
 }
 
 function abrirLightbox(src, alt) {
