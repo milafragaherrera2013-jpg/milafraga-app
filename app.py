@@ -1,6 +1,7 @@
 # app.py
 # Aplicacion de gestion de pedidos - Mila Fraga / Artabria
 import csv
+import hashlib
 import io
 import json
 import os
@@ -397,6 +398,33 @@ def descargar_factura(pedido_id):
     return send_file(ruta_pdf, as_attachment=True)
 
 
+def token_factura_cliente(pedido_id):
+    """Token corto y unico por pedido, para que la clienta pueda descargar su
+    propia factura sin necesitar login, sin que nadie pueda adivinar la de otra
+    clienta solo probando numeros de pedido."""
+    firma = f"{pedido_id}-{app.secret_key}".encode()
+    return hashlib.sha256(firma).hexdigest()[:16]
+
+
+@app.route("/mi-pedido/<int:pedido_id>/factura")
+def factura_cliente(pedido_id):
+    if request.args.get("token") != token_factura_cliente(pedido_id):
+        return "Enlace no válido", 403
+
+    conn = get_db()
+    row = conn.execute("SELECT * FROM pedidos WHERE id = ?", (pedido_id,)).fetchone()
+    conn.close()
+    if row is None:
+        return "Pedido no encontrado", 404
+
+    pedido = dict(row)
+    pedido["items"] = json.loads(pedido["items"])
+
+    carpeta = os.path.join(BASE_DIR, "static", "facturas")
+    ruta_pdf = generar_factura(pedido, carpeta)
+    return send_file(ruta_pdf, as_attachment=True, download_name=f"Factura Mila Fraga - pedido {pedido_id}.pdf")
+
+
 @app.route("/pedido/<int:pedido_id>/etiqueta")
 @login_requerido
 def descargar_etiqueta(pedido_id):
@@ -627,8 +655,15 @@ def confirmacion(pedido_id):
         return "Pedido no encontrado", 404
     pedido = dict(row)
     pedido["productos"] = json.loads(pedido.pop("items"))
+    enlace_factura = url_for(
+        "factura_cliente", pedido_id=pedido_id, token=token_factura_cliente(pedido_id)
+    )
     return render_template(
-        "confirmacion.html", pedido=pedido, negocio=CONFIG["negocio"], cobro=CONFIG["cobro"]
+        "confirmacion.html",
+        pedido=pedido,
+        negocio=CONFIG["negocio"],
+        cobro=CONFIG["cobro"],
+        enlace_factura=enlace_factura,
     )
 
 
