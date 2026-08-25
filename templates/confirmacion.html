@@ -53,6 +53,11 @@
     Pulsa el botón para avisarme por WhatsApp y así preparo tu pedido cuanto antes.
   </p>
 
+  <a class="btn-whatsapp" style="background:var(--lila-dark); margin-bottom:10px;"
+     href="{{ enlace_factura }}">
+    📄 Descargar mi factura
+  </a>
+
   <a class="btn-whatsapp"
      href="https://wa.me/{{ cobro.whatsapp | replace('+','') }}?text=Hola%20Mila%2C%20soy%20{{ pedido.cliente | urlencode }}%2C%20acabo%20de%20enviar%20mi%20pedido%20n%C2%BA%20{{ pedido.id }}%20por%20un%20total%20de%20{{ '%.2f'|format(pedido.total) }}%E2%82%AC."
      target="_blank">
