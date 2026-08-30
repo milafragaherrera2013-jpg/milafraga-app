@@ -220,6 +220,8 @@ table.pedidos tr:last-child td { border-bottom: none; }
 
 .hero img.logo-marca {
   max-width: 260px;
+  aspect-ratio: 1 / 1;
+  height: auto;
   margin-bottom: 10px;
 }
 
@@ -1299,6 +1301,8 @@ table.pedidos tr:last-child td { border-bottom: none; }
   .historia-foto {
     width: 340px;
     max-width: 90%;
+    aspect-ratio: 1 / 1;
+    object-fit: cover;
     border-radius: 18px;
     box-shadow: 0 8px 22px rgba(124,77,158,.18);
   }
