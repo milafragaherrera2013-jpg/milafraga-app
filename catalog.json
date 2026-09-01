@@ -326,27 +326,7 @@
   ],
   "edicion_limitada": [
     {
-      "id": "primavera",
-      "nombre": "Primavera Artabria",
-      "detalle": "2 Café 5.0 + 2 Elixir de Juventud + 🎁 esponja Konjac de regalo",
-      "precio": 130,
-      "precio_antes": 187,
-      "descuento": "30%",
-      "img": "primavera.png",
-      "descripcion": "Pack de temporada con un ahorro especial, ideal para empezar tu rutina de bienestar de primavera con energía y colágeno."
-    },
-    {
-      "id": "bienestar_primavera",
-      "nombre": "Paquete Bienestar Especial Primavera",
-      "detalle": "Café + Bebida Inteligente + ChocoSlender + Caña Zero + 2 Elixir + 🎁 esponja Konjac",
-      "precio": 161,
-      "precio_antes": 251,
-      "descuento": "35%",
-      "img": "bienestar_primavera.png",
-      "descripcion": "Nuestro pack de bienestar más completo, en edición limitada de primavera, con un regalo incluido."
-    },
-    {
-     "id": "ensaladera_choco",
+      "id": "ensaladera_choco",
       "nombre": "Ensaladera Gratis - Pack Energía y Control",
       "detalle": "Café + Bebida Inteligente + ChocoSlender + 🥗 Ensaladera de regalo",
       "precio": 110,
@@ -358,7 +338,7 @@
       "nombre": "Ensaladera Gratis - Pack Energía y Colágeno",
       "detalle": "Café + Bebida Inteligente + Elixir de Juventud + 🥗 Ensaladera de regalo",
       "precio": 118,
-      "img": "ensaladera_gratis_pack_2.png" ,
+      "img": "ensaladera_gratis_pack_2.png",
       "descripcion": "Belleza desde el interior, energía y equilibrio — con ensaladera portátil de regalo incluida."
     }
   ]
