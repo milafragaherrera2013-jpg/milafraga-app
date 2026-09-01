@@ -7,6 +7,14 @@
     "direccion_cp_ciudad": "47193 La Cistérniga, Valladolid",
     "telefono": "677 00 43 82"
   },
+  "marca_visual": {
+    "color_aqua": "#5FAEA2",
+    "color_lila": "#7C4D9E",
+    "color_texto": "#1C1C1C"
+  },
+  "rutas": {
+    "logo_factura": "static/img/logo_acuarela.png"
+  },
   "cobro": {
     "whatsapp": "+34677004382",
     "bizum": "677 00 43 82",
