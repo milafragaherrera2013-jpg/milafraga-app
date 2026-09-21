@@ -84,10 +84,10 @@
     {
       "id": "elixir_30",
       "categoria": "Elixir de Juventud",
-      "nombre": "Elixir de Juventud (1 mes)",
+      "nombre": "Elixir de Juventud (25 sobres)",
       "detalle": "Colágeno · 1 mes",
       "precio": 50,
-      "img": "elixir_30.png",
+      "img": "elixir_25_sobres.jpg",
       "descripcion": "Colágeno, magnesio, glucosamina, condroitina y vitamina C en un solo sobre, para cuidar tu piel y tus articulaciones."
     },
     {
@@ -310,7 +310,7 @@
     {
       "id": "combo_bienestar",
       "nombre": "Combo Bienestar Integral",
-      "detalle": "Pack completo bienestar",
+      "detalle": "Café 5.0 + Bebida Inteligente + ChocoSlender + Elixir de Juventud + Caña Zero",
       "precio": 165,
       "img": "combo_bienestar.png",
       "descripcion": "El combo ideal para cuidar tu bienestar general día a día, combinando varios de nuestros productos estrella."
@@ -318,7 +318,7 @@
     {
       "id": "combo_familiar",
       "nombre": "Combo Familiar",
-      "detalle": "Lo más completo · envío gratis",
+      "detalle": "3 Café 5.0 + 3 Elixir de Juventud",
       "precio": 240,
       "img": "combo_familiar.png",
       "descripcion": "Nuestro pack más completo, pensado para que toda la familia disfrute de los beneficios de Artabria."
