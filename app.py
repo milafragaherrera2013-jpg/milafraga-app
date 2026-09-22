@@ -25,11 +25,10 @@ TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "")
 
 
 def notificar_pedido_whatsapp(pedido_id, cliente, telefono_cliente, direccion_cliente,
-                                items_pedido, total, metodo_pago, notas):
+                                items_pedido, total, metodo_pago, notas, provincia=""):
     """Envia un aviso por Telegram a Mila cuando entra un pedido nuevo, con el detalle
     completo. Sirve como respaldo del pedido por si el panel llegara a perderlo
-    (el plan gratuito de Render borra la base de datos al reiniciarse).
-    Si no hay token/chat_id configurados, o falla el envio, no rompe el pedido."""
+    (el plan gratuito de Render borra la base de datos al reiniciarse)."""
     if not TELEGRAM_BOT_TOKEN or not TELEGRAM_CHAT_ID:
         return
 
@@ -46,6 +45,8 @@ def notificar_pedido_whatsapp(pedido_id, cliente, telefono_cliente, direccion_cl
         f"Total: {total:.2f}€\n"
         f"Pago: {metodo_pago}"
     )
+    if es_envio_a_islas(provincia):
+        mensaje += "\n\n🏝️ Envío a Canarias/Baleares: confirma con la clienta el coste real del envío antes de mandarlo (no está incluido en el total)."
     if notas:
         mensaje += f"\nNotas: {notas}"
 
@@ -171,11 +172,6 @@ def init_db():
 UMBRAL_ENVIO_GRATIS = 53.0
 COSTE_ENVIO = 3.0
 
-UMBRAL_ISLAS_TRAMO1 = 30.0  # hasta aqui, 5 euros
-UMBRAL_ISLAS_TRAMO2 = 53.0  # de tramo1 a aqui, 3 euros; desde aqui, gratis
-COSTE_ENVIO_ISLAS_TRAMO1 = 5.0
-COSTE_ENVIO_ISLAS_TRAMO2 = 3.0
-
 PROVINCIAS_ISLAS = (
     "las palmas",
     "santa cruz de tenerife",
@@ -198,12 +194,9 @@ def es_envio_a_islas(provincia):
 
 
 def calcular_envio_base(subtotal, provincia):
-    if es_envio_a_islas(provincia):
-        if subtotal < UMBRAL_ISLAS_TRAMO1:
-            return COSTE_ENVIO_ISLAS_TRAMO1
-        if subtotal < UMBRAL_ISLAS_TRAMO2:
-            return COSTE_ENVIO_ISLAS_TRAMO2
-        return 0.0
+    # El envio a Canarias/Baleares ya no se calcula automaticamente: Mila lo
+    # confirma directamente con la clienta por WhatsApp (coste real ~10 euros
+    # segun transportista, no compensa asumirlo con una tarifa fija en la web).
     return 0.0 if subtotal >= UMBRAL_ENVIO_GRATIS else COSTE_ENVIO
 
 
@@ -674,7 +667,8 @@ def crear_pedido():
     conn.close()
 
     notificar_pedido_whatsapp(pedido_id, cliente, telefono_cliente, direccion_cliente,
-                               items_pedido, total_con_envio, metodo_pago, notas)
+                               items_pedido, total_con_envio, metodo_pago, notas,
+                               provincia=direccion_provincia)
     respaldar_documentos_pedido(pedido_id, cliente, telefono_cliente, direccion_cliente,
                                  items_pedido, gastos_envio, metodo_pago, notas, fecha_pedido)
 
