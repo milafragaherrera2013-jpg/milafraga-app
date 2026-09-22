@@ -305,11 +305,7 @@
       <label>¿Cómo prefieres pagar?</label>
       <div class="metodos-pago">
         <label class="metodo-opcion">
-          <input type="radio" name="metodo_pago" value="Efectivo (entrega en mano)" checked onchange="actualizarResumen()">
-          <span>💶 Efectivo (entrega en mano)</span>
-        </label>
-        <label class="metodo-opcion">
-          <input type="radio" name="metodo_pago" value="Bizum" onchange="actualizarResumen()">
+          <input type="radio" name="metodo_pago" value="Bizum" checked onchange="actualizarResumen()">
           <span>📲 Bizum</span>
         </label>
         <label class="metodo-opcion">
@@ -325,7 +321,7 @@
       <p style="font-size:13px; color:var(--texto-suave); margin-top:14px; text-align:center;">
         🚚 Envío gratis a partir de 53€ de pedido. Pedidos inferiores: 3€ de gastos de envío.<br>
         📦 El contrareembolso siempre incluye 3€ de gastos de envío, sea cual sea el importe.<br>
-        🏝️ Envíos a Canarias/Baleares: 5€ hasta 30€ de pedido, 3€ de 30€ a 53€, gratis a partir de 53€.
+        🏝️ Envíos a Canarias/Baleares: te confirmo el coste exacto por WhatsApp antes de enviarlo.
       </p>
 
       <button type="submit" class="btn-enviar">Enviar mi pedido</button>
@@ -533,22 +529,22 @@ function actualizarResumen() {
   const metodoSeleccionado = document.querySelector('input[name="metodo_pago"]:checked');
   const esContrareembolso = metodoSeleccionado && metodoSeleccionado.value === 'Contrareembolso';
 
-  let envio;
-  if (esIslas) {
-    if (subtotal < 30) envio = 5;
-    else if (subtotal < 53) envio = 3;
-    else envio = 0;
-  } else {
-    envio = subtotal >= 53 ? 0 : 3;
-  }
+  let envio = subtotal >= 53 ? 0 : 3;
   if (esContrareembolso) envio += 3;
 
   const total = subtotal + envio;
 
   document.getElementById('resumen-subtotal').textContent = formatoEuros(subtotal);
-  document.getElementById('resumen-envio').textContent = envio === 0 ? 'Gratis' : formatoEuros(envio);
-  document.getElementById('resumen-total').textContent = formatoEuros(total);
-  document.getElementById('resumen-total-mini').textContent = formatoEuros(total);
+
+  if (esIslas) {
+    document.getElementById('resumen-envio').textContent = 'A confirmar 🏝️';
+    document.getElementById('resumen-total').textContent = formatoEuros(subtotal) + ' + envío';
+    document.getElementById('resumen-total-mini').textContent = formatoEuros(subtotal) + ' + envío';
+  } else {
+    document.getElementById('resumen-envio').textContent = envio === 0 ? 'Gratis' : formatoEuros(envio);
+    document.getElementById('resumen-total').textContent = formatoEuros(total);
+    document.getElementById('resumen-total-mini').textContent = formatoEuros(total);
+  }
 
   const flotante = document.getElementById('resumen-flotante');
   if (subtotal > 0) {
